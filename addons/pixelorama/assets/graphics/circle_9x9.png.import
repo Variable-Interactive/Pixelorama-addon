@@ -1,0 +1,13 @@
+[remap]
+
+importer="image"
+type="Image"
+path="res://addons/pixelorama/.import/circle_9x9.png-1d1644d688947ae9ecd18223538d26a2.image"
+
+[deps]
+
+source_file="res://addons/pixelorama/assets/graphics/circle_9x9.png"
+dest_files=[ "res://addons/pixelorama/.import/circle_9x9.png-1d1644d688947ae9ecd18223538d26a2.image" ]
+
+[params]
+

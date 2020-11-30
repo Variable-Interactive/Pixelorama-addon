@@ -1,0 +1,13 @@
+[remap]
+
+importer="image"
+type="Image"
+path="res://addons/pixelorama/.import/zoom_cursor.png-b265ba9561e50307b88bb710979e8f7c.image"
+
+[deps]
+
+source_file="res://addons/pixelorama/assets/graphics/cursor_icons/zoom_cursor.png"
+dest_files=[ "res://addons/pixelorama/.import/zoom_cursor.png-b265ba9561e50307b88bb710979e8f7c.image" ]
+
+[params]
+

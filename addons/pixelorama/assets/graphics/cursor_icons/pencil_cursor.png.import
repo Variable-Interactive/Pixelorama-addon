@@ -1,0 +1,13 @@
+[remap]
+
+importer="image"
+type="Image"
+path="res://addons/pixelorama/.import/pencil_cursor.png-2dcf8fd5eff1796d9f9a65004cc36715.image"
+
+[deps]
+
+source_file="res://addons/pixelorama/assets/graphics/cursor_icons/pencil_cursor.png"
+dest_files=[ "res://addons/pixelorama/.import/pencil_cursor.png-2dcf8fd5eff1796d9f9a65004cc36715.image" ]
+
+[params]
+

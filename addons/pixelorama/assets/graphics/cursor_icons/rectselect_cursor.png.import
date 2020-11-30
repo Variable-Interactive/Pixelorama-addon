@@ -1,0 +1,13 @@
+[remap]
+
+importer="image"
+type="Image"
+path="res://addons/pixelorama/.import/rectselect_cursor.png-7aa608550c06a26d2a385b2bb9316b6d.image"
+
+[deps]
+
+source_file="res://addons/pixelorama/assets/graphics/cursor_icons/rectselect_cursor.png"
+dest_files=[ "res://addons/pixelorama/.import/rectselect_cursor.png-7aa608550c06a26d2a385b2bb9316b6d.image" ]
+
+[params]
+

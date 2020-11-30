@@ -12,77 +12,77 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "AnimationTag",
 "language": "GDScript",
-"path": "res://src/Classes/AnimationTag.gd"
+"path": "res://addons/pixelorama/src/Classes/AnimationTag.gd"
 }, {
 "base": "Popup",
 "class": "Brushes",
 "language": "GDScript",
-"path": "res://src/UI/BrushesPopup.gd"
+"path": "res://addons/pixelorama/src/UI/BrushesPopup.gd"
 }, {
-"base": "Node2D",
+"base": "Reference",
 "class": "Canvas",
 "language": "GDScript",
-"path": "res://src/UI/Canvas/Canvas.gd"
+"path": "res://addons/pixelorama/src/UI/Canvas/Canvas.gd"
 }, {
 "base": "Reference",
 "class": "Cel",
 "language": "GDScript",
-"path": "res://src/Classes/Cel.gd"
+"path": "res://addons/pixelorama/src/Classes/Cel.gd"
 }, {
 "base": "Reference",
 "class": "Drawer",
 "language": "GDScript",
-"path": "res://src/Classes/Drawers.gd"
+"path": "res://addons/pixelorama/src/Classes/Drawers.gd"
 }, {
 "base": "Reference",
 "class": "Frame",
 "language": "GDScript",
-"path": "res://src/Classes/Frame.gd"
+"path": "res://addons/pixelorama/src/Classes/Frame.gd"
 }, {
 "base": "Line2D",
 "class": "Guide",
 "language": "GDScript",
-"path": "res://src/UI/Canvas/Rulers/Guide.gd"
+"path": "res://addons/pixelorama/src/UI/Canvas/Rulers/Guide.gd"
 }, {
-"base": "AcceptDialog",
+"base": "Reference",
 "class": "ImageEffect",
 "language": "GDScript",
-"path": "res://src/Classes/ImageEffect.gd"
+"path": "res://addons/pixelorama/src/Classes/ImageEffect.gd"
 }, {
 "base": "Reference",
 "class": "Layer",
 "language": "GDScript",
-"path": "res://src/Classes/Layer.gd"
+"path": "res://addons/pixelorama/src/Classes/Layer.gd"
 }, {
-"base": "Button",
+"base": "Reference",
 "class": "LayerButton",
 "language": "GDScript",
-"path": "res://src/UI/Timeline/LayerButton.gd"
+"path": "res://addons/pixelorama/src/UI/Timeline/LayerButton.gd"
 }, {
 "base": "Reference",
 "class": "Palette",
 "language": "GDScript",
-"path": "res://src/Palette/Palette.gd"
+"path": "res://addons/pixelorama/src/Palette/Palette.gd"
 }, {
 "base": "Reference",
 "class": "PaletteColor",
 "language": "GDScript",
-"path": "res://src/Palette/PaletteColor.gd"
+"path": "res://addons/pixelorama/src/Palette/PaletteColor.gd"
 }, {
 "base": "PopupPanel",
 "class": "Patterns",
 "language": "GDScript",
-"path": "res://src/UI/PatternsPopup.gd"
+"path": "res://addons/pixelorama/src/UI/PatternsPopup.gd"
 }, {
 "base": "Reference",
 "class": "Project",
 "language": "GDScript",
-"path": "res://src/Classes/Project.gd"
+"path": "res://addons/pixelorama/src/Classes/Project.gd"
 }, {
 "base": "Guide",
 "class": "SymmetryGuide",
 "language": "GDScript",
-"path": "res://src/UI/Canvas/Rulers/SymmetryGuide.gd"
+"path": "res://addons/pixelorama/src/UI/Canvas/Rulers/SymmetryGuide.gd"
 } ]
 _global_script_class_icons={
 "AnimationTag": "",
@@ -106,13 +106,12 @@ _global_script_class_icons={
 
 config/name="Pixelorama"
 config/description="A free & open-source 2D sprite editor"
-run/main_scene="res://src/Main.tscn"
 run/low_processor_mode=true
-boot_splash/image="res://assets/graphics/splash.png"
+boot_splash/image="res://addons/pixelorama/assets/graphics/splash.png"
 boot_splash/bg_color=Color( 0.145098, 0.145098, 0.164706, 1 )
-config/icon="res://assets/graphics/icons/icon.png"
-config/macos_native_icon="res://assets/graphics/icons/icon.icns"
-config/windows_native_icon="res://assets/graphics/icons/icon.ico"
+config/icon="res://addons/pixelorama/assets/graphics/icons/icon.png"
+config/macos_native_icon="res://addons/pixelorama/assets/graphics/icons/icon.icns"
+config/windows_native_icon="res://addons/pixelorama/assets/graphics/icons/icon.ico"
 config/Version="v0.8.2-dev"
 
 [audio]
@@ -121,13 +120,13 @@ driver="Dummy"
 
 [autoload]
 
-Global="*res://src/Autoload/Global.gd"
-Import="*res://src/Autoload/Import.gd"
-OpenSave="*res://src/Autoload/OpenSave.gd"
-DrawingAlgos="*res://src/Autoload/DrawingAlgos.gd"
-Tools="*res://src/Autoload/Tools.gd"
-Html5FileExchange="*res://src/Autoload/HTML5FileExchange.gd"
-Export="*res://src/Autoload/Export.gd"
+DrawingAlgos="*res://addons/pixelorama/src/Autoload/DrawingAlgos.gd"
+Export="*res://addons/pixelorama/src/Autoload/Export.gd"
+Global="*res://addons/pixelorama/src/Autoload/Global.gd"
+Html5FileExchange="*res://addons/pixelorama/src/Autoload/HTML5FileExchange.gd"
+Import="*res://addons/pixelorama/src/Autoload/Import.gd"
+OpenSave="*res://addons/pixelorama/src/Autoload/OpenSave.gd"
+Tools="*res://addons/pixelorama/src/Autoload/Tools.gd"
 
 [debug]
 
@@ -422,7 +421,7 @@ mirror_view={
 
 [locale]
 
-translations=PoolStringArray( "res://Translations/zh_TW.po", "res://Translations/pt_BR.po", "res://Translations/de_DE.po", "res://Translations/el_GR.po", "res://Translations/en_US.po", "res://Translations/fr_FR.po", "res://Translations/it_IT.po", "res://Translations/pl_PL.po", "res://Translations/ru_RU.po", "res://Translations/es_ES.po", "res://Translations/zh_CN.po", "res://Translations/lv_LV.po", "res://Translations/eo_UY.po", "res://Translations/cs_CZ.po", "res://Translations/id_ID.po", "res://Translations/hu_HU.po", "res://Translations/ro_RO.po", "res://Translations/ko_KR.po" )
+translations=PoolStringArray( "res://addons/pixelorama/Translations/af_ZA.po", "res://addons/pixelorama/Translations/ar_SA.po", "res://addons/pixelorama/Translations/ca_ES.po", "res://addons/pixelorama/Translations/cs_CZ.po", "res://addons/pixelorama/Translations/da_DK.po", "res://addons/pixelorama/Translations/de_DE.po", "res://addons/pixelorama/Translations/el_GR.po", "res://addons/pixelorama/Translations/en.po", "res://addons/pixelorama/Translations/en_US.po", "res://addons/pixelorama/Translations/eo_UY.po", "res://addons/pixelorama/Translations/es_ES.po", "res://addons/pixelorama/Translations/fi_FI.po", "res://addons/pixelorama/Translations/fr_FR.po", "res://addons/pixelorama/Translations/he_IL.po", "res://addons/pixelorama/Translations/hi_IN.po", "res://addons/pixelorama/Translations/hu_HU.po", "res://addons/pixelorama/Translations/id_ID.po", "res://addons/pixelorama/Translations/it_IT.po", "res://addons/pixelorama/Translations/ja_JP.po", "res://addons/pixelorama/Translations/ko_KR.po", "res://addons/pixelorama/Translations/lv_LV.po", "res://addons/pixelorama/Translations/nl_NL.po", "res://addons/pixelorama/Translations/no_NO.po", "res://addons/pixelorama/Translations/pl_PL.po", "res://addons/pixelorama/Translations/pt_BR.po", "res://addons/pixelorama/Translations/pt_PT.po", "res://addons/pixelorama/Translations/ro_RO.po", "res://addons/pixelorama/Translations/ru_RU.po", "res://addons/pixelorama/Translations/sr_SP.po", "res://addons/pixelorama/Translations/sv_SE.po", "res://addons/pixelorama/Translations/tr_TR.po", "res://addons/pixelorama/Translations/uk_UA.po", "res://addons/pixelorama/Translations/vi_VN.po", "res://addons/pixelorama/Translations/zh_CN.po", "res://addons/pixelorama/Translations/zh_TW.po" )
 locale_filter=[ 0, [  ] ]
 
 [logging]
