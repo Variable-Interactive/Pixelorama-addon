@@ -1,9 +1,11 @@
 extends Node
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready():
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 # Get hold of the brushes, including random brushes (subdirectories and % files
 # in them, non % files get loaded independently.) nyaaa

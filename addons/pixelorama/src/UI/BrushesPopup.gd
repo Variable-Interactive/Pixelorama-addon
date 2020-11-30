@@ -17,10 +17,12 @@ var pixel_image = preload("res://addons/pixelorama/assets/graphics/pixel_image.p
 var circle_image = preload("res://addons/pixelorama/assets/graphics/circle_9x9.png")
 var circle_filled_image = preload("res://addons/pixelorama/assets/graphics/circle_filled_9x9.png")
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	var container = global.brushes_popup.get_node("TabContainer/File/FileBrushContainer")
 	var button = create_button(pixel_image)
 	button.brush.type = PIXEL
@@ -84,7 +86,7 @@ static func add_project_brush(brushes_popup, image : Image, hint := "") -> void:
 
 
 static func clear_project_brush(brushes_popup) -> void:
-	var container = brushes_popup.brushes_popup.get_node("TabContainer/Project/ProjectBrushContainer")
+	var container = brushes_popup.get_node("TabContainer/Project/ProjectBrushContainer")
 	for child in container.get_children():
 		child.queue_free()
 		brushes_popup.emit_signal("brush_removed", child.brush)

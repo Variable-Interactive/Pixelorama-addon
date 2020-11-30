@@ -5,10 +5,12 @@ var file_menu : PopupMenu
 var view_menu : PopupMenu
 var zen_mode := false
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	setup_file_menu()
 	setup_edit_menu()
 	setup_view_menu()

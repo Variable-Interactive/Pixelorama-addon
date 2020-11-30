@@ -14,10 +14,12 @@ onready var left_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/Cente
 onready var right_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/RightColor/NinePatchRect
 onready var dummyBtn = $DummyBtn
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	$VBoxContainer/HBoxContainer/EditPaletteColorPicker.presets_visible = false
 
 

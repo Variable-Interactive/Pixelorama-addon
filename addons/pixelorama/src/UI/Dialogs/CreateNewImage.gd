@@ -52,10 +52,15 @@ var TStrings ={
 	}
 
 
-func _ready() -> void:
-	width_value.value = get_node("/root/Pixelorama").default_image_width
-	height_value.value = get_node("/root/Pixelorama").default_image_height
-	fill_color_node.color = get_node("/root/Pixelorama").default_fill_color
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
+
+func _ready():
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	width_value.value = global.default_image_width
+	height_value.value = global.default_image_height
+	fill_color_node.color = global.default_fill_color
 	fill_color_node.get_picker().presets_visible = false
 
 	ratio_box.connect("pressed", self, "_on_RatioCheckBox_toggled", [ratio_box.pressed])
@@ -77,14 +82,14 @@ func _on_CreateNewImage_confirmed() -> void:
 	var width : int = width_value.value
 	var height : int = height_value.value
 	var fill_color : Color = fill_color_node.color
-	get_node("/root/Pixelorama").canvas.fill_color = fill_color
+	global.canvas.fill_color = fill_color
 
-	var frame : Frame = get_node("/root/Pixelorama").canvas.new_empty_frame(false, true, Vector2(width, height))
+	var frame : Frame = global.canvas.new_empty_frame(false, true, Vector2(width, height))
 	var new_project := Project.new([frame], tr("untitled"), Vector2(width, height).floor())
 	new_project.layers.append(Layer.new())
-	get_node("/root/Pixelorama").projects.append(new_project)
-	get_node("/root/Pixelorama").tabs.current_tab = get_node("/root/Pixelorama").tabs.get_tab_count() - 1
-	get_node("/root/Pixelorama").canvas.camera_zoom()
+	global.projects.append(new_project)
+	global.tabs.current_tab = global.tabs.get_tab_count() - 1
+	global.canvas.camera_zoom()
 
 
 var aspect_ratio: float
@@ -109,8 +114,8 @@ func _on_TemplatesOptions_item_selected(id: int) -> void:
 	if id != Templates.TDefault:
 		size_value = TResolutions[id]
 	else:
-		width_value.value = get_node("/root/Pixelorama").default_image_width
-		height_value.value = get_node("/root/Pixelorama").default_image_height
+		width_value.value = global.default_image_width
+		height_value.value = global.default_image_height
 
 	width_value.value = size_value.x
 	height_value.value = size_value.y

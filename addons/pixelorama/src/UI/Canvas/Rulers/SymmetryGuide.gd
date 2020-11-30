@@ -3,15 +3,17 @@ class_name SymmetryGuide extends Guide
 
 var _texture = preload("res://addons/pixelorama/assets/graphics/dotted_line.png")
 
+#var global
 
-func _ready() -> void:
+func _ready():
+	global = get_node("/root/Pixelorama")
 	has_focus = false
 	visible = false
 	texture = _texture
 	texture_mode = Line2D.LINE_TEXTURE_TILE
-	width = get_node("/root/Pixelorama").camera.zoom.x * 4
+	width = global.camera.zoom.x * 4
 	yield(get_tree().create_timer(0.01), "timeout")
-	modulate = get_node("/root/Pixelorama").guide_color
+	modulate = global.guide_color
 
 
 func _input(_event : InputEvent) -> void:
@@ -26,10 +28,10 @@ func _input(_event : InputEvent) -> void:
 
 func outside_canvas() -> bool:
 	if type == Types.HORIZONTAL:
-		points[0].y = clamp(points[0].y, 0, get_node("/root/Pixelorama").current_project.size.y)
-		points[1].y = clamp(points[1].y, 0, get_node("/root/Pixelorama").current_project.size.y)
+		points[0].y = clamp(points[0].y, 0, global.current_project.size.y)
+		points[1].y = clamp(points[1].y, 0, global.current_project.size.y)
 	elif type == Types.VERTICAL:
-		points[0].x = clamp(points[0].x, 0, get_node("/root/Pixelorama").current_project.size.x)
-		points[1].x = clamp(points[1].x, 0, get_node("/root/Pixelorama").current_project.size.x)
+		points[0].x = clamp(points[0].x, 0, global.current_project.size.x)
+		points[1].x = clamp(points[1].x, 0, global.current_project.size.x)
 
 	return false

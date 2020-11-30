@@ -15,12 +15,16 @@ var preview : TextureRect
 var selection_checkbox : CheckBox
 var affect_option_button : OptionButton
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
 
 func _ready() -> void:
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	set_nodes()
 	current_cel = Image.new()
 	current_frame = Image.new()
-	current_frame.create(get_node("/root/Pixelorama").current_project.size.x, get_node("/root/Pixelorama").current_project.size.y, false, Image.FORMAT_RGBA8)
+	current_frame.create(global.current_project.size.x, global.current_project.size.y, false, Image.FORMAT_RGBA8)
 	preview_image = Image.new()
 	preview_texture = ImageTexture.new()
 	connect("about_to_show", self, "_about_to_show")
@@ -33,11 +37,11 @@ func _ready() -> void:
 
 
 func _about_to_show() -> void:
-	current_cel = get_node("/root/Pixelorama").current_project.frames[get_node("/root/Pixelorama").current_project.current_frame].cels[get_node("/root/Pixelorama").current_project.current_layer].image
-	current_frame.resize(get_node("/root/Pixelorama").current_project.size.x, get_node("/root/Pixelorama").current_project.size.y)
+	current_cel = global.current_project.frames[global.current_project.current_frame].cels[global.current_project.current_layer].image
+	current_frame.resize(global.current_project.size.x, global.current_project.size.y)
 	current_frame.fill(Color(0, 0, 0, 0))
-	var frame = get_node("/root/Pixelorama").current_project.frames[get_node("/root/Pixelorama").current_project.current_frame]
-	get_node("/root/Pixelorama").get_export().blend_layers(current_frame, frame)
+	var frame = global.current_project.frames[global.current_project.current_frame]
+	global.get_export().blend_layers(current_frame, frame)
 	if selection_checkbox:
 		_on_SelectionCheckBox_toggled(selection_checkbox.pressed)
 	else:
@@ -47,24 +51,24 @@ func _about_to_show() -> void:
 
 func _confirmed() -> void:
 	if affect == CEL:
-		get_node("/root/Pixelorama").canvas.handle_undo("Draw")
+		global.canvas.handle_undo("Draw")
 		commit_action(current_cel, pixels)
-		get_node("/root/Pixelorama").canvas.handle_redo("Draw")
+		global.canvas.handle_redo("Draw")
 	elif affect == FRAME:
-		get_node("/root/Pixelorama").canvas.handle_undo("Draw", get_node("/root/Pixelorama").current_project, -1)
-		for cel in get_node("/root/Pixelorama").current_project.frames[get_node("/root/Pixelorama").current_project.current_frame].cels:
+		global.canvas.handle_undo("Draw", global.current_project, -1)
+		for cel in global.current_project.frames[global.current_project.current_frame].cels:
 			commit_action(cel.image, pixels)
-		get_node("/root/Pixelorama").canvas.handle_redo("Draw", get_node("/root/Pixelorama").current_project, -1)
+		global.canvas.handle_redo("Draw", global.current_project, -1)
 
 	elif affect == ALL_FRAMES:
-		get_node("/root/Pixelorama").canvas.handle_undo("Draw", get_node("/root/Pixelorama").current_project, -1, -1)
-		for frame in get_node("/root/Pixelorama").current_project.frames:
+		global.canvas.handle_undo("Draw", global.current_project, -1, -1)
+		for frame in global.current_project.frames:
 			for cel in frame.cels:
 				commit_action(cel.image, pixels)
-		get_node("/root/Pixelorama").canvas.handle_redo("Draw", get_node("/root/Pixelorama").current_project, -1, -1)
+		global.canvas.handle_redo("Draw", global.current_project, -1, -1)
 
 	elif affect == ALL_PROJECTS:
-		for project in get_node("/root/Pixelorama").projects:
+		for project in global.projects:
 			var _pixels := []
 			if selection_checkbox.pressed:
 				_pixels = project.selected_pixels.duplicate()
@@ -73,14 +77,14 @@ func _confirmed() -> void:
 					for y in project.size.y:
 						_pixels.append(Vector2(x, y))
 
-			get_node("/root/Pixelorama").canvas.handle_undo("Draw", project, -1, -1)
+			global.canvas.handle_undo("Draw", project, -1, -1)
 			for frame in project.frames:
 				for cel in frame.cels:
 					commit_action(cel.image, _pixels, project)
-			get_node("/root/Pixelorama").canvas.handle_redo("Draw", project, -1, -1)
+			global.canvas.handle_redo("Draw", project, -1, -1)
 
 
-func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node("/root/Pixelorama").current_project) -> void:
+func commit_action(_cel : Image, _pixels : Array, _project : Project = global.current_project) -> void:
 	pass
 
 
@@ -91,10 +95,10 @@ func set_nodes() -> void:
 func _on_SelectionCheckBox_toggled(button_pressed : bool) -> void:
 	pixels.clear()
 	if button_pressed:
-		pixels = get_node("/root/Pixelorama").current_project.selected_pixels.duplicate()
+		pixels = global.current_project.selected_pixels.duplicate()
 	else:
-		for x in get_node("/root/Pixelorama").current_project.size.x:
-			for y in get_node("/root/Pixelorama").current_project.size.y:
+		for x in global.current_project.size.x:
+			for y in global.current_project.size.y:
 				pixels.append(Vector2(x, y))
 
 	update_preview()
@@ -133,4 +137,4 @@ func update_transparent_background_size() -> void:
 
 
 func _popup_hide() -> void:
-	get_node("/root/Pixelorama").dialog_open(false)
+	global.dialog_open(false)

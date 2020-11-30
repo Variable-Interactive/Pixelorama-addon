@@ -1,17 +1,21 @@
 extends ColorRect
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
-func _ready() -> void:
-	rect_size = get_node("/root/Pixelorama").current_project.size
-	if get_parent().get_parent() == get_node("/root/Pixelorama").main_viewport:
-		get_node("/root/Pixelorama").second_viewport.get_node("Viewport/TransparentChecker")._ready()
-		get_node("/root/Pixelorama").small_preview_viewport.get_node("Viewport/TransparentChecker")._ready()
-	material.set_shader_param("size", get_node("/root/Pixelorama").checker_size)
-	material.set_shader_param("color1", get_node("/root/Pixelorama").checker_color_1)
-	material.set_shader_param("color2", get_node("/root/Pixelorama").checker_color_2)
-	material.set_shader_param("follow_movement", get_node("/root/Pixelorama").checker_follow_movement)
-	material.set_shader_param("follow_scale", get_node("/root/Pixelorama").checker_follow_scale)
-	_init_position(get_node("/root/Pixelorama").current_project.tile_mode)
+var global
+
+func _ready():
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	rect_size = global.current_project.size
+	if get_parent().get_parent() == global.main_viewport:
+		global.second_viewport.get_node("Viewport/TransparentChecker")._ready()
+		global.small_preview_viewport.get_node("Viewport/TransparentChecker")._ready()
+	material.set_shader_param("size", global.checker_size)
+	material.set_shader_param("color1", global.checker_color_1)
+	material.set_shader_param("color2", global.checker_color_2)
+	material.set_shader_param("follow_movement", global.checker_follow_movement)
+	material.set_shader_param("follow_scale", global.checker_follow_scale)
+	_init_position(global.current_project.tile_mode)
 
 
 func update_offset(offset : Vector2, scale : Vector2) -> void:
@@ -26,18 +30,18 @@ func _on_TransparentChecker_resized() -> void:
 func _init_position(id : int) -> void:
 	match id:
 		0:
-			get_node("/root/Pixelorama").current_project.tile_mode = get_node("/root/Pixelorama").Tile_Mode.NONE
-			get_node("/root/Pixelorama").transparent_checker.set_size(get_node("/root/Pixelorama").current_project.size)
-			get_node("/root/Pixelorama").transparent_checker.set_position(Vector2.ZERO)
+			global.current_project.tile_mode = global.Tile_Mode.NONE
+			global.transparent_checker.set_size(global.current_project.size)
+			global.transparent_checker.set_position(Vector2.ZERO)
 		1:
-			get_node("/root/Pixelorama").current_project.tile_mode = get_node("/root/Pixelorama").Tile_Mode.BOTH
-			get_node("/root/Pixelorama").transparent_checker.set_size(get_node("/root/Pixelorama").current_project.size*3)
-			get_node("/root/Pixelorama").transparent_checker.set_position(-get_node("/root/Pixelorama").current_project.size)
+			global.current_project.tile_mode = global.Tile_Mode.BOTH
+			global.transparent_checker.set_size(global.current_project.size*3)
+			global.transparent_checker.set_position(-global.current_project.size)
 		2:
-			get_node("/root/Pixelorama").current_project.tile_mode = get_node("/root/Pixelorama").Tile_Mode.XAXIS
-			get_node("/root/Pixelorama").transparent_checker.set_size(Vector2(get_node("/root/Pixelorama").current_project.size.x*3, get_node("/root/Pixelorama").current_project.size.y*1))
-			get_node("/root/Pixelorama").transparent_checker.set_position(Vector2(-get_node("/root/Pixelorama").current_project.size.x, 0))
+			global.current_project.tile_mode = global.Tile_Mode.XAXIS
+			global.transparent_checker.set_size(Vector2(global.current_project.size.x*3, global.current_project.size.y*1))
+			global.transparent_checker.set_position(Vector2(-global.current_project.size.x, 0))
 		3:
-			get_node("/root/Pixelorama").current_project.tile_mode = get_node("/root/Pixelorama").Tile_Mode.YAXIS
-			get_node("/root/Pixelorama").transparent_checker.set_size(Vector2(get_node("/root/Pixelorama").current_project.size.x*1, get_node("/root/Pixelorama").current_project.size.y*3))
-			get_node("/root/Pixelorama").transparent_checker.set_position(Vector2(0, -get_node("/root/Pixelorama").current_project.size.y))
+			global.current_project.tile_mode = global.Tile_Mode.YAXIS
+			global.transparent_checker.set_size(Vector2(global.current_project.size.x*1, global.current_project.size.y*3))
+			global.transparent_checker.set_position(Vector2(0, -global.current_project.size.y))

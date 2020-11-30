@@ -13,10 +13,12 @@ onready var options_dialog = $TagOptions
 func _ready() -> void:
 	$"TagOptions/GridContainer/ColorPickerButton".get_picker().presets_visible = false
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _on_FrameTagDialog_about_to_show() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	global.dialog_open(true)
 	for vbox in tag_vboxes:
 		vbox.queue_free()
@@ -83,7 +85,6 @@ func _on_EditButton_pressed(_tag_id : int) -> void:
 
 
 func _on_TagOptions_confirmed() -> void:
-	var global = global
 	var tag_name : String = options_dialog.get_node("GridContainer/NameLineEdit").text
 	var tag_color : Color = options_dialog.get_node("GridContainer/ColorPickerButton").color
 	var tag_from : int = options_dialog.get_node("GridContainer/FromSpinBox").value
@@ -121,7 +122,6 @@ func _on_TagOptions_confirmed() -> void:
 
 
 func _on_TagOptions_custom_action(action : String) -> void:
-	var global = global
 	if action == "delete_tag":
 		var new_animation_tags = global.current_project.animation_tags.duplicate()
 		new_animation_tags.remove(current_tag_id)

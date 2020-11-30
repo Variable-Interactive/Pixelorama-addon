@@ -14,6 +14,10 @@ var _hue_amount := 10
 var _sat_amount := 10
 var _value_amount := 10
 
+#var global
+
+func _ready():
+	global = get_node("/root/Pixelorama")
 
 class LightenDarkenOp extends Drawer.ColorOp:
 	var changed := false
@@ -215,7 +219,7 @@ func draw_start(position : Vector2) -> void:
 	else:
 		draw_tool(position)
 		_last_position = position
-		get_node("/root/Pixelorama").canvas.sprite_changed_this_frame = true
+		global.canvas.sprite_changed_this_frame = true
 	cursor_text = ""
 
 
@@ -229,7 +233,7 @@ func draw_move(position : Vector2) -> void:
 		draw_fill_gap(_last_position, position)
 		_last_position = position
 		cursor_text = ""
-		get_node("/root/Pixelorama").canvas.sprite_changed_this_frame = true
+		global.canvas.sprite_changed_this_frame = true
 
 
 func draw_end(_position : Vector2) -> void:

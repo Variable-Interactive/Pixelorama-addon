@@ -1,9 +1,15 @@
 extends ViewportContainer
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
+
+func _ready():
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_ViewportContainer_mouse_entered() -> void:
-	get_node("/root/Pixelorama").has_focus = true
+	global.has_focus = true
 
 
 func _on_ViewportContainer_mouse_exited() -> void:
-	get_node("/root/Pixelorama").has_focus = false
+	global.has_focus = false

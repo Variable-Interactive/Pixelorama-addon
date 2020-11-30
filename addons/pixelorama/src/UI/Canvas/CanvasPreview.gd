@@ -4,12 +4,19 @@ extends Node2D
 var frame : int = 0
 onready var animation_timer : Timer = $AnimationTimer
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
+
+func _ready():
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+
 func _draw() -> void:
-	var current_project : Project = get_node("/root/Pixelorama").current_project
+	var current_project : Project = global.current_project
 	if frame >= current_project.frames.size():
 		frame = current_project.current_frame
 
-	$AnimationTimer.wait_time = current_project.frame_duration[frame] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
+	$AnimationTimer.wait_time = current_project.frame_duration[frame] * (1 / global.animation_timeline.fps)
 
 	if animation_timer.is_stopped():
 		frame = current_project.current_frame
@@ -23,13 +30,13 @@ func _draw() -> void:
 
 
 func _on_AnimationTimer_timeout() -> void:
-	var current_project : Project = get_node("/root/Pixelorama").current_project
+	var current_project : Project = global.current_project
 	if frame < current_project.frames.size() - 1:
 		frame += 1
 	else:
 		frame = 0
 
 	$AnimationTimer.set_one_shot(true)
-	$AnimationTimer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[frame] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
+	$AnimationTimer.wait_time = global.current_project.frame_duration[frame] * (1 / global.animation_timeline.fps)
 	$AnimationTimer.start()
 	update()

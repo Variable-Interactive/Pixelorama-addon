@@ -13,10 +13,12 @@ onready var buttons_container : BoxContainer = $ThemeButtons
 onready var colors_container : BoxContainer = $ThemeColorsSpacer/ThemeColors
 onready var theme_color_preview_scene = preload("res://addons/pixelorama/src/Preferences/ThemeColorPreview.tscn")
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	var button_group = ButtonGroup.new()
 	for theme in themes:
 		var button := CheckBox.new()

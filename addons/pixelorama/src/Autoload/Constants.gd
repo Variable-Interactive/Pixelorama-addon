@@ -10,4 +10,5 @@ enum AnimationType { MULTIPLE_FILES = 0, ANIMATED = 1 }
 enum AnimationDirection { FORWARD = 0, BACKWARDS = 1, PING_PONG = 2 }
 enum FileFormat { PNG = 0, GIF = 1}
 
+const NODE_PATH_GLOBAL = "/root/Pixelorama"
 

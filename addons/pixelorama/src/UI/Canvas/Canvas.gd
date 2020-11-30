@@ -13,11 +13,13 @@ onready var grid = $Grid
 onready var tile_mode = $TileMode
 onready var indicators = $Indicators
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	var frame : Frame = new_empty_frame(true)
 	global.current_project.frames.append(frame)
 	yield(get_tree().create_timer(0.2), "timeout")

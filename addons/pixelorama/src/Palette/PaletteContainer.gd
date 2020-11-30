@@ -11,10 +11,12 @@ var from_palette : Palette
 onready var palette_from_sprite_dialog = $"../../../../PaletteFromSpriteDialog"
 onready var remove_palette_warning = $"../../../../RemovePaletteWarning"
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	_load_palettes()
 
 	# Select default palette "Default"

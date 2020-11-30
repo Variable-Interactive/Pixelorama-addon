@@ -9,10 +9,12 @@ var transparent_checker : ColorRect
 var mouse_pos := Vector2.ZERO
 var drag := false
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	viewport_container = get_parent().get_parent()
 	transparent_checker = get_parent().get_node("TransparentChecker")
 	tween = Tween.new()

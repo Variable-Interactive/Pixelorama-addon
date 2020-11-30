@@ -9,9 +9,13 @@ var minor_subdivision := 4
 var first : Vector2
 var last : Vector2
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
-func _ready() -> void:
-	get_node("/root/Pixelorama").main_viewport.connect("item_rect_changed", self, "update")
+var global
+
+func _ready():
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	global.main_viewport.connect("item_rect_changed", self, "update")
 
 
 # Code taken and modified from Godot's source code
@@ -20,10 +24,10 @@ func _draw() -> void:
 	var ruler_transform := Transform2D()
 	var major_subdivide := Transform2D()
 	var minor_subdivide := Transform2D()
-	var zoom: float = 1 / get_node("/root/Pixelorama").camera.zoom.x
+	var zoom: float = 1 / global.camera.zoom.x
 	transform.y = Vector2(zoom, zoom)
 
-	transform.origin = get_node("/root/Pixelorama").main_viewport.rect_size / 2 + get_node("/root/Pixelorama").camera.offset * -zoom
+	transform.origin = global.main_viewport.rect_size / 2 + global.camera.offset * -zoom
 
 	var basic_rule := 100.0
 	var i := 0
@@ -41,7 +45,7 @@ func _draw() -> void:
 	minor_subdivide = minor_subdivide.scaled(Vector2(1.0 / minor_subdivision, 1.0 / minor_subdivision))
 
 	first = (transform * ruler_transform * major_subdivide * minor_subdivide).affine_inverse().xform(Vector2.ZERO)
-	last = (transform * ruler_transform * major_subdivide * minor_subdivide).affine_inverse().xform(get_node("/root/Pixelorama").main_viewport.rect_size)
+	last = (transform * ruler_transform * major_subdivide * minor_subdivide).affine_inverse().xform(global.main_viewport.rect_size)
 
 	for j in range(ceil(first.y), ceil(last.y)):
 		var position : Vector2 = (transform * ruler_transform * major_subdivide * minor_subdivide).xform(Vector2(0, j))
@@ -60,15 +64,15 @@ func _draw() -> void:
 
 
 func _on_VerticalRuler_pressed() -> void:
-	if !get_node("/root/Pixelorama").show_guides:
+	if !global.show_guides:
 		return
 	var guide := Guide.new()
 	guide.type = guide.Types.VERTICAL
-	guide.add_point(Vector2(get_node("/root/Pixelorama").canvas.current_pixel.x, -19999))
-	guide.add_point(Vector2(get_node("/root/Pixelorama").canvas.current_pixel.x, 19999))
+	guide.add_point(Vector2(global.canvas.current_pixel.x, -19999))
+	guide.add_point(Vector2(global.canvas.current_pixel.x, 19999))
 	if guide.points.size() < 2:
 		guide.queue_free()
 		return
-	get_node("/root/Pixelorama").canvas.add_child(guide)
-	get_node("/root/Pixelorama").has_focus = false
+	global.canvas.add_child(guide)
+	global.has_focus = false
 	update()

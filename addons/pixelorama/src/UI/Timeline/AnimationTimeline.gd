@@ -9,10 +9,12 @@ var last_frame := 0
 var timeline_scroll : ScrollContainer
 var tag_scroll_container : ScrollContainer
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	timeline_scroll = global.find_node_by_name(self, "TimelineScroll")
 	tag_scroll_container = global.find_node_by_name(self, "TagScroll")
 	timeline_scroll.get_h_scrollbar().connect("value_changed", self, "_h_scroll_changed")
@@ -361,7 +363,6 @@ func _on_BlueRedMode_toggled(button_pressed : bool) -> void:
 # Layer buttons
 
 func add_layer(is_new := true) -> void:
-	var global = global
 	var new_layers : Array = global.current_project.layers.duplicate()
 	var l := Layer.new()
 	if !is_new: # Clone layer

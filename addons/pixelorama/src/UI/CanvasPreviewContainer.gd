@@ -5,6 +5,12 @@ onready var canvas_preview = $HBoxContainer/PreviewViewportContainer/Viewport/Ca
 onready var camera : Camera2D = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview
 onready var play_button : Button = $HBoxContainer/VBoxContainer/PlayButton
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
+
+func _ready():
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_PreviewZoomSlider_value_changed(value : float) -> void:
 	camera.zoom = -Vector2(value, value)
@@ -14,11 +20,11 @@ func _on_PreviewZoomSlider_value_changed(value : float) -> void:
 
 func _on_PlayButton_toggled(button_pressed : bool) -> void:
 	if button_pressed:
-		if get_node("/root/Pixelorama").current_project.frames.size() <= 1:
+		if global.current_project.frames.size() <= 1:
 			play_button.pressed = false
 			return
 		canvas_preview.animation_timer.start()
-		get_node("/root/Pixelorama").change_button_texturerect(play_button.get_child(0), "pause.png")
+		global.change_button_texturerect(play_button.get_child(0), "pause.png")
 	else:
 		canvas_preview.animation_timer.stop()
-		get_node("/root/Pixelorama").change_button_texturerect(play_button.get_child(0), "play.png")
+		global.change_button_texturerect(play_button.get_child(0), "play.png")

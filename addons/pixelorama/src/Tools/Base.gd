@@ -11,7 +11,7 @@ var _cursor := Vector2.INF
 var global
 
 func _ready():
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	kname = name.replace(" ", "_").to_lower()
 	$Label.text = tool_slot.name
 

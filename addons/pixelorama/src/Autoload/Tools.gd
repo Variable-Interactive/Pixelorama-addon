@@ -60,10 +60,12 @@ var control := false
 var shift := false
 var alt := false
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	yield(get_tree(), "idle_frame")
 	_slots[BUTTON_LEFT] = Slot.new("Left tool", global)
 	_slots[BUTTON_RIGHT] = Slot.new("Right tool", global)

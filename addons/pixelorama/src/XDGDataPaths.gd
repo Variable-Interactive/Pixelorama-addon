@@ -1,5 +1,7 @@
 extends Reference
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 # These are *with* the config subdirectory name

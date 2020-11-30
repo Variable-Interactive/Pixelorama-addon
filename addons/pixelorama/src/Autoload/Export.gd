@@ -56,7 +56,7 @@ func _exit_tree() -> void:
 		gif_export_thread.wait_to_finish()
 		
 func _enter_tree() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 
 func external_export() -> void:

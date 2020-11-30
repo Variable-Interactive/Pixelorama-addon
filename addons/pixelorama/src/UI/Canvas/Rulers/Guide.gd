@@ -7,10 +7,12 @@ var has_focus := true
 var mouse_pos := Vector2.ZERO
 var type = Types.HORIZONTAL
 var project
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	project = global.current_project
 	width = global.camera.zoom.x
 	default_color = global.guide_color

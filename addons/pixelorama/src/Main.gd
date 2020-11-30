@@ -1,5 +1,7 @@
 extends Control
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 var opensprite_file_selected := false
@@ -9,7 +11,7 @@ var is_quitting_on_save := false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	get_tree().set_auto_accept_quit(false)
 	setup_application_window_size()
 

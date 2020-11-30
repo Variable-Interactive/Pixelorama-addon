@@ -3,10 +3,12 @@ extends Node
 
 enum GradientDirection {TOP, BOTTOM, LEFT, RIGHT}
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _enter_tree():
-	var global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func scale3X(sprite : Image, tol : float = 50) -> Image:
 	var scaled = Image.new()
@@ -263,7 +265,7 @@ func crop_image(image : Image) -> void:
 	# Use first cel as a starting rectangle
 	var used_rect : Rect2 = image.get_used_rect()
 	if not global:
-		global = get_node("/root/Pixelorama")
+		global = get_node(Constants.NODE_PATH_GLOBAL)
 	for f in global.current_project.frames:
 		# However, if first cel is empty, loop through all cels until we find one that isn't
 		for cel in f.cels:
@@ -310,7 +312,7 @@ func resize_canvas(width : int, height : int, offset_x : int, offset_y : int) ->
 
 func general_do_scale(width : int, height : int) -> void:
 	if not global:
-		global = get_node("/root/Pixelorama")
+		global = get_node(Constants.NODE_PATH_GLOBAL)
 	var x_ratio = global.current_project.size.x / width
 	var y_ratio = global.current_project.size.y / height
 	var new_x_symmetry_point = global.current_project.x_symmetry_point / x_ratio

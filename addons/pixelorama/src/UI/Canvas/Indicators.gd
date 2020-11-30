@@ -1,9 +1,11 @@
 extends Node2D
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _enter_tree():
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _input(event : InputEvent) -> void:
 	if global.has_focus and event is InputEventMouseMotion:

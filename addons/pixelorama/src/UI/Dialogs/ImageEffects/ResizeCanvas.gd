@@ -14,15 +14,17 @@ onready var x_spinbox : SpinBox = $VBoxContainer/OptionsContainer/XSpinBox
 onready var y_spinbox : SpinBox = $VBoxContainer/OptionsContainer/YSpinBox
 onready var preview_rect : TextureRect = $VBoxContainer/Preview
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready():
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_ResizeCanvas_about_to_show() -> void:
 	image = Image.new()
 	if not global:
-		global = get_node("/root/Pixelorama")
+		global = get_node(Constants.NODE_PATH_GLOBAL)
 	image.create(global.current_project.size.x, global.current_project.size.y, false, Image.FORMAT_RGBA8)
 	image.lock()
 

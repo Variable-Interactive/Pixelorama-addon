@@ -3,10 +3,12 @@ extends ConfirmationDialog
 onready var frame_num = $VBoxContainer/GridContainer/FrameNum
 onready var frame_dur = $VBoxContainer/GridContainer/FrameTime
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready():
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func set_frame_label(frame : int) -> void:
 	frame_num.set_text(str(frame + 1))

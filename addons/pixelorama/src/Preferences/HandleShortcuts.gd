@@ -7,11 +7,17 @@ var shortcut_already_assigned = false
 var old_input_event : InputEventKey
 var new_input_event : InputEventKey
 
-onready var shortcut_selector_popup = get_node("/root/Pixelorama").preferences_dialog.get_node("Popups/ShortcutSelector")
-onready var theme_font_color : Color = get_node("/root/Pixelorama").preferences_dialog.get_node("Popups/ShortcutSelector/EnteredShortcut").get_color("font_color")
+var shortcut_selector_popup
+var theme_font_color : Color
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
 
 func _ready() -> void:
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	shortcut_selector_popup = global.preferences_dialog.get_node("Popups/ShortcutSelector")
+	theme_font_color = global.preferences_dialog.get_node("Popups/ShortcutSelector/EnteredShortcut").get_color("font_color")
 	# Disable input until the shortcut selector is displayed
 	set_process_input(false)
 
@@ -29,11 +35,11 @@ func _ready() -> void:
 	# Load custom shortcuts from the config file
 	custom_shortcuts_preset = default_shortcuts_preset.duplicate()
 	for action in default_shortcuts_preset:
-		var saved_input_event = get_node("/root/Pixelorama").config_cache.get_value("shortcuts", action, 0)
+		var saved_input_event = global.config_cache.get_value("shortcuts", action, 0)
 		if saved_input_event is InputEventKey:
 			custom_shortcuts_preset[action] = saved_input_event
 
-	var shortcuts_preset = get_node("/root/Pixelorama").config_cache.get_value("shortcuts", "shortcuts_preset", 0)
+	var shortcuts_preset = global.config_cache.get_value("shortcuts", "shortcuts_preset", 0)
 	get_node("HBoxContainer/PresetOptionButton").select(shortcuts_preset)
 	_on_PresetOptionButton_item_selected(shortcuts_preset)
 
@@ -72,8 +78,8 @@ func _on_PresetOptionButton_item_selected(id : int) -> void:
 			apply_shortcuts_preset(default_shortcuts_preset)
 		1:
 			apply_shortcuts_preset(custom_shortcuts_preset)
-	get_node("/root/Pixelorama").config_cache.set_value("shortcuts", "shortcuts_preset", id)
-	get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
+	global.config_cache.set_value("shortcuts", "shortcuts_preset", id)
+	global.config_cache.save("user://cache.ini")
 
 
 func apply_shortcuts_preset(preset) -> void:
@@ -96,10 +102,10 @@ func toggle_shortcut_buttons(enabled : bool) -> void:
 func set_action_shortcut(action : String, old_input : InputEventKey, new_input : InputEventKey) -> void:
 	InputMap.action_erase_event(action, old_input)
 	InputMap.action_add_event(action, new_input)
-	get_node("/root/Pixelorama").update_hint_tooltips()
+	global.update_hint_tooltips()
 	# Set shortcut to switch colors button
 	if action == "switch_colors":
-		get_node("/root/Pixelorama").color_switch_button.shortcut.shortcut = InputMap.get_action_list("switch_colors")[0]
+		global.color_switch_button.shortcut.shortcut = InputMap.get_action_list("switch_colors")[0]
 
 
 func _on_Shortcut_button_pressed(button : Button) -> void:
@@ -119,7 +125,7 @@ func _on_ShortcutSelector_confirmed() -> void:
 	if not shortcut_already_assigned:
 		set_action_shortcut(action_being_edited, old_input_event, new_input_event)
 		custom_shortcuts_preset[action_being_edited] = new_input_event
-		get_node("/root/Pixelorama").config_cache.set_value("shortcuts", action_being_edited, new_input_event)
-		get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
+		global.config_cache.set_value("shortcuts", action_being_edited, new_input_event)
+		global.config_cache.save("user://cache.ini")
 		get_node("Shortcuts/" + action_being_edited).text = OS.get_scancode_string(new_input_event.get_scancode_with_modifiers())
 		shortcut_selector_popup.hide()

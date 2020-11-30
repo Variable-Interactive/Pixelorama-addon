@@ -9,10 +9,12 @@ onready var preview : TextureRect = $VBoxContainer/Preview
 onready var shader_loaded_label : Label = $VBoxContainer/ShaderLoadedLabel
 onready var shader_params : BoxContainer = $VBoxContainer/ShaderParams
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _enter_tree():
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 
 func _on_ShaderEffect_about_to_show() -> void:

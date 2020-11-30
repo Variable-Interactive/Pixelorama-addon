@@ -7,10 +7,12 @@ var backup_save_paths := [] # Array of strings
 
 onready var autosave_timer : Timer
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _enter_tree() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	autosave_timer = Timer.new()
 	autosave_timer.one_shot = false
 	autosave_timer.process_mode = Timer.TIMER_PROCESS_IDLE
@@ -70,7 +72,7 @@ func open_pxo_file(path : String, untitled_backup : bool = false) -> void:
 		new_project.animation_tags.clear()
 		new_project.name = path.get_file()
 	else:
-		new_project = Project.new([], path.get_file())
+		new_project = Project.new([], path.get_file(), Vector2(64,64), global)
 
 	var first_line := file.get_line()
 	var dict := JSON.parse(first_line)

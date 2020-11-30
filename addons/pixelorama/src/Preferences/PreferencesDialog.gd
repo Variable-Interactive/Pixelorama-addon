@@ -40,10 +40,12 @@ onready var autosave_interval : SpinBox = $HSplitContainer/ScrollContainer/VBoxC
 onready var restore_default_button_scene = preload("res://addons/pixelorama/src/Preferences/RestoreDefaultButton.tscn")
 onready var shrink_label : Label = $HSplitContainer/ScrollContainer/VBoxContainer/Interface/ShrinkContainer/ShrinkLabel
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	# Replace OK with Close since preference changes are being applied immediately, not after OK confirmation
 	get_ok().text = tr("Close")
 

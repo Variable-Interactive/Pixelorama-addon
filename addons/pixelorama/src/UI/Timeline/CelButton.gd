@@ -4,10 +4,12 @@ var frame := 0
 var layer := 0
 
 onready var popup_menu : PopupMenu = $PopupMenu
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
 var global
 
 func _ready() -> void:
-	global = get_node("/root/Pixelorama")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
 	hint_tooltip = tr("Frame: %s, Layer: %s") % [frame + 1, layer]
 	if global.current_project.frames[frame] in global.current_project.layers[layer].linked_cels:
 		get_node("LinkedIndicator").visible = true
