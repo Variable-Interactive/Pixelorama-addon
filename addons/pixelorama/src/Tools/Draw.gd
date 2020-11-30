@@ -21,15 +21,17 @@ var _indicator := BitMap.new()
 var _polylines := []
 var _line_polylines := []
 
+#var global
+
 func _ready() -> void:
 	global.get_tools().connect("color_changed", self, "_on_Color_changed")
-	get_node("/root/Pixelorama").brushes_popup.connect("brush_removed", self, "_on_Brush_removed")
+	global.brushes_popup.connect("brush_removed", self, "_on_Brush_removed")
 
 
 func _on_BrushType_pressed() -> void:
-	if not get_node("/root/Pixelorama").brushes_popup.is_connected("brush_selected", self, "_on_Brush_selected"):
-		get_node("/root/Pixelorama").brushes_popup.connect("brush_selected", self, "_on_Brush_selected", [], CONNECT_ONESHOT)
-	get_node("/root/Pixelorama").brushes_popup.popup(Rect2($Brush/Type.rect_global_position, Vector2(226, 72)))
+	if not global.brushes_popup.is_connected("brush_selected", self, "_on_Brush_selected"):
+		global.brushes_popup.connect("brush_selected", self, "_on_Brush_selected", [], CONNECT_ONESHOT)
+	global.brushes_popup.popup(Rect2($Brush/Type.rect_global_position, Vector2(226, 72)))
 
 
 func _on_Brush_selected(brush : Brushes.Brush) -> void:
@@ -73,7 +75,7 @@ func get_config() -> Dictionary:
 func set_config(config : Dictionary) -> void:
 	var type = config.get("brush_type", _brush.type)
 	var index = config.get("brush_index", _brush.index)
-	_brush = get_node("/root/Pixelorama").brushes_popup.get_brush(type, index)
+	_brush = global.brushes_popup.get_brush(type, index)
 	_brush_size = config.get("brush_size", _brush_size)
 	_brush_interpolate = config.get("brush_interpolate", _brush_interpolate)
 
@@ -143,7 +145,7 @@ func update_line_polylines(start : Vector2, end : Vector2) -> void:
 
 
 func restore_image() -> void:
-	var project : Project = get_node("/root/Pixelorama").current_project
+	var project : Project = global.current_project
 	var image = project.frames[project.current_frame].cels[project.current_layer].image
 	image.unlock()
 	image.data = _undo_data[image]
@@ -156,10 +158,10 @@ func prepare_undo() -> void:
 
 func commit_undo(action : String) -> void:
 	var redo_data = _get_undo_data()
-	var project : Project = get_node("/root/Pixelorama").current_project
+	var project : Project = global.current_project
 	var frame := -1
 	var layer := -1
-	if get_node("/root/Pixelorama").animation_timer.is_stopped():
+	if global.animation_timer.is_stopped():
 		frame = project.current_frame
 		layer = project.current_layer
 
@@ -177,10 +179,10 @@ func commit_undo(action : String) -> void:
 
 
 func draw_tool(position : Vector2) -> void:
-	if get_node("/root/Pixelorama").current_project.layers[get_node("/root/Pixelorama").current_project.current_layer].locked:
+	if global.current_project.layers[global.current_project.current_layer].locked:
 		return
 	var strength := _strength
-	if get_node("/root/Pixelorama").pressure_sensitivity_mode == get_node("/root/Pixelorama").Pressure_Sensitivity.ALPHA:
+	if global.pressure_sensitivity_mode == global.Pressure_Sensitivity.ALPHA:
 		strength *= global.get_tools().pen_pressure
 
 	_drawer.pixel_perfect = tool_slot.pixel_perfect if _brush_size == 1 else false
@@ -257,11 +259,11 @@ func draw_tool_circle(position : Vector2, fill := false) -> void:
 
 
 func draw_tool_brush(position : Vector2) -> void:
-	if get_node("/root/Pixelorama").mirror_view:
-		position.x = get_node("/root/Pixelorama").current_project.size.x - position.x
+	if global.mirror_view:
+		position.x = global.current_project.size.x - position.x
 
-	if get_node("/root/Pixelorama").current_project.tile_mode and _get_tile_mode_rect().has_point(position):
-		position = position.posmodv(get_node("/root/Pixelorama").current_project.size)
+	if global.current_project.tile_mode and _get_tile_mode_rect().has_point(position):
+		position = position.posmodv(global.current_project.size)
 
 	var size := _brush_image.get_size()
 	var dst := position - (size / 2).floor()
@@ -273,7 +275,7 @@ func draw_tool_brush(position : Vector2) -> void:
 	var src_rect := Rect2(dst_rect.position - dst, dst_rect.size)
 	dst = dst_rect.position
 
-	var project : Project = get_node("/root/Pixelorama").current_project
+	var project : Project = global.current_project
 	_draw_brush_image(_brush_image, src_rect, dst)
 
 	# Handle Mirroring
@@ -305,15 +307,15 @@ func draw_tool_brush(position : Vector2) -> void:
 
 func draw_indicator() -> void:
 	draw_indicator_at(_cursor, Vector2.ZERO, Color.blue)
-	if get_node("/root/Pixelorama").current_project.tile_mode and _get_tile_mode_rect().has_point(_cursor):
+	if global.current_project.tile_mode and _get_tile_mode_rect().has_point(_cursor):
 		var tile := _line_start if _draw_line else _cursor
-		if not tile in get_node("/root/Pixelorama").current_project.selected_pixels:
-			var offset := tile - tile.posmodv(get_node("/root/Pixelorama").current_project.size)
+		if not tile in global.current_project.selected_pixels:
+			var offset := tile - tile.posmodv(global.current_project.size)
 			draw_indicator_at(_cursor, offset, Color.green)
 
 
 func draw_indicator_at(position : Vector2, offset : Vector2, color : Color) -> void:
-	var canvas = get_node("/root/Pixelorama").canvas.indicators
+	var canvas = global.canvas.indicators
 	if _brush.type in [Brushes.FILE, Brushes.RANDOM_FILE, Brushes.CUSTOM] and not _draw_line:
 		position -= (_brush_image.get_size() / 2).floor()
 		position -= offset
@@ -333,10 +335,10 @@ func draw_indicator_at(position : Vector2, offset : Vector2, color : Color) -> v
 
 
 func _set_pixel(position : Vector2) -> void:
-	var project : Project = get_node("/root/Pixelorama").current_project
-	if get_node("/root/Pixelorama").mirror_view:
+	var project : Project = global.current_project
+	if global.mirror_view:
 		position.x = project.size.x - position.x - 1
-	if get_node("/root/Pixelorama").current_project.tile_mode and _get_tile_mode_rect().has_point(position):
+	if global.current_project.tile_mode and _get_tile_mode_rect().has_point(position):
 		position = position.posmodv(project.size)
 
 	var entire_image_selected : bool = project.selected_pixels.size() == project.size.x * project.size.y
@@ -513,9 +515,9 @@ func _line_angle_constraint(start : Vector2, end : Vector2) -> Dictionary:
 
 func _get_undo_data() -> Dictionary:
 	var data = {}
-	var project : Project = get_node("/root/Pixelorama").current_project
+	var project : Project = global.current_project
 	var frames := project.frames
-	if get_node("/root/Pixelorama").animation_timer.is_stopped():
+	if global.animation_timer.is_stopped():
 		frames = [project.frames[project.current_frame]]
 	for frame in frames:
 		var image : Image = frame.cels[project.current_layer].image

@@ -17,11 +17,11 @@ func _ready() -> void:
 	global = get_node("/root/Pixelorama")
 	for t in tools:
 		t[0].connect("pressed", self, "_on_Tool_pressed", [t[0]])
-	get_node("/root/Pixelorama").update_hint_tooltips()
+	global.update_hint_tooltips()
 
 
 func _input(event : InputEvent) -> void:
-	if not get_node("/root/Pixelorama").has_focus:
+	if not global.has_focus:
 		return
 	for action in ["undo", "redo", "redo_secondary"]:
 		if event.is_action_pressed(action):

@@ -9,12 +9,14 @@ var last_frame := 0
 var timeline_scroll : ScrollContainer
 var tag_scroll_container : ScrollContainer
 
+var global
 
 func _ready() -> void:
-	timeline_scroll = get_node("/root/Pixelorama").find_node_by_name(self, "TimelineScroll")
-	tag_scroll_container = get_node("/root/Pixelorama").find_node_by_name(self, "TagScroll")
+	global = get_node("/root/Pixelorama")
+	timeline_scroll = global.find_node_by_name(self, "TimelineScroll")
+	tag_scroll_container = global.find_node_by_name(self, "TagScroll")
 	timeline_scroll.get_h_scrollbar().connect("value_changed", self, "_h_scroll_changed")
-	get_node("/root/Pixelorama").animation_timer.wait_time = 1 / fps
+	global.animation_timer.wait_time = 1 / fps
 
 
 func _h_scroll_changed(value : float) -> void:
@@ -24,7 +26,6 @@ func _h_scroll_changed(value : float) -> void:
 
 
 func add_frame() -> void:
-	var global = get_node("/root/Pixelorama")
 	var frame_duration : Array = global.current_project.frame_duration.duplicate()
 	var frame : Frame = global.canvas.new_empty_frame()
 	var new_frames : Array = global.current_project.frames.duplicate()
@@ -62,7 +63,6 @@ func add_frame() -> void:
 
 
 func _on_DeleteFrame_pressed(frame := -1) -> void:
-	var global = get_node("/root/Pixelorama")
 	if global.current_project.frames.size() == 1:
 		return
 	if frame == -1:
@@ -130,7 +130,6 @@ func _on_DeleteFrame_pressed(frame := -1) -> void:
 
 
 func _on_CopyFrame_pressed(frame := -1) -> void:
-	var global = get_node("/root/Pixelorama")
 	if frame == -1:
 		frame = global.current_project.current_frame
 
@@ -179,64 +178,64 @@ func _on_CopyFrame_pressed(frame := -1) -> void:
 
 
 func _on_FrameTagButton_pressed() -> void:
-	get_node("/root/Pixelorama").tag_dialog.popup_centered()
+	global.tag_dialog.popup_centered()
 
 func _on_MoveLeft_pressed() -> void:
-	var frame : int = get_node("/root/Pixelorama").current_project.current_frame
+	var frame : int = global.current_project.current_frame
 	if frame == 0:
 		return
-	get_node("/root/Pixelorama").current_project.layers[get_node("/root/Pixelorama").current_project.current_layer].frame_container.get_child(frame).change_frame_order(-1)
+	global.current_project.layers[global.current_project.current_layer].frame_container.get_child(frame).change_frame_order(-1)
 
 func _on_MoveRight_pressed() -> void:
-	var frame : int = get_node("/root/Pixelorama").current_project.current_frame
+	var frame : int = global.current_project.current_frame
 	if frame == last_frame:
 		return
-	get_node("/root/Pixelorama").current_project.layers[get_node("/root/Pixelorama").current_project.current_layer].frame_container.get_child(frame).change_frame_order(1)
+	global.current_project.layers[global.current_project.current_layer].frame_container.get_child(frame).change_frame_order(1)
 
 func _on_OnionSkinning_pressed() -> void:
-	get_node("/root/Pixelorama").onion_skinning = !get_node("/root/Pixelorama").onion_skinning
-	get_node("/root/Pixelorama").canvas.update()
-	var texture_button : TextureRect = get_node("/root/Pixelorama").onion_skinning_button.get_child(0)
-	if get_node("/root/Pixelorama").onion_skinning:
-		get_node("/root/Pixelorama").change_button_texturerect(texture_button, "onion_skinning.png")
+	global.onion_skinning = !global.onion_skinning
+	global.canvas.update()
+	var texture_button : TextureRect = global.onion_skinning_button.get_child(0)
+	if global.onion_skinning:
+		global.change_button_texturerect(texture_button, "onion_skinning.png")
 	else:
-		get_node("/root/Pixelorama").change_button_texturerect(texture_button, "onion_skinning_off.png")
+		global.change_button_texturerect(texture_button, "onion_skinning_off.png")
 
 func _on_OnionSkinningSettings_pressed() -> void:
-	$OnionSkinningSettings.popup(Rect2(get_node("/root/Pixelorama").onion_skinning_button.rect_global_position.x - $OnionSkinningSettings.rect_size.x - 16, get_node("/root/Pixelorama").onion_skinning_button.rect_global_position.y - 106, 136, 126))
+	$OnionSkinningSettings.popup(Rect2(global.onion_skinning_button.rect_global_position.x - $OnionSkinningSettings.rect_size.x - 16, global.onion_skinning_button.rect_global_position.y - 106, 136, 126))
 
 
 func _on_LoopAnim_pressed() -> void:
-	var texture_button : TextureRect = get_node("/root/Pixelorama").loop_animation_button.get_child(0)
+	var texture_button : TextureRect = global.loop_animation_button.get_child(0)
 	match animation_loop:
 		0: # Make it loop
 			animation_loop = 1
-			get_node("/root/Pixelorama").change_button_texturerect(texture_button, "loop.png")
-			get_node("/root/Pixelorama").loop_animation_button.hint_tooltip = "Cycle loop"
+			global.change_button_texturerect(texture_button, "loop.png")
+			global.loop_animation_button.hint_tooltip = "Cycle loop"
 		1: # Make it ping-pong
 			animation_loop = 2
-			get_node("/root/Pixelorama").change_button_texturerect(texture_button, "loop_pingpong.png")
-			get_node("/root/Pixelorama").loop_animation_button.hint_tooltip = "Ping-pong loop"
+			global.change_button_texturerect(texture_button, "loop_pingpong.png")
+			global.loop_animation_button.hint_tooltip = "Ping-pong loop"
 		2: # Make it stop
 			animation_loop = 0
-			get_node("/root/Pixelorama").change_button_texturerect(texture_button, "loop_none.png")
-			get_node("/root/Pixelorama").loop_animation_button.hint_tooltip = "No loop"
+			global.change_button_texturerect(texture_button, "loop_none.png")
+			global.loop_animation_button.hint_tooltip = "No loop"
 
 
 func _on_PlayForward_toggled(button_pressed : bool) -> void:
 	if button_pressed:
-		get_node("/root/Pixelorama").change_button_texturerect(get_node("/root/Pixelorama").play_forward.get_child(0), "pause.png")
+		global.change_button_texturerect(global.play_forward.get_child(0), "pause.png")
 	else:
-		get_node("/root/Pixelorama").change_button_texturerect(get_node("/root/Pixelorama").play_forward.get_child(0), "play.png")
+		global.change_button_texturerect(global.play_forward.get_child(0), "play.png")
 
 	play_animation(button_pressed, true)
 
 
 func _on_PlayBackwards_toggled(button_pressed : bool) -> void:
 	if button_pressed:
-		get_node("/root/Pixelorama").change_button_texturerect(get_node("/root/Pixelorama").play_backwards.get_child(0), "pause.png")
+		global.change_button_texturerect(global.play_backwards.get_child(0), "pause.png")
 	else:
-		get_node("/root/Pixelorama").change_button_texturerect(get_node("/root/Pixelorama").play_backwards.get_child(0), "play_backwards.png")
+		global.change_button_texturerect(global.play_backwards.get_child(0), "play_backwards.png")
 
 	play_animation(button_pressed, false)
 
@@ -247,39 +246,39 @@ func _on_AnimationTimer_timeout() -> void:
 		return
 
 	if animation_forward:
-		if get_node("/root/Pixelorama").current_project.current_frame < last_frame:
-			get_node("/root/Pixelorama").current_project.current_frame += 1
-			get_node("/root/Pixelorama").animation_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[get_node("/root/Pixelorama").current_project.current_frame] * (1/fps)
-			get_node("/root/Pixelorama").animation_timer.start() #Change the frame, change the wait time and start a cycle, this is the best way to do it
+		if global.current_project.current_frame < last_frame:
+			global.current_project.current_frame += 1
+			global.animation_timer.wait_time = global.current_project.frame_duration[global.current_project.current_frame] * (1/fps)
+			global.animation_timer.start() #Change the frame, change the wait time and start a cycle, this is the best way to do it
 		else:
 			match animation_loop:
 				0: # No loop
-					get_node("/root/Pixelorama").play_forward.pressed = false
-					get_node("/root/Pixelorama").play_backwards.pressed = false
-					get_node("/root/Pixelorama").animation_timer.stop()
+					global.play_forward.pressed = false
+					global.play_backwards.pressed = false
+					global.animation_timer.stop()
 				1: # Cycle loop
-					get_node("/root/Pixelorama").current_project.current_frame = first_frame
-					get_node("/root/Pixelorama").animation_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[get_node("/root/Pixelorama").current_project.current_frame] * (1/fps)
-					get_node("/root/Pixelorama").animation_timer.start()
+					global.current_project.current_frame = first_frame
+					global.animation_timer.wait_time = global.current_project.frame_duration[global.current_project.current_frame] * (1/fps)
+					global.animation_timer.start()
 				2: # Ping pong loop
 					animation_forward = false
 					_on_AnimationTimer_timeout()
 
 	else:
-		if get_node("/root/Pixelorama").current_project.current_frame > first_frame:
-			get_node("/root/Pixelorama").current_project.current_frame -= 1
-			get_node("/root/Pixelorama").animation_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[get_node("/root/Pixelorama").current_project.current_frame] * (1/fps)
-			get_node("/root/Pixelorama").animation_timer.start()
+		if global.current_project.current_frame > first_frame:
+			global.current_project.current_frame -= 1
+			global.animation_timer.wait_time = global.current_project.frame_duration[global.current_project.current_frame] * (1/fps)
+			global.animation_timer.start()
 		else:
 			match animation_loop:
 				0: # No loop
-					get_node("/root/Pixelorama").play_backwards.pressed = false
-					get_node("/root/Pixelorama").play_forward.pressed = false
-					get_node("/root/Pixelorama").animation_timer.stop()
+					global.play_backwards.pressed = false
+					global.play_forward.pressed = false
+					global.animation_timer.stop()
 				1: # Cycle loop
-					get_node("/root/Pixelorama").current_project.current_frame = last_frame
-					get_node("/root/Pixelorama").animation_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[get_node("/root/Pixelorama").current_project.current_frame] * (1/fps)
-					get_node("/root/Pixelorama").animation_timer.start()
+					global.current_project.current_frame = last_frame
+					global.animation_timer.wait_time = global.current_project.frame_duration[global.current_project.current_frame] * (1/fps)
+					global.animation_timer.start()
 				2: # Ping pong loop
 					animation_forward = true
 					_on_AnimationTimer_timeout()
@@ -287,82 +286,82 @@ func _on_AnimationTimer_timeout() -> void:
 
 func play_animation(play : bool, forward_dir : bool) -> void:
 	first_frame = 0
-	last_frame = get_node("/root/Pixelorama").current_project.frames.size() - 1
-	if get_node("/root/Pixelorama").play_only_tags:
-		for tag in get_node("/root/Pixelorama").current_project.animation_tags:
-			if get_node("/root/Pixelorama").current_project.current_frame + 1 >= tag.from && get_node("/root/Pixelorama").current_project.current_frame + 1 <= tag.to:
+	last_frame = global.current_project.frames.size() - 1
+	if global.play_only_tags:
+		for tag in global.current_project.animation_tags:
+			if global.current_project.current_frame + 1 >= tag.from && global.current_project.current_frame + 1 <= tag.to:
 				first_frame = tag.from - 1
-				last_frame = min(get_node("/root/Pixelorama").current_project.frames.size() - 1, tag.to - 1)
+				last_frame = min(global.current_project.frames.size() - 1, tag.to - 1)
 
 	if first_frame == last_frame:
 		if forward_dir:
-			get_node("/root/Pixelorama").play_forward.pressed = false
+			global.play_forward.pressed = false
 		else:
-			get_node("/root/Pixelorama").play_backwards.pressed = false
+			global.play_backwards.pressed = false
 		return
 
 	if forward_dir:
-		get_node("/root/Pixelorama").play_backwards.disconnect("toggled", self, "_on_PlayBackwards_toggled")
-		get_node("/root/Pixelorama").play_backwards.pressed = false
-		get_node("/root/Pixelorama").change_button_texturerect(get_node("/root/Pixelorama").play_backwards.get_child(0), "play_backwards.png")
-		get_node("/root/Pixelorama").play_backwards.connect("toggled", self, "_on_PlayBackwards_toggled")
+		global.play_backwards.disconnect("toggled", self, "_on_PlayBackwards_toggled")
+		global.play_backwards.pressed = false
+		global.change_button_texturerect(global.play_backwards.get_child(0), "play_backwards.png")
+		global.play_backwards.connect("toggled", self, "_on_PlayBackwards_toggled")
 	else:
-		get_node("/root/Pixelorama").play_forward.disconnect("toggled", self, "_on_PlayForward_toggled")
-		get_node("/root/Pixelorama").play_forward.pressed = false
-		get_node("/root/Pixelorama").change_button_texturerect(get_node("/root/Pixelorama").play_forward.get_child(0), "play.png")
-		get_node("/root/Pixelorama").play_forward.connect("toggled", self, "_on_PlayForward_toggled")
+		global.play_forward.disconnect("toggled", self, "_on_PlayForward_toggled")
+		global.play_forward.pressed = false
+		global.change_button_texturerect(global.play_forward.get_child(0), "play.png")
+		global.play_forward.connect("toggled", self, "_on_PlayForward_toggled")
 
 	if play:
-		get_node("/root/Pixelorama").animation_timer.set_one_shot(true) #The wait_time it can't change correctly if it is playing
-		get_node("/root/Pixelorama").animation_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[get_node("/root/Pixelorama").current_project.current_frame] * (1 / fps)
-		get_node("/root/Pixelorama").animation_timer.start()
+		global.animation_timer.set_one_shot(true) #The wait_time it can't change correctly if it is playing
+		global.animation_timer.wait_time = global.current_project.frame_duration[global.current_project.current_frame] * (1 / fps)
+		global.animation_timer.start()
 		animation_forward = forward_dir
 	else:
-		get_node("/root/Pixelorama").animation_timer.stop()
+		global.animation_timer.stop()
 
 
 func _on_NextFrame_pressed() -> void:
-	if get_node("/root/Pixelorama").current_project.current_frame < get_node("/root/Pixelorama").current_project.frames.size() - 1:
-		get_node("/root/Pixelorama").current_project.current_frame += 1
+	if global.current_project.current_frame < global.current_project.frames.size() - 1:
+		global.current_project.current_frame += 1
 
 
 func _on_PreviousFrame_pressed() -> void:
-	if get_node("/root/Pixelorama").current_project.current_frame > 0:
-		get_node("/root/Pixelorama").current_project.current_frame -= 1
+	if global.current_project.current_frame > 0:
+		global.current_project.current_frame -= 1
 
 
 func _on_LastFrame_pressed() -> void:
-	get_node("/root/Pixelorama").current_project.current_frame = get_node("/root/Pixelorama").current_project.frames.size() - 1
+	global.current_project.current_frame = global.current_project.frames.size() - 1
 
 
 func _on_FirstFrame_pressed() -> void:
-	get_node("/root/Pixelorama").current_project.current_frame = 0
+	global.current_project.current_frame = 0
 
 
 func _on_FPSValue_value_changed(value : float) -> void:
 	fps = float(value)
-	get_node("/root/Pixelorama").animation_timer.wait_time = 1 / fps
+	global.animation_timer.wait_time = 1 / fps
 
 
 func _on_PastOnionSkinning_value_changed(value : float) -> void:
-	get_node("/root/Pixelorama").onion_skinning_past_rate = int(value)
-	get_node("/root/Pixelorama").canvas.update()
+	global.onion_skinning_past_rate = int(value)
+	global.canvas.update()
 
 
 func _on_FutureOnionSkinning_value_changed(value : float) -> void:
-	get_node("/root/Pixelorama").onion_skinning_future_rate = int(value)
-	get_node("/root/Pixelorama").canvas.update()
+	global.onion_skinning_future_rate = int(value)
+	global.canvas.update()
 
 
 func _on_BlueRedMode_toggled(button_pressed : bool) -> void:
-	get_node("/root/Pixelorama").onion_skinning_blue_red = button_pressed
-	get_node("/root/Pixelorama").canvas.update()
+	global.onion_skinning_blue_red = button_pressed
+	global.canvas.update()
 
 
 # Layer buttons
 
 func add_layer(is_new := true) -> void:
-	var global = get_node("/root/Pixelorama")
+	var global = global
 	var new_layers : Array = global.current_project.layers.duplicate()
 	var l := Layer.new()
 	if !is_new: # Clone layer
@@ -397,7 +396,6 @@ func add_layer(is_new := true) -> void:
 
 
 func _on_RemoveLayer_pressed() -> void:
-	var global = get_node("/root/Pixelorama")
 	if global.current_project.layers.size() == 1:
 		return
 	var new_layers : Array = global.current_project.layers.duplicate()
@@ -424,7 +422,6 @@ func _on_RemoveLayer_pressed() -> void:
 
 
 func change_layer_order(rate : int) -> void:
-	var global = get_node("/root/Pixelorama")
 	var change = global.current_project.current_layer + rate
 
 	var new_layers : Array = global.current_project.layers.duplicate()
@@ -451,7 +448,6 @@ func change_layer_order(rate : int) -> void:
 
 
 func _on_MergeDownLayer_pressed() -> void:
-	var global = get_node("/root/Pixelorama")
 	var new_layers : Array = global.current_project.layers.duplicate()
 	# Loop through the array to create new classes for each element, so that they
 	# won't be the same as the original array's classes. Needed for undo/redo to work properly.
@@ -503,7 +499,7 @@ func _on_MergeDownLayer_pressed() -> void:
 
 
 func _on_OpacitySlider_value_changed(value) -> void:
-	var global = get_node("/root/Pixelorama")
+
 	global.current_project.frames[global.current_project.current_frame].cels[global.current_project.current_layer].opacity = value / 100
 	global.layer_opacity_slider.value = value
 	global.layer_opacity_slider.value = value
@@ -512,5 +508,5 @@ func _on_OpacitySlider_value_changed(value) -> void:
 
 
 func _on_OnionSkinningSettings_popup_hide() -> void:
-	get_node("/root/Pixelorama").can_draw = true
+	global.can_draw = true
 

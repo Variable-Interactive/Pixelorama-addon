@@ -4,8 +4,10 @@ extends Node
 
 signal InFocus
 
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	if OS.get_name() == "HTML5" and OS.has_feature('JavaScript'):
 		_define_js()
 
@@ -142,7 +144,7 @@ func load_image() -> void:
 		print("An error occurred while trying to display the image.")
 		return
 	else:
-		get_node("/root/Pixelorama").get_open_save().handle_loading_image(image_name, image)
+		global.get_open_save().handle_loading_image(image_name, image)
 
 
 func load_palette() -> void:
@@ -171,23 +173,23 @@ func load_palette() -> void:
 	var file_name = JavaScript.eval("fileName;", true)
 	if file_name.ends_with(".gpl"):
 		var palette := Palette.new()
-		palette = get_node("/root/Pixelorama").get_import().import_gpl(file_name, palette_data)
-		get_node("/root/Pixelorama").palette_container.attempt_to_import_palette(palette)
+		palette = global.get_import().import_gpl(file_name, palette_data)
+		global.palette_container.attempt_to_import_palette(palette)
 	elif file_name.ends_with(".pal"):
 		var palette := Palette.new()
-		palette = get_node("/root/Pixelorama").get_import().import_pal_palette(file_name, palette_data)
-		get_node("/root/Pixelorama").palette_container.attempt_to_import_palette(palette)
+		palette = global.get_import().import_pal_palette(file_name, palette_data)
+		global.palette_container.attempt_to_import_palette(palette)
 	else:
 		match file_type:
 			"image/png":
 				var image := Image.new()
 				var err = image.load_png_from_buffer(palette_data)
 				if !err:
-					get_node("/root/Pixelorama").palette_container.import_image_palette(file_name, image)
+					global.palette_container.import_image_palette(file_name, image)
 			"application/json":
 				var palette : Palette = Palette.new().deserialize(palette_data)
 				palette.source_path = file_name
-				get_node("/root/Pixelorama").palette_container.attempt_to_import_palette(palette)
+				global.palette_container.attempt_to_import_palette(palette)
 			var invalid_type:
 				print("Invalid type: " + invalid_type)
 				return
@@ -236,6 +238,6 @@ func load_shader() -> void:
 	var shader = Shader.new()
 	shader.code = file_data
 
-	var shader_effect_dialog = get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/ShaderEffect")
+	var shader_effect_dialog = global.control.get_node("Dialogs/ImageEffects/ShaderEffect")
 	shader_effect_dialog.change_shader(shader, file_name.get_basename())
 

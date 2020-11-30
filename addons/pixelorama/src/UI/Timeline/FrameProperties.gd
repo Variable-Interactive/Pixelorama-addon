@@ -3,6 +3,11 @@ extends ConfirmationDialog
 onready var frame_num = $VBoxContainer/GridContainer/FrameNum
 onready var frame_dur = $VBoxContainer/GridContainer/FrameTime
 
+var global
+
+func _ready():
+	global = get_node("/root/Pixelorama")
+
 func set_frame_label(frame : int) -> void:
 	frame_num.set_text(str(frame + 1))
 
@@ -10,10 +15,10 @@ func set_frame_dur(duration : float) -> void:
 	frame_dur.set_value(duration)	
 
 func _on_FrameProperties_popup_hide() -> void:
-	get_node("/root/Pixelorama").dialog_open(false)
+	global.dialog_open(false)
+
 
 func _on_FrameProperties_confirmed():
-	var global = get_node("/root/Pixelorama")
 	var frame : int = int(frame_num.get_text())
 	var duration : float = frame_dur.get_value()
 	var frame_duration = global.current_project.frame_duration.duplicate()

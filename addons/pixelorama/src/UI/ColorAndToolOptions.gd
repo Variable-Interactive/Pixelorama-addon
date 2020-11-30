@@ -23,11 +23,11 @@ func _on_ColorPickerButton_color_changed(color : Color, right : bool):
 
 
 func _on_ColorPickerButton_pressed() -> void:
-	get_node("/root/Pixelorama").can_draw = false
+	global.can_draw = false
 
 
 func _on_ColorPickerButton_popup_closed() -> void:
-	get_node("/root/Pixelorama").can_draw = true
+	global.can_draw = true
 
 
 func _on_ColorDefaults_pressed() -> void:

@@ -1,5 +1,9 @@
 extends Node
 
+var global
+
+func _ready():
+	global = get_node("/root/Pixelorama")
 
 # Get hold of the brushes, including random brushes (subdirectories and % files
 # in them, non % files get loaded independently.) nyaaa
@@ -20,7 +24,7 @@ extends Node
 # for each nyaa.
 #
 # Returns null if the directory gave an error opening.
-#
+
 func get_brush_files_from_directory(directory: String): # -> Array
 	var base_png_files := []  # list of files in the base directory
 	var subdirectories := []  # list of subdirectories to process.
@@ -105,7 +109,7 @@ func add_randomised_brush(fpaths : Array, tooltip_name : String) -> void:
 
 	if len(loaded_images) > 0:  # actually have images
 		# to use.
-		Brushes.add_file_brush(get_node("/root/Pixelorama"),
+		Brushes.add_file_brush(global,
 			loaded_images, tooltip_name)
 
 # Add a plain brush from the given path to the list of brushes.
@@ -117,7 +121,7 @@ func add_plain_brush(path: String, tooltip_name: String) -> void:
 		return
 	# do the standard conversion thing...
 	image.convert(Image.FORMAT_RGBA8)
-	Brushes.add_file_brush(get_node("/root/Pixelorama"),
+	Brushes.add_file_brush(global,
 		[image], tooltip_name)
 
 
@@ -224,7 +228,7 @@ func import_patterns(priority_ordered_search_path: Array) -> void:
 			if err == OK:
 				image.convert(Image.FORMAT_RGBA8)
 				var tooltip_name = pattern.get_basename()
-				get_node("/root/Pixelorama").patterns_popup.add(image, tooltip_name)
+				global.patterns_popup.add(image, tooltip_name)
 
 
 func import_gpl(path : String, text : String) -> Palette:

@@ -224,9 +224,9 @@ func _ready() -> void:
 
 	# The fact that root_dir is set earlier than this is important
 	# XDGDataDirs depends on it nyaa
-	directory_module = XDGDataPaths.new(get_node("/root/Pixelorama"))
+	directory_module = XDGDataPaths.new(self)
 	image_clipboard = Image.new()
-	Input.set_custom_mouse_cursor(get_node("/root/Pixelorama").cursor_image, Input.CURSOR_CROSS, Vector2(15, 15))
+	Input.set_custom_mouse_cursor(cursor_image, Input.CURSOR_CROSS, Vector2(15, 15))
 
 	var root = get_tree().get_root()
 	control = find_node_by_name(root, "Control")
@@ -375,9 +375,9 @@ func undo(_frame_index := -1, _layer_index := -1, project : Project = current_pr
 
 		if action_name == "Scale":
 			canvas.camera_zoom()
-			get_node("/root/Pixelorama").canvas.grid.isometric_polylines.clear()
-			get_node("/root/Pixelorama").canvas.grid.update()
-			get_node("/root/Pixelorama").cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
+			self.canvas.grid.isometric_polylines.clear()
+			self.canvas.grid.update()
+			self.cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
 
 	elif "Frame" in action_name:
 		# This actually means that frames.size is one, but it hasn't been updated yet
@@ -406,9 +406,9 @@ func redo(_frame_index := -1, _layer_index := -1, project : Project = current_pr
 
 		if action_name == "Scale":
 			canvas.camera_zoom()
-			get_node("/root/Pixelorama").canvas.grid.isometric_polylines.clear()
-			get_node("/root/Pixelorama").canvas.grid.update()
-			get_node("/root/Pixelorama").cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
+			self.canvas.grid.isometric_polylines.clear()
+			self.canvas.grid.update()
+			self.cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
 
 	elif "Frame" in action_name:
 		if project.frames.size() == 1: # Stop animating
@@ -566,7 +566,7 @@ func _exit_tree() -> void:
 	var i := 0
 	for project in projects:
 		project.undo_redo.free()
-		get_node("/root/Pixelorama").get_open_save().remove_backup(i)
+		self.get_open_save().remove_backup(i)
 		i += 1
 
 
@@ -588,5 +588,5 @@ func save_project_to_recent_list(path : String) -> void:
 
 
 func update_recent_projects_submenu() -> void:
-	for project in get_node("/root/Pixelorama").recent_projects:
+	for project in self.recent_projects:
 		recent_projects_submenu.add_item(project.get_file())

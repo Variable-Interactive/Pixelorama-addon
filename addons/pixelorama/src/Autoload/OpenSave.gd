@@ -26,15 +26,15 @@ func handle_loading_files(files : PoolStringArray) -> void:
 		if file_ext == "pxo": # Pixelorama project file
 			open_pxo_file(file)
 		elif file_ext == "json" or file_ext == "gpl" or file_ext == "pal": # Palettes
-			get_node("/root/Pixelorama").palette_container.on_palette_import_file_selected(file)
+			global.palette_container.on_palette_import_file_selected(file)
 		else: # Image files
 			var image := Image.new()
 			var err := image.load(file)
 			if err != OK: # An error occured
 				var file_name : String = file.get_file()
-				get_node("/root/Pixelorama").error_dialog.set_text(tr("Can't load file '%s'.\nError code: %s") % [file_name, str(err)])
-				get_node("/root/Pixelorama").error_dialog.popup_centered()
-				get_node("/root/Pixelorama").dialog_open(true)
+				global.error_dialog.set_text(tr("Can't load file '%s'.\nError code: %s") % [file_name, str(err)])
+				global.error_dialog.popup_centered()
+				global.dialog_open(true)
 				continue
 			handle_loading_image(file, image)
 
@@ -43,9 +43,9 @@ func handle_loading_image(file : String, image : Image) -> void:
 	var preview_dialog : ConfirmationDialog = preload("res://addons/pixelorama/src/UI/Dialogs/PreviewDialog.tscn").instance()
 	preview_dialog.path = file
 	preview_dialog.image = image
-	get_node("/root/Pixelorama").control.add_child(preview_dialog)
+	global.control.add_child(preview_dialog)
 	preview_dialog.popup_centered()
-	get_node("/root/Pixelorama").dialog_open(true)
+	global.dialog_open(true)
 
 
 func open_pxo_file(path : String, untitled_backup : bool = false) -> void:
@@ -55,16 +55,16 @@ func open_pxo_file(path : String, untitled_backup : bool = false) -> void:
 		err = file.open(path, File.READ) # If the file is not compressed open it raw (pre-v0.7)
 
 	if err != OK:
-		get_node("/root/Pixelorama").error_dialog.set_text(tr("File failed to open. Error code %s") % err)
-		get_node("/root/Pixelorama").error_dialog.popup_centered()
-		get_node("/root/Pixelorama").dialog_open(true)
+		global.error_dialog.set_text(tr("File failed to open. Error code %s") % err)
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		file.close()
 		return
 
-	var empty_project : bool = get_node("/root/Pixelorama").current_project.frames.size() == 1 and get_node("/root/Pixelorama").current_project.layers.size() == 1 and get_node("/root/Pixelorama").current_project.frames[0].cels[0].image.is_invisible() and get_node("/root/Pixelorama").current_project.animation_tags.size() == 0
+	var empty_project : bool = global.current_project.frames.size() == 1 and global.current_project.layers.size() == 1 and global.current_project.frames[0].cels[0].image.is_invisible() and global.current_project.animation_tags.size() == 0
 	var new_project : Project
 	if empty_project:
-		new_project = get_node("/root/Pixelorama").current_project
+		new_project = global.current_project
 		new_project.frames = []
 		new_project.layers = []
 		new_project.animation_tags.clear()
@@ -101,30 +101,30 @@ func open_pxo_file(path : String, untitled_backup : bool = false) -> void:
 
 	file.close()
 	if !empty_project:
-		get_node("/root/Pixelorama").projects.append(new_project)
-		get_node("/root/Pixelorama").tabs.current_tab = get_node("/root/Pixelorama").tabs.get_tab_count() - 1
+		global.projects.append(new_project)
+		global.tabs.current_tab = global.tabs.get_tab_count() - 1
 	else:
 		new_project.frames = new_project.frames # Just to call frames_changed
 		new_project.layers = new_project.layers # Just to call layers_changed
-	get_node("/root/Pixelorama").canvas.camera_zoom()
+	global.canvas.camera_zoom()
 
 	if not untitled_backup:
 		# Untitled backup should not change window title and save path
-		current_save_paths[get_node("/root/Pixelorama").current_project_index] = path
-		get_node("/root/Pixelorama").window_title = path.get_file() + " - Pixelorama " + get_node("/root/Pixelorama").current_version
-		get_node("/root/Pixelorama").save_sprites_dialog.current_path = path
+		current_save_paths[global.current_project_index] = path
+		global.window_title = path.get_file() + " - Pixelorama " + global.current_version
+		global.save_sprites_dialog.current_path = path
 		# Set last opened project path and save
-		get_node("/root/Pixelorama").config_cache.set_value("preferences", "last_project_path", path)
-		get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
-		get_node("/root/Pixelorama").get_export().file_name = path.get_file().trim_suffix(".pxo")
-		get_node("/root/Pixelorama").get_export().directory_path = path.get_base_dir()
-		new_project.directory_path = get_node("/root/Pixelorama").get_export().directory_path
-		new_project.file_name = get_node("/root/Pixelorama").get_export().file_name
-		get_node("/root/Pixelorama").get_export().was_exported = false
-		get_node("/root/Pixelorama").file_menu.get_popup().set_item_text(4, tr("Save") + " %s" % path.get_file())
-		get_node("/root/Pixelorama").file_menu.get_popup().set_item_text(6, tr("Export"))
+		global.config_cache.set_value("preferences", "last_project_path", path)
+		global.config_cache.save("user://cache.ini")
+		global.get_export().file_name = path.get_file().trim_suffix(".pxo")
+		global.get_export().directory_path = path.get_base_dir()
+		new_project.directory_path = global.get_export().directory_path
+		new_project.file_name = global.get_export().file_name
+		global.get_export().was_exported = false
+		global.file_menu.get_popup().set_item_text(4, tr("Save") + " %s" % path.get_file())
+		global.file_menu.get_popup().set_item_text(6, tr("Export"))
 
-	get_node("/root/Pixelorama").save_project_to_recent_list(path)
+	global.save_project_to_recent_list(path)
 
 
 # For pxo files older than v0.8
@@ -148,7 +148,7 @@ func open_old_pxo_file(file : File, new_project : Project, first_line : String) 
 		_file_status_version = file_ver_splitted[1]
 
 	if file_major_version == 0 and file_minor_version < 5:
-		get_node("/root/Pixelorama").notification_label("File is from an older version of Pixelorama, as such it might not work properly")
+		global.notification_label("File is from an older version of Pixelorama, as such it might not work properly")
 
 	var new_guides := true
 	if file_major_version == 0:
@@ -214,7 +214,7 @@ func open_old_pxo_file(file : File, new_project : Project, first_line : String) 
 					guide.add_point(Vector2(file.get_16(), -99999))
 					guide.add_point(Vector2(file.get_16(), 99999))
 				guide.has_focus = false
-				get_node("/root/Pixelorama").canvas.add_child(guide)
+				global.canvas.add_child(guide)
 				new_project.guides.append(guide)
 				guide_line = file.get_line()
 
@@ -237,7 +237,7 @@ func open_old_pxo_file(file : File, new_project : Project, first_line : String) 
 				guide.add_point(Vector2(file.get_16(), -99999))
 				guide.add_point(Vector2(file.get_16(), 99999))
 			guide.has_focus = false
-			get_node("/root/Pixelorama").canvas.add_child(guide)
+			global.canvas.add_child(guide)
 			new_project.guides.append(guide)
 			guide_line = file.get_line()
 
@@ -274,18 +274,18 @@ func open_old_pxo_file(file : File, new_project : Project, first_line : String) 
 			tag_line = file.get_line()
 
 
-func save_pxo_file(path : String, autosave : bool, use_zstd_compression := true, project : Project = get_node("/root/Pixelorama").current_project) -> void:
+func save_pxo_file(path : String, autosave : bool, use_zstd_compression := true, project : Project = global.current_project) -> void:
 	var serialized_data = project.serialize()
 	if !serialized_data:
-		get_node("/root/Pixelorama").error_dialog.set_text(tr("File failed to save. Converting project data to dictionary failed."))
-		get_node("/root/Pixelorama").error_dialog.popup_centered()
-		get_node("/root/Pixelorama").dialog_open(true)
+		global.error_dialog.set_text(tr("File failed to save. Converting project data to dictionary failed."))
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		return
 	var to_save = JSON.print(serialized_data)
 	if !to_save:
-		get_node("/root/Pixelorama").error_dialog.set_text(tr("File failed to save. Converting dictionary to JSON failed."))
-		get_node("/root/Pixelorama").error_dialog.popup_centered()
-		get_node("/root/Pixelorama").dialog_open(true)
+		global.error_dialog.set_text(tr("File failed to save. Converting dictionary to JSON failed."))
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		return
 
 	var file : File = File.new()
@@ -296,15 +296,15 @@ func save_pxo_file(path : String, autosave : bool, use_zstd_compression := true,
 		err = file.open(path, File.WRITE)
 
 	if err != OK:
-		get_node("/root/Pixelorama").error_dialog.set_text(tr("File failed to save. Error code %s") % err)
-		get_node("/root/Pixelorama").error_dialog.popup_centered()
-		get_node("/root/Pixelorama").dialog_open(true)
+		global.error_dialog.set_text(tr("File failed to save. Error code %s") % err)
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		file.close()
 		return
 
 	if !autosave:
 		project.name = path.get_file()
-		current_save_paths[get_node("/root/Pixelorama").current_project_index] = path
+		current_save_paths[global.current_project_index] = path
 
 	file.store_line(to_save)
 	for frame in project.frames:
@@ -327,31 +327,31 @@ func save_pxo_file(path : String, autosave : bool, use_zstd_compression := true,
 		dir.remove(path)
 
 	if autosave:
-		get_node("/root/Pixelorama").notification_label("File autosaved")
+		global.notification_label("File autosaved")
 	else:
 		# First remove backup then set current save path
 		if project.has_changed:
 			project.has_changed = false
-		remove_backup(get_node("/root/Pixelorama").current_project_index)
-		get_node("/root/Pixelorama").notification_label("File saved")
-		get_node("/root/Pixelorama").window_title = path.get_file() + " - Pixelorama " + get_node("/root/Pixelorama").current_version
+		remove_backup(global.current_project_index)
+		global.notification_label("File saved")
+		global.window_title = path.get_file() + " - Pixelorama " + global.current_version
 
 		# Set last opened project path and save
-		get_node("/root/Pixelorama").config_cache.set_value("preferences", "last_project_path", path)
-		get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
-		get_node("/root/Pixelorama").get_export().file_name = path.get_file().trim_suffix(".pxo")
-		get_node("/root/Pixelorama").get_export().directory_path = path.get_base_dir()
-		get_node("/root/Pixelorama").get_export().was_exported = false
+		global.config_cache.set_value("preferences", "last_project_path", path)
+		global.config_cache.save("user://cache.ini")
+		global.get_export().file_name = path.get_file().trim_suffix(".pxo")
+		global.get_export().directory_path = path.get_base_dir()
+		global.get_export().was_exported = false
 		project.was_exported = false
-		get_node("/root/Pixelorama").file_menu.get_popup().set_item_text(4, tr("Save") + " %s" % path.get_file())
+		global.file_menu.get_popup().set_item_text(4, tr("Save") + " %s" % path.get_file())
 
-	get_node("/root/Pixelorama").save_project_to_recent_list(path)
+	global.save_project_to_recent_list(path)
 
 
 func open_image_as_new_tab(path : String, image : Image) -> void:
 	var project = Project.new([], path.get_file(), image.get_size())
 	project.layers.append(Layer.new())
-	get_node("/root/Pixelorama").projects.append(project)
+	global.projects.append(project)
 
 	var frame := Frame.new()
 	image.convert(Image.FORMAT_RGBA8)
@@ -365,7 +365,7 @@ func open_image_as_new_tab(path : String, image : Image) -> void:
 func open_image_as_spritesheet(path : String, image : Image, horizontal : int, vertical : int) -> void:
 	var project = Project.new([], path.get_file())
 	project.layers.append(Layer.new())
-	get_node("/root/Pixelorama").projects.append(project)
+	global.projects.append(project)
 	horizontal = min(horizontal, image.get_size().x)
 	vertical = min(vertical, image.get_size().y)
 	var frame_width := image.get_size().x / horizontal
@@ -393,7 +393,7 @@ func open_image_as_spritesheet(path : String, image : Image, horizontal : int, v
 
 
 func open_image_as_new_frame(image : Image, layer_index := 0) -> void:
-	var project = get_node("/root/Pixelorama").current_project
+	var project = global.current_project
 	image.crop(project.size.x, project.size.y)
 	var new_frames : Array = project.frames.duplicate()
 
@@ -427,13 +427,13 @@ func open_image_as_new_frame(image : Image, layer_index := 0) -> void:
 
 
 func open_image_as_new_layer(image : Image, file_name : String, frame_index := 0) -> void:
-	var project = get_node("/root/Pixelorama").current_project
+	var project = global.current_project
 	image.crop(project.size.x, project.size.y)
-	var new_layers : Array = get_node("/root/Pixelorama").current_project.layers.duplicate()
+	var new_layers : Array = global.current_project.layers.duplicate()
 	var layer := Layer.new(file_name)
 
-	get_node("/root/Pixelorama").current_project.undos += 1
-	get_node("/root/Pixelorama").current_project.undo_redo.create_action("Add Layer")
+	global.current_project.undos += 1
+	global.current_project.undo_redo.create_action("Add Layer")
 	for i in project.frames.size():
 		var new_cels : Array = project.frames[i].cels.duplicate(true)
 		if i == frame_index:
@@ -465,24 +465,24 @@ func open_image_as_new_layer(image : Image, file_name : String, frame_index := 0
 
 
 func set_new_tab(project : Project, path : String) -> void:
-	get_node("/root/Pixelorama").tabs.current_tab = get_node("/root/Pixelorama").tabs.get_tab_count() - 1
-	get_node("/root/Pixelorama").canvas.camera_zoom()
+	global.tabs.current_tab = global.tabs.get_tab_count() - 1
+	global.canvas.camera_zoom()
 
-	get_node("/root/Pixelorama").window_title = path.get_file() + " (" + tr("imported") + ") - Pixelorama " + get_node("/root/Pixelorama").current_version
+	global.window_title = path.get_file() + " (" + tr("imported") + ") - Pixelorama " + global.current_version
 	if project.has_changed:
-		get_node("/root/Pixelorama").window_title = get_node("/root/Pixelorama").window_title + "(*)"
+		global.window_title = global.window_title + "(*)"
 	var file_name := path.get_basename().get_file()
 	var directory_path := path.get_basename().replace(file_name, "")
 	project.directory_path = directory_path
 	project.file_name = file_name
-	get_node("/root/Pixelorama").get_export().directory_path = directory_path
-	get_node("/root/Pixelorama").get_export().file_name = file_name
+	global.get_export().directory_path = directory_path
+	global.get_export().file_name = file_name
 
 
 func update_autosave() -> void:
 	autosave_timer.stop()
-	autosave_timer.wait_time = get_node("/root/Pixelorama").autosave_interval * 60 # Interval parameter is in minutes, wait_time is seconds
-	if get_node("/root/Pixelorama").enable_autosave:
+	autosave_timer.wait_time = global.autosave_interval * 60 # Interval parameter is in minutes, wait_time is seconds
+	if global.enable_autosave:
 		autosave_timer.start()
 
 
@@ -493,7 +493,7 @@ func _on_Autosave_timeout() -> void:
 			backup_save_paths[i] = "user://backup-" + String(OS.get_unix_time()) + "-%s" % i
 
 		store_backup_path(i)
-		save_pxo_file(backup_save_paths[i], true, true, get_node("/root/Pixelorama").projects[i])
+		save_pxo_file(backup_save_paths[i], true, true, global.projects[i])
 
 
 # Backup paths are stored in two ways:
@@ -502,14 +502,14 @@ func _on_Autosave_timeout() -> void:
 func store_backup_path(i : int) -> void:
 	if current_save_paths[i] != "":
 		# Remove "untitled" backup if it existed on this project instance
-		if get_node("/root/Pixelorama").config_cache.has_section_key("backups", backup_save_paths[i]):
-			get_node("/root/Pixelorama").config_cache.erase_section_key("backups", backup_save_paths[i])
+		if global.config_cache.has_section_key("backups", backup_save_paths[i]):
+			global.config_cache.erase_section_key("backups", backup_save_paths[i])
 
-		get_node("/root/Pixelorama").config_cache.set_value("backups", current_save_paths[i], backup_save_paths[i])
+		global.config_cache.set_value("backups", current_save_paths[i], backup_save_paths[i])
 	else:
-		get_node("/root/Pixelorama").config_cache.set_value("backups", backup_save_paths[i], backup_save_paths[i])
+		global.config_cache.set_value("backups", backup_save_paths[i], backup_save_paths[i])
 
-	get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
+	global.config_cache.save("user://cache.ini")
 
 
 func remove_backup(i : int) -> void:
@@ -525,11 +525,11 @@ func remove_backup(i : int) -> void:
 
 func remove_backup_by_path(project_path : String, backup_path : String) -> void:
 	Directory.new().remove(backup_path)
-	if get_node("/root/Pixelorama").config_cache.has_section_key("backups", project_path):
-		get_node("/root/Pixelorama").config_cache.erase_section_key("backups", project_path)
-	elif get_node("/root/Pixelorama").config_cache.has_section_key("backups", backup_path):
-		get_node("/root/Pixelorama").config_cache.erase_section_key("backups", backup_path)
-	get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
+	if global.config_cache.has_section_key("backups", project_path):
+		global.config_cache.erase_section_key("backups", project_path)
+	elif global.config_cache.has_section_key("backups", backup_path):
+		global.config_cache.erase_section_key("backups", backup_path)
+	global.config_cache.save("user://cache.ini")
 
 
 func reload_backup_file(project_paths : Array, backup_paths : Array) -> void:
@@ -538,9 +538,9 @@ func reload_backup_file(project_paths : Array, backup_paths : Array) -> void:
 	var dir := Directory.new()
 	for backup in backup_paths:
 		if !dir.file_exists(backup):
-			if get_node("/root/Pixelorama").config_cache.has_section_key("backups", backup):
-				get_node("/root/Pixelorama").config_cache.erase_section_key("backups", backup)
-				get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
+			if global.config_cache.has_section_key("backups", backup):
+				global.config_cache.erase_section_key("backups", backup)
+				global.config_cache.save("user://cache.ini")
 			project_paths.remove(backup_paths.find(backup))
 			deleted_backup_paths.append(backup)
 
@@ -555,7 +555,7 @@ func reload_backup_file(project_paths : Array, backup_paths : Array) -> void:
 		# If project path is the same as backup save path -> the backup was untitled
 		if project_paths[i] != backup_paths[i]: # If the user has saved
 			current_save_paths[i] = project_paths[i]
-			get_node("/root/Pixelorama").window_title = project_paths[i].get_file() + " - Pixelorama(*) " + get_node("/root/Pixelorama").current_version
-			get_node("/root/Pixelorama").current_project.has_changed = true
+			global.window_title = project_paths[i].get_file() + " - Pixelorama(*) " + global.current_version
+			global.current_project.has_changed = true
 
-	get_node("/root/Pixelorama").notification_label("Backup reloaded")
+	global.notification_label("Backup reloaded")

@@ -9,8 +9,10 @@ var transparent_checker : ColorRect
 var mouse_pos := Vector2.ZERO
 var drag := false
 
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	viewport_container = get_parent().get_parent()
 	transparent_checker = get_parent().get_node("TransparentChecker")
 	tween = Tween.new()
@@ -31,19 +33,19 @@ func dir_move_zoom_multiplier(press_time : float) -> float:
 	if press_time < 0:
 		return 0.0
 	if Input.is_key_pressed(KEY_SHIFT) and Input.is_key_pressed(KEY_CONTROL) :
-		return get_node("/root/Pixelorama").high_speed_move_rate
+		return global.high_speed_move_rate
 	elif Input.is_key_pressed(KEY_SHIFT):
-		return get_node("/root/Pixelorama").medium_speed_move_rate
+		return global.medium_speed_move_rate
 	elif !Input.is_key_pressed(KEY_CONTROL):
 		# control + right/left is used to move frames so
 		# we do this check to ensure that there is no conflict
-		return get_node("/root/Pixelorama").low_speed_move_rate
+		return global.low_speed_move_rate
 	else:
 		return 0.0
 
 
 func reset_dir_move_time(direction) -> void:
-	get_node("/root/Pixelorama").key_move_press_time[direction] = 0.0
+	global.key_move_press_time[direction] = 0.0
 
 
 const key_move_action_names := ["ui_up", "ui_down", "ui_left", "ui_right"]
@@ -68,18 +70,18 @@ func is_action_direction_released(event: InputEvent) -> bool:
 # if not a direction event return null
 func get_action_direction(event: InputEvent):  # -> Optional[Direction]
 	if event.is_action("ui_up"):
-		return get_node("/root/Pixelorama").Direction.UP
+		return global.Direction.UP
 	elif event.is_action("ui_down"):
-		return get_node("/root/Pixelorama").Direction.DOWN
+		return global.Direction.DOWN
 	elif event.is_action("ui_left"):
-		return get_node("/root/Pixelorama").Direction.LEFT
+		return global.Direction.LEFT
 	elif event.is_action("ui_right"):
-		return get_node("/root/Pixelorama").Direction.RIGHT
+		return global.Direction.RIGHT
 	return null
 
 
 # Holds sign multipliers for the given directions nyaa
-# (per the indices in get_node("/root/Pixelorama").gd defined by Direction)
+# (per the indices in global.gd defined by Direction)
 # UP, DOWN, LEFT, RIGHT in that order
 const directional_sign_multipliers := [
 	Vector2(0.0, -1.0),
@@ -97,8 +99,8 @@ func process_direction_action_pressed(event: InputEvent) -> void:
 		return
 	var increment := get_process_delta_time()
 	# Count the total time we've been doing this ^.^
-	get_node("/root/Pixelorama").key_move_press_time[dir] += increment
-	var this_direction_press_time : float = get_node("/root/Pixelorama").key_move_press_time[dir]
+	global.key_move_press_time[dir] += increment
+	var this_direction_press_time : float = global.key_move_press_time[dir]
 	var move_speed := dir_move_zoom_multiplier(this_direction_press_time)
 	offset = offset + move_speed * increment * directional_sign_multipliers[dir] * zoom
 	update_rulers()
@@ -121,7 +123,7 @@ func _input(event : InputEvent) -> void:
 	elif event.is_action_released("middle_mouse") || event.is_action_released("space"):
 		drag = false
 
-	if get_node("/root/Pixelorama").can_draw && Rect2(Vector2.ZERO, viewport_size).has_point(mouse_pos):
+	if global.can_draw && Rect2(Vector2.ZERO, viewport_size).has_point(mouse_pos):
 		if event.is_action_pressed("zoom_in"): # Wheel Up Event
 			zoom_camera(-1)
 		elif event.is_action_pressed("zoom_out"): # Wheel Down Event
@@ -141,7 +143,7 @@ func _input(event : InputEvent) -> void:
 # Zoom Camera
 func zoom_camera(dir : int) -> void:
 	var viewport_size := viewport_container.rect_size
-	if get_node("/root/Pixelorama").smooth_zoom:
+	if global.smooth_zoom:
 		var zoom_margin = zoom * dir / 5
 		var new_zoom = zoom + zoom_margin
 		if new_zoom > zoom_min && new_zoom < zoom_max:
@@ -166,17 +168,17 @@ func zoom_camera(dir : int) -> void:
 func zoom_changed() -> void:
 	update_transparent_checker_offset()
 	if name == "Camera2D":
-		get_node("/root/Pixelorama").zoom_level_label.text = str(round(100 / zoom.x)) + " %"
+		global.zoom_level_label.text = str(round(100 / zoom.x)) + " %"
 		update_rulers()
-		for guide in get_node("/root/Pixelorama").current_project.guides:
+		for guide in global.current_project.guides:
 			guide.width = zoom.x * 2
 	elif name == "CameraPreview":
-		get_node("/root/Pixelorama").preview_zoom_slider.value = -zoom.x
+		global.preview_zoom_slider.value = -zoom.x
 
 
 func update_rulers() -> void:
-	get_node("/root/Pixelorama").horizontal_ruler.update()
-	get_node("/root/Pixelorama").vertical_ruler.update()
+	global.horizontal_ruler.update()
+	global.vertical_ruler.update()
 
 
 func _on_tween_step(_object: Object, _key: NodePath, _elapsed: float, _value: Object) -> void:
@@ -185,7 +187,7 @@ func _on_tween_step(_object: Object, _key: NodePath, _elapsed: float, _value: Ob
 
 func zoom_100() -> void:
 	zoom = Vector2.ONE
-	offset = get_node("/root/Pixelorama").current_project.size / 2
+	offset = global.current_project.size / 2
 	zoom_changed()
 
 
@@ -199,12 +201,12 @@ func fit_to_frame(size : Vector2) -> void:
 		# If the ratio is 0, it means that the viewport container is hidden
 		# in that case, use the other viewport to get the ratio
 		if name == "Camera2D":
-			h_ratio = get_node("/root/Pixelorama").second_viewport.rect_size.x / size.x
-			v_ratio = get_node("/root/Pixelorama").second_viewport.rect_size.y / size.y
+			h_ratio = global.second_viewport.rect_size.x / size.x
+			v_ratio = global.second_viewport.rect_size.y / size.y
 			ratio = min(h_ratio, v_ratio)
 		elif name == "Camera2D2":
-			h_ratio = get_node("/root/Pixelorama").main_viewport.rect_size.x / size.x
-			v_ratio = get_node("/root/Pixelorama").main_viewport.rect_size.y / size.y
+			h_ratio = global.main_viewport.rect_size.x / size.x
+			v_ratio = global.main_viewport.rect_size.y / size.y
 			ratio = min(h_ratio, v_ratio)
 
 	zoom = Vector2(1 / ratio, 1 / ratio)
@@ -214,11 +216,11 @@ func fit_to_frame(size : Vector2) -> void:
 
 func save_values_to_project() -> void:
 	if name == "Camera2D":
-		get_node("/root/Pixelorama").current_project.cameras_zoom[0] = zoom
-		get_node("/root/Pixelorama").current_project.cameras_offset[0] = offset
+		global.current_project.cameras_zoom[0] = zoom
+		global.current_project.cameras_offset[0] = offset
 	elif name == "Camera2D2":
-		get_node("/root/Pixelorama").current_project.cameras_zoom[1] = zoom
-		get_node("/root/Pixelorama").current_project.cameras_offset[1] = offset
+		global.current_project.cameras_zoom[1] = zoom
+		global.current_project.cameras_offset[1] = offset
 	elif name == "CameraPreview":
-		get_node("/root/Pixelorama").current_project.cameras_zoom[2] = zoom
-		get_node("/root/Pixelorama").current_project.cameras_offset[2] = offset
+		global.current_project.cameras_zoom[2] = zoom
+		global.current_project.cameras_offset[2] = offset

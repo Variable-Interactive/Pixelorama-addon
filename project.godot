@@ -54,7 +54,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/pixelorama/src/Classes/Layer.gd"
 }, {
-"base": "Reference",
+"base": "Button",
 "class": "LayerButton",
 "language": "GDScript",
 "path": "res://addons/pixelorama/src/UI/Timeline/LayerButton.gd"

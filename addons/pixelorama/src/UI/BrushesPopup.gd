@@ -17,9 +17,11 @@ var pixel_image = preload("res://addons/pixelorama/assets/graphics/pixel_image.p
 var circle_image = preload("res://addons/pixelorama/assets/graphics/circle_9x9.png")
 var circle_filled_image = preload("res://addons/pixelorama/assets/graphics/circle_filled_9x9.png")
 
+var global
 
 func _ready() -> void:
-	var container = get_node("/root/Pixelorama").brushes_popup.get_node("TabContainer/File/FileBrushContainer")
+	global = get_node("/root/Pixelorama")
+	var container = global.brushes_popup.get_node("TabContainer/File/FileBrushContainer")
 	var button = create_button(pixel_image)
 	button.brush.type = PIXEL
 	button.hint_tooltip = "Pixel brush"
@@ -91,9 +93,9 @@ static func clear_project_brush(brushes_popup) -> void:
 func get_brush(type : int, index : int) -> Brush:
 	var container
 	if type == CUSTOM:
-		container = get_node("/root/Pixelorama").brushes_popup.get_node("TabContainer/Project/ProjectBrushContainer")
+		container = global.brushes_popup.get_node("TabContainer/Project/ProjectBrushContainer")
 	else:
-		container = get_node("/root/Pixelorama").brushes_popup.get_node("TabContainer/File/FileBrushContainer")
+		container = global.brushes_popup.get_node("TabContainer/File/FileBrushContainer")
 	var brush = get_default_brush()
 	if index < container.get_child_count():
 		brush = container.get_child(index).brush
@@ -103,7 +105,7 @@ func get_brush(type : int, index : int) -> Brush:
 func remove_brush(brush_button : Node) -> void:
 	emit_signal("brush_removed", brush_button.brush)
 
-	var project = get_node("/root/Pixelorama").current_project
+	var project = global.current_project
 	var undo_brushes = project.brushes.duplicate()
 	project.brushes.erase(brush_button.brush.image)
 
@@ -118,8 +120,8 @@ func remove_brush(brush_button : Node) -> void:
 
 
 func undo_custom_brush(brush_button : BaseButton = null) -> void:
-	get_node("/root/Pixelorama").general_undo()
-	var action_name : String = get_node("/root/Pixelorama").current_project.undo_redo.get_current_action_name()
+	global.general_undo()
+	var action_name : String = global.current_project.undo_redo.get_current_action_name()
 	if action_name == "Delete Custom Brush":
 		$TabContainer/Project/ProjectBrushContainer.add_child(brush_button)
 		$TabContainer/Project/ProjectBrushContainer.move_child(brush_button, brush_button.brush.index)
@@ -127,7 +129,7 @@ func undo_custom_brush(brush_button : BaseButton = null) -> void:
 
 
 func redo_custom_brush(brush_button : BaseButton = null) -> void:
-	get_node("/root/Pixelorama").general_redo()
-	var action_name : String = get_node("/root/Pixelorama").current_project.undo_redo.get_current_action_name()
+	global.general_redo()
+	var action_name : String = global.current_project.undo_redo.get_current_action_name()
 	if action_name == "Delete Custom Brush":
 		$TabContainer/Project/ProjectBrushContainer.remove_child(brush_button)

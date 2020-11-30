@@ -13,15 +13,17 @@ onready var options_dialog = $TagOptions
 func _ready() -> void:
 	$"TagOptions/GridContainer/ColorPickerButton".get_picker().presets_visible = false
 
+var global
 
 func _on_FrameTagDialog_about_to_show() -> void:
-	get_node("/root/Pixelorama").dialog_open(true)
+	global = get_node("/root/Pixelorama")
+	global.dialog_open(true)
 	for vbox in tag_vboxes:
 		vbox.queue_free()
 	tag_vboxes.clear()
 
 	var i := 0
-	for tag in get_node("/root/Pixelorama").current_project.animation_tags:
+	for tag in global.current_project.animation_tags:
 		var vbox_cont := VBoxContainer.new()
 		var hbox_cont := HBoxContainer.new()
 		var tag_label := Label.new()
@@ -57,23 +59,23 @@ func _on_FrameTagDialog_about_to_show() -> void:
 
 
 func _on_FrameTagDialog_popup_hide() -> void:
-	get_node("/root/Pixelorama").dialog_open(false)
+	global.dialog_open(false)
 
 
 func _on_AddTag_pressed() -> void:
 	options_dialog.popup_centered()
-	current_tag_id = get_node("/root/Pixelorama").current_project.animation_tags.size()
-	options_dialog.get_node("GridContainer/FromSpinBox").value = get_node("/root/Pixelorama").current_project.current_frame + 1
-	options_dialog.get_node("GridContainer/ToSpinBox").value = get_node("/root/Pixelorama").current_project.current_frame + 1
+	current_tag_id = global.current_project.animation_tags.size()
+	options_dialog.get_node("GridContainer/FromSpinBox").value = global.current_project.current_frame + 1
+	options_dialog.get_node("GridContainer/ToSpinBox").value = global.current_project.current_frame + 1
 
 
 func _on_EditButton_pressed(_tag_id : int) -> void:
 	options_dialog.popup_centered()
 	current_tag_id = _tag_id
-	options_dialog.get_node("GridContainer/NameLineEdit").text = get_node("/root/Pixelorama").current_project.animation_tags[_tag_id].name
-	options_dialog.get_node("GridContainer/ColorPickerButton").color = get_node("/root/Pixelorama").current_project.animation_tags[_tag_id].color
-	options_dialog.get_node("GridContainer/FromSpinBox").value = get_node("/root/Pixelorama").current_project.animation_tags[_tag_id].from
-	options_dialog.get_node("GridContainer/ToSpinBox").value = get_node("/root/Pixelorama").current_project.animation_tags[_tag_id].to
+	options_dialog.get_node("GridContainer/NameLineEdit").text = global.current_project.animation_tags[_tag_id].name
+	options_dialog.get_node("GridContainer/ColorPickerButton").color = global.current_project.animation_tags[_tag_id].color
+	options_dialog.get_node("GridContainer/FromSpinBox").value = global.current_project.animation_tags[_tag_id].from
+	options_dialog.get_node("GridContainer/ToSpinBox").value = global.current_project.animation_tags[_tag_id].to
 	if !delete_tag_button:
 		delete_tag_button = options_dialog.add_button("Delete", true, "delete_tag")
 	else:
@@ -81,7 +83,7 @@ func _on_EditButton_pressed(_tag_id : int) -> void:
 
 
 func _on_TagOptions_confirmed() -> void:
-	var global = get_node("/root/Pixelorama")
+	var global = global
 	var tag_name : String = options_dialog.get_node("GridContainer/NameLineEdit").text
 	var tag_color : Color = options_dialog.get_node("GridContainer/ColorPickerButton").color
 	var tag_from : int = options_dialog.get_node("GridContainer/FromSpinBox").value
@@ -114,12 +116,12 @@ func _on_TagOptions_confirmed() -> void:
 	global.current_project.undo_redo.add_undo_method(global, "general_undo")
 	global.current_project.undo_redo.add_do_property(global.current_project, "animation_tags", new_animation_tags)
 	global.current_project.undo_redo.add_undo_property(global.current_project, "animation_tags", global.current_project.animation_tags)
-	get_node("/root/Pixelorama").current_project.undo_redo.commit_action()
+	global.current_project.undo_redo.commit_action()
 	_on_FrameTagDialog_about_to_show()
 
 
 func _on_TagOptions_custom_action(action : String) -> void:
-	var global = get_node("/root/Pixelorama")
+	var global = global
 	if action == "delete_tag":
 		var new_animation_tags = global.current_project.animation_tags.duplicate()
 		new_animation_tags.remove(current_tag_id)
@@ -130,7 +132,7 @@ func _on_TagOptions_custom_action(action : String) -> void:
 		global.current_project.undo_redo.add_undo_method(global, "general_undo")
 		global.current_project.undo_redo.add_do_property(global.current_project, "animation_tags", new_animation_tags)
 		global.current_project.undo_redo.add_undo_property(global.current_project, "animation_tags", global.current_project.animation_tags)
-		get_node("/root/Pixelorama").current_project.undo_redo.commit_action()
+		global.current_project.undo_redo.commit_action()
 
 		options_dialog.hide()
 		_on_FrameTagDialog_about_to_show()
@@ -142,4 +144,4 @@ func _on_TagOptions_popup_hide() -> void:
 
 
 func _on_PlayOnlyTags_toggled(button_pressed : bool) -> void:
-	get_node("/root/Pixelorama").play_only_tags = button_pressed
+	global.play_only_tags = button_pressed
