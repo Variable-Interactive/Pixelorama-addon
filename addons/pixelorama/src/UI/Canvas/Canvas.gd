@@ -13,34 +13,36 @@ onready var grid = $Grid
 onready var tile_mode = $TileMode
 onready var indicators = $Indicators
 
+var global
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	var frame : Frame = new_empty_frame(true)
-	Global.current_project.frames.append(frame)
+	global.current_project.frames.append(frame)
 	yield(get_tree().create_timer(0.2), "timeout")
 	camera_zoom()
 
 
 func _draw() -> void:
-	Global.second_viewport.get_child(0).get_node("CanvasPreview").update()
-	Global.small_preview_viewport.get_child(0).get_node("CanvasPreview").update()
+	global.second_viewport.get_child(0).get_node("CanvasPreview").update()
+	global.small_preview_viewport.get_child(0).get_node("CanvasPreview").update()
 
-	var current_cels : Array = Global.current_project.frames[Global.current_project.current_frame].cels
+	var current_cels : Array = global.current_project.frames[global.current_project.current_frame].cels
 
 	var _position := position
 	var _scale := scale
-	if Global.mirror_view:
-		_position.x = _position.x + Global.current_project.size.x
+	if global.mirror_view:
+		_position.x = _position.x + global.current_project.size.x
 		_scale.x = -1
 	draw_set_transform(_position, rotation, _scale)
 	# Draw current frame layers
-	for i in range(Global.current_project.layers.size()):
+	for i in range(global.current_project.layers.size()):
 		var modulate_color := Color(1, 1, 1, current_cels[i].opacity)
-		if Global.current_project.layers[i].visible: # if it's visible
+		if global.current_project.layers[i].visible: # if it's visible
 			draw_texture(current_cels[i].image_texture, location, modulate_color)
 
-	if Global.onion_skinning:
+	if global.onion_skinning:
 		onion_skinning()
 	tile_mode.update()
 	draw_set_transform(position, rotation, scale)
@@ -60,30 +62,30 @@ func _input(event : InputEvent) -> void:
 	# Do not use self.get_local_mouse_position() because it return unexpected
 	# value when shrink parameter is not equal to one. At godot version 3.2.3
 	var tmp_transform = get_canvas_transform().affine_inverse()
-	var tmp_position = Global.main_viewport.get_local_mouse_position()
+	var tmp_position = global.main_viewport.get_local_mouse_position()
 	current_pixel = tmp_transform.basis_xform(tmp_position) + tmp_transform.origin + location
 
-	if Global.has_focus:
+	if global.has_focus:
 		update()
 
 	sprite_changed_this_frame = false
 
-	var current_project : Project = Global.current_project
+	var current_project : Project = global.current_project
 
-	if Global.has_focus:
+	if global.has_focus:
 		if !cursor_image_has_changed:
 			cursor_image_has_changed = true
-			if Global.show_left_tool_icon:
-				Global.left_cursor.visible = true
-			if Global.show_right_tool_icon:
-				Global.right_cursor.visible = true
+			if global.show_left_tool_icon:
+				global.left_cursor.visible = true
+			if global.show_right_tool_icon:
+				global.right_cursor.visible = true
 	else:
 		if cursor_image_has_changed:
 			cursor_image_has_changed = false
-			Global.left_cursor.visible = false
-			Global.right_cursor.visible = false
+			global.left_cursor.visible = false
+			global.right_cursor.visible = false
 
-	Tools.handle_draw(current_pixel.floor(), event)
+	global.get_tools().handle_draw(current_pixel.floor(), event)
 
 	if sprite_changed_this_frame:
 		update_texture(current_project.current_layer)
@@ -91,37 +93,37 @@ func _input(event : InputEvent) -> void:
 
 func camera_zoom() -> void:
 	# Set camera zoom based on the sprite size
-	var bigger_canvas_axis = max(Global.current_project.size.x, Global.current_project.size.y)
+	var bigger_canvas_axis = max(global.current_project.size.x, global.current_project.size.y)
 	var zoom_max := Vector2(bigger_canvas_axis, bigger_canvas_axis) * 0.01
-	var cameras = [Global.camera, Global.camera2, Global.camera_preview]
+	var cameras = [global.camera, global.camera2, global.camera_preview]
 	for camera in cameras:
 		if zoom_max > Vector2.ONE:
 			camera.zoom_max = zoom_max
 		else:
 			camera.zoom_max = Vector2.ONE
 
-		if camera == Global.camera_preview:
-			Global.preview_zoom_slider.max_value = -camera.zoom_min.x
-			Global.preview_zoom_slider.min_value = -camera.zoom_max.x
+		if camera == global.camera_preview:
+			global.preview_zoom_slider.max_value = -camera.zoom_min.x
+			global.preview_zoom_slider.min_value = -camera.zoom_max.x
 
-		camera.fit_to_frame(Global.current_project.size)
+		camera.fit_to_frame(global.current_project.size)
 		camera.save_values_to_project()
 
-	Global.transparent_checker._ready() # To update the rect size
+	global.transparent_checker._ready() # To update the rect size
 
 
-func new_empty_frame(first_time := false, single_layer := false, size := Global.current_project.size) -> Frame:
+func new_empty_frame(first_time := false, single_layer := false, size := global.current_project.size) -> Frame:
 	var frame := Frame.new()
-	for l in Global.current_project.layers: # Create as many cels as there are layers
+	for l in global.current_project.layers: # Create as many cels as there are layers
 		# The sprite itself
 		var sprite := Image.new()
 		if first_time:
-			if Global.config_cache.has_section_key("preferences", "default_image_width"):
-				Global.current_project.size.x = Global.config_cache.get_value("preferences", "default_image_width")
-			if Global.config_cache.has_section_key("preferences", "default_image_height"):
-				Global.current_project.size.y = Global.config_cache.get_value("preferences", "default_image_height")
-			if Global.config_cache.has_section_key("preferences", "default_fill_color"):
-				fill_color = Global.config_cache.get_value("preferences", "default_fill_color")
+			if global.config_cache.has_section_key("preferences", "default_image_width"):
+				global.current_project.size.x = global.config_cache.get_value("preferences", "default_image_width")
+			if global.config_cache.has_section_key("preferences", "default_image_height"):
+				global.current_project.size.y = global.config_cache.get_value("preferences", "default_image_height")
+			if global.config_cache.has_section_key("preferences", "default_fill_color"):
+				fill_color = global.config_cache.get_value("preferences", "default_fill_color")
 		sprite.create(size.x, size.y, false, Image.FORMAT_RGBA8)
 		sprite.fill(fill_color)
 		sprite.lock()
@@ -133,7 +135,7 @@ func new_empty_frame(first_time := false, single_layer := false, size := Global.
 	return frame
 
 
-func handle_undo(action : String, project : Project = Global.current_project, layer_index := -2, frame_index := -2) -> void:
+func handle_undo(action : String, project : Project = global.current_project, layer_index := -2, frame_index := -2) -> void:
 	if !can_undo:
 		return
 
@@ -168,12 +170,13 @@ func handle_undo(action : String, project : Project = Global.current_project, la
 		var data = cel.image.data
 		cel.image.lock()
 		project.undo_redo.add_undo_property(cel.image, "data", data)
-	project.undo_redo.add_undo_method(Global, "undo", frame_index, layer_index, project)
+	project.undo_redo.add_undo_method(global,
+			 "undo", frame_index, layer_index, project)
 
 	can_undo = false
 
 
-func handle_redo(_action : String, project : Project = Global.current_project, layer_index := -2, frame_index := -2) -> void:
+func handle_redo(_action : String, project : Project = global.current_project, layer_index := -2, frame_index := -2) -> void:
 	can_undo = true
 	if project.undos < project.undo_redo.get_version():
 		return
@@ -203,51 +206,52 @@ func handle_redo(_action : String, project : Project = Global.current_project, l
 
 	for cel in cels:
 		project.undo_redo.add_do_property(cel.image, "data", cel.image.data)
-	project.undo_redo.add_do_method(Global, "redo", frame_index, layer_index, project)
+	project.undo_redo.add_do_method(global,
+			 "redo", frame_index, layer_index, project)
 	project.undo_redo.commit_action()
 
 
-func update_texture(layer_index : int, frame_index := -1, project : Project = Global.current_project) -> void:
+func update_texture(layer_index : int, frame_index := -1, project : Project = global.current_project) -> void:
 	if frame_index == -1:
 		frame_index = project.current_frame
 	var current_cel : Cel = project.frames[frame_index].cels[layer_index]
 	current_cel.image_texture.create_from_image(current_cel.image, 0)
 
-	if project == Global.current_project:
+	if project == global.current_project:
 		var frame_texture_rect : TextureRect
-		frame_texture_rect = Global.find_node_by_name(project.layers[layer_index].frame_container.get_child(frame_index), "CelTexture")
+		frame_texture_rect = global.find_node_by_name(project.layers[layer_index].frame_container.get_child(frame_index), "CelTexture")
 		frame_texture_rect.texture = current_cel.image_texture
 
 
 func onion_skinning() -> void:
 	# Past
-	if Global.onion_skinning_past_rate > 0:
+	if global.onion_skinning_past_rate > 0:
 		var color : Color
-		if Global.onion_skinning_blue_red:
+		if global.onion_skinning_blue_red:
 			color = Color.blue
 		else:
 			color = Color.white
-		for i in range(1, Global.onion_skinning_past_rate + 1):
-			if Global.current_project.current_frame >= i:
+		for i in range(1, global.onion_skinning_past_rate + 1):
+			if global.current_project.current_frame >= i:
 				var layer_i := 0
-				for layer in Global.current_project.frames[Global.current_project.current_frame - i].cels:
-					if Global.current_project.layers[layer_i].visible:
+				for layer in global.current_project.frames[global.current_project.current_frame - i].cels:
+					if global.current_project.layers[layer_i].visible:
 						color.a = 0.6 / i
 						draw_texture(layer.image_texture, location, color)
 					layer_i += 1
 
 	# Future
-	if Global.onion_skinning_future_rate > 0:
+	if global.onion_skinning_future_rate > 0:
 		var color : Color
-		if Global.onion_skinning_blue_red:
+		if global.onion_skinning_blue_red:
 			color = Color.red
 		else:
 			color = Color.white
-		for i in range(1, Global.onion_skinning_future_rate + 1):
-			if Global.current_project.current_frame < Global.current_project.frames.size() - i:
+		for i in range(1, global.onion_skinning_future_rate + 1):
+			if global.current_project.current_frame < global.current_project.frames.size() - i:
 				var layer_i := 0
-				for layer in Global.current_project.frames[Global.current_project.current_frame + i].cels:
-					if Global.current_project.layers[layer_i].visible:
+				for layer in global.current_project.frames[global.current_project.current_frame + i].cels:
+					if global.current_project.layers[layer_i].visible:
 						color.a = 0.6 / i
 						draw_texture(layer.image_texture, location, color)
 					layer_i += 1

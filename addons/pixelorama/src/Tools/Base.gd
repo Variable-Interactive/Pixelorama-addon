@@ -1,14 +1,17 @@
 extends VBoxContainer
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var kname : String
-var tool_slot : Tools.Slot = null
+var tool_slot  = null
 var cursor_text := ""
 
 var _cursor := Vector2.INF
 
+var global
 
 func _ready():
+	global = get_node("/root/Pixelorama")
 	kname = name.replace(" ", "_").to_lower()
 	$Label.text = tool_slot.name
 
@@ -27,30 +30,30 @@ func _on_PixelPerfect_toggled(button_pressed : bool):
 func _on_Horizontal_toggled(button_pressed : bool):
 	tool_slot.horizontal_mirror = button_pressed
 	tool_slot.save_config()
-	Global.show_y_symmetry_axis = button_pressed
+	global.show_y_symmetry_axis = button_pressed
 	# If the button is not pressed but another button is, keep the symmetry guide visible
-	if !button_pressed and (Tools._slots[BUTTON_LEFT].horizontal_mirror or Tools._slots[BUTTON_RIGHT].horizontal_mirror):
-		Global.show_y_symmetry_axis = true
-	Global.current_project.y_symmetry_axis.visible = Global.show_y_symmetry_axis and Global.show_guides
+	if !button_pressed and (global.get_tools()._slots[BUTTON_LEFT].horizontal_mirror or global.get_tools()._slots[BUTTON_RIGHT].horizontal_mirror):
+		global.show_y_symmetry_axis = true
+	global.current_project.y_symmetry_axis.visible = global.show_y_symmetry_axis and global.show_guides
 
 
 func _on_Vertical_toggled(button_pressed : bool):
 	tool_slot.vertical_mirror = button_pressed
 	tool_slot.save_config()
-	Global.show_x_symmetry_axis = button_pressed
+	global.show_x_symmetry_axis = button_pressed
 	# If the button is not pressed but another button is, keep the symmetry guide visible
-	if !button_pressed and (Tools._slots[BUTTON_LEFT].vertical_mirror or Tools._slots[BUTTON_RIGHT].vertical_mirror):
-		Global.show_x_symmetry_axis = true
-	Global.current_project.x_symmetry_axis.visible = Global.show_x_symmetry_axis and Global.show_guides
+	if !button_pressed and (global.get_tools()._slots[BUTTON_LEFT].vertical_mirror or global.get_tools()._slots[BUTTON_RIGHT].vertical_mirror):
+		global.show_x_symmetry_axis = true
+	global.current_project.x_symmetry_axis.visible = global.show_x_symmetry_axis and global.show_guides
 
 
 func save_config() -> void:
 	var config := get_config()
-	Global.config_cache.set_value(tool_slot.kname, kname, config)
+	global.config_cache.set_value(tool_slot.kname, kname, config)
 
 
 func load_config() -> void:
-	var value = Global.config_cache.get_value(tool_slot.kname, kname, {})
+	var value = global.config_cache.get_value(tool_slot.kname, kname, {})
 	set_config(value)
 	update_config()
 
@@ -73,28 +76,28 @@ func cursor_move(position : Vector2) -> void:
 
 func draw_indicator() -> void:
 	var rect := Rect2(_cursor, Vector2.ONE)
-	Global.canvas.indicators.draw_rect(rect, Color.blue, false)
+	global.canvas.indicators.draw_rect(rect, Color.blue, false)
 
 
 func _get_draw_rect() -> Rect2:
-	var selected_pixels = Global.current_project.selected_pixels
+	var selected_pixels = global.current_project.selected_pixels
 	return Rect2(selected_pixels[0].x, selected_pixels[0].y, selected_pixels[-1].x - selected_pixels[0].x + 1, selected_pixels[-1].y - selected_pixels[0].y + 1)
 
 
 func _get_tile_mode_rect() -> Rect2:
-	match Global.current_project.tile_mode:
-		Global.Tile_Mode.XAXIS:
-			return Rect2(Vector2(-Global.current_project.size.x,0), Vector2(Global.current_project.size.x * 3,Global.current_project.size.y))
-		Global.Tile_Mode.YAXIS:
-			return Rect2(Vector2(0,-Global.current_project.size.y), Vector2(Global.current_project.size.x,Global.current_project.size.y * 3))
-		Global.Tile_Mode.BOTH:
-			return Rect2(-Global.current_project.size, Global.current_project.size * 3)
-	return Rect2(Vector2(0,0),Global.current_project.size)
+	match global.current_project.tile_mode:
+		Constants.Tile_Mode.XAXIS:
+			return Rect2(Vector2(-global.current_project.size.x,0), Vector2(global.current_project.size.x * 3,global.current_project.size.y))
+		Constants.Tile_Mode.YAXIS:
+			return Rect2(Vector2(0,-global.current_project.size.y), Vector2(global.current_project.size.x,global.current_project.size.y * 3))
+		Constants.Tile_Mode.BOTH:
+			return Rect2(-global.current_project.size, global.current_project.size * 3)
+	return Rect2(Vector2(0,0),global.current_project.size)
 
 
 
 func _get_draw_image() -> Image:
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	return project.frames[project.current_frame].cels[project.current_layer].image
 
 

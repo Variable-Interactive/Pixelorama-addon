@@ -1,11 +1,12 @@
 class_name Project extends Reference
 # A class for project properties.
 
-
+var global = null
 var name := "" setget name_changed
 var size : Vector2 setget size_changed
 var undo_redo : UndoRedo
-var tile_mode : int = Global.Tile_Mode.NONE
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+var tile_mode : int = Constants.Tile_Mode.NONE
 var undos := 0 # The number of times we added undo properties
 var has_changed := false setget has_changed_changed
 var frames := [] setget frames_changed # Array of Frames (that contain Cels)
@@ -33,11 +34,12 @@ var cameras_offset := [Vector2.ZERO, Vector2.ZERO, Vector2.ZERO] # Array of Vect
 # Export directory path and export file name
 var directory_path := ""
 var file_name := "untitled"
-var file_format : int = Export.FileFormat.PNG
+var file_format : int = Constants.FileFormat.PNG
 var was_exported := false
 
 
-func _init(_frames := [], _name := tr("untitled"), _size := Vector2(64, 64)) -> void:
+func _init(_frames := [], _name := tr("untitled"), _size := Vector2(64, 64), p_global = null) -> void:
+	global = p_global
 	frames = _frames
 	name = _name
 	size = _size
@@ -46,9 +48,9 @@ func _init(_frames := [], _name := tr("untitled"), _size := Vector2(64, 64)) -> 
 
 	undo_redo = UndoRedo.new()
 
-	Global.tabs.add_tab(name)
-	OpenSave.current_save_paths.append("")
-	OpenSave.backup_save_paths.append("")
+	global.tabs.add_tab(name)
+	global.get_open_save().current_save_paths.append("")
+	global.get_open_save().backup_save_paths.append("")
 
 	x_symmetry_point = size.x / 2
 	y_symmetry_point = size.y / 2
@@ -59,7 +61,7 @@ func _init(_frames := [], _name := tr("untitled"), _size := Vector2(64, 64)) -> 
 		x_symmetry_axis.project = self
 		x_symmetry_axis.add_point(Vector2(-19999, y_symmetry_point))
 		x_symmetry_axis.add_point(Vector2(19999, y_symmetry_point))
-		Global.canvas.add_child(x_symmetry_axis)
+		global.canvas.add_child(x_symmetry_axis)
 
 	if !y_symmetry_axis:
 		y_symmetry_axis = SymmetryGuide.new()
@@ -67,7 +69,7 @@ func _init(_frames := [], _name := tr("untitled"), _size := Vector2(64, 64)) -> 
 		y_symmetry_axis.project = self
 		y_symmetry_axis.add_point(Vector2(x_symmetry_point, -19999))
 		y_symmetry_axis.add_point(Vector2(x_symmetry_point, 19999))
-		Global.canvas.add_child(y_symmetry_axis)
+		global.canvas.add_child(y_symmetry_axis)
 
 	if OS.get_name() == "HTML5":
 		directory_path = "user://"
@@ -88,18 +90,18 @@ func clear_selection() -> void:
 
 func _set_selected_rect(value : Rect2) -> void:
 	selected_rect = value
-	Global.selection_rectangle.set_rect(value)
+	global.selection_rectangle.set_rect(value)
 
 
 func change_project() -> void:
 	# Remove old nodes
-	for container in Global.layers_container.get_children():
+	for container in global.layers_container.get_children():
 		container.queue_free()
 
 	remove_cel_buttons()
 
-	for frame_id in Global.frame_ids.get_children():
-		Global.frame_ids.remove_child(frame_id)
+	for frame_id in global.frame_ids.get_children():
+		global.frame_ids.remove_child(frame_id)
 		frame_id.queue_free()
 
 	# Create new ones
@@ -110,11 +112,11 @@ func change_project() -> void:
 		if layers[i].name == tr("Layer") + " 0":
 			layers[i].name = tr("Layer") + " %s" % i
 
-		Global.layers_container.add_child(layer_container)
+		global.layers_container.add_child(layer_container)
 		layer_container.label.text = layers[i].name
 		layer_container.line_edit.text = layers[i].name
 
-		Global.frames_container.add_child(layers[i].frame_container)
+		global.frames_container.add_child(layers[i].frame_container)
 		for j in range(frames.size()): # Create Cel buttons
 			var cel_button = load("res://addons/pixelorama/src/UI/Timeline/CelButton.tscn").instance()
 			cel_button.frame = j
@@ -131,80 +133,80 @@ func change_project() -> void:
 		label.align = Label.ALIGN_CENTER
 		label.text = str(j + 1)
 		if j == current_frame:
-			label.add_color_override("font_color", Global.control.theme.get_color("Selected Color", "Label"))
-		Global.frame_ids.add_child(label)
+			label.add_color_override("font_color", global.control.theme.get_color("Selected Color", "Label"))
+		global.frame_ids.add_child(label)
 
-	var layer_button = Global.layers_container.get_child(Global.layers_container.get_child_count() - 1 - current_layer)
+	var layer_button = global.layers_container.get_child(global.layers_container.get_child_count() - 1 - current_layer)
 	layer_button.pressed = true
 
-	Global.current_frame_mark_label.text = "%s/%s" % [str(current_frame + 1), frames.size()]
+	global.current_frame_mark_label.text = "%s/%s" % [str(current_frame + 1), frames.size()]
 
-	Global.disable_button(Global.remove_frame_button, frames.size() == 1)
-	Global.disable_button(Global.move_left_frame_button, frames.size() == 1 or current_frame == 0)
-	Global.disable_button(Global.move_right_frame_button, frames.size() == 1 or current_frame == frames.size() - 1)
+	global.disable_button(global.remove_frame_button, frames.size() == 1)
+	global.disable_button(global.move_left_frame_button, frames.size() == 1 or current_frame == 0)
+	global.disable_button(global.move_right_frame_button, frames.size() == 1 or current_frame == frames.size() - 1)
 	toggle_layer_buttons_layers()
 	toggle_layer_buttons_current_layer()
 
 	self.animation_tags = animation_tags
 
 	# Change the selection rectangle
-	Global.selection_rectangle.set_rect(selected_rect)
+	global.selection_rectangle.set_rect(selected_rect)
 
 	# Change the guides
-	for guide in Global.canvas.get_children():
+	for guide in global.canvas.get_children():
 		if guide is Guide:
 			if guide in guides:
-				guide.visible = Global.show_guides
+				guide.visible = global.show_guides
 				if guide is SymmetryGuide:
 					if guide.type == Guide.Types.HORIZONTAL:
-						guide.visible = Global.show_x_symmetry_axis and Global.show_guides
+						guide.visible = global.show_x_symmetry_axis and global.show_guides
 					else:
-						guide.visible = Global.show_y_symmetry_axis and Global.show_guides
+						guide.visible = global.show_y_symmetry_axis and global.show_guides
 			else:
 				guide.visible = false
 
 	# Change the project brushes
-	Brushes.clear_project_brush()
+	Brushes.clear_project_brush(global.brushes_popup)
 	for brush in brushes:
-		Brushes.add_project_brush(brush)
+		Brushes.add_project_brush(global.brushes_popup ,brush)
 
-	var cameras = [Global.camera, Global.camera2, Global.camera_preview]
+	var cameras = [global.camera, global.camera2, global.camera_preview]
 	var i := 0
 	for camera in cameras:
 		camera.zoom = cameras_zoom[i]
 		camera.offset = cameras_offset[i]
 		i += 1
-	Global.zoom_level_label.text = str(round(100 / Global.camera.zoom.x)) + " %"
-	Global.canvas.update()
-	Global.canvas.grid.isometric_polylines.clear()
-	Global.canvas.grid.update()
-	Global.transparent_checker._ready()
-	Global.horizontal_ruler.update()
-	Global.vertical_ruler.update()
-	Global.preview_zoom_slider.value = -Global.camera_preview.zoom.x
-	Global.cursor_position_label.text = "[%s×%s]" % [size.x, size.y]
+	global.zoom_level_label.text = str(round(100 / global.camera.zoom.x)) + " %"
+	global.canvas.update()
+	global.canvas.grid.isometric_polylines.clear()
+	global.canvas.grid.update()
+	global.transparent_checker._ready()
+	global.horizontal_ruler.update()
+	global.vertical_ruler.update()
+	global.preview_zoom_slider.value = -global.camera_preview.zoom.x
+	global.cursor_position_label.text = "[%s×%s]" % [size.x, size.y]
 
-	Global.window_title = "%s - Pixelorama %s" % [name, Global.current_version]
+	global.window_title = "%s - Pixelorama %s" % [name, global.current_version]
 	if has_changed:
-		Global.window_title = Global.window_title + "(*)"
+		global.window_title = global.window_title + "(*)"
 
-	var save_path = OpenSave.current_save_paths[Global.current_project_index]
+	var save_path = global.get_open_save().current_save_paths[global.current_project_index]
 	if save_path != "":
-		Global.open_sprites_dialog.current_path = save_path
-		Global.save_sprites_dialog.current_path = save_path
-		Global.file_menu.get_popup().set_item_text(4, tr("Save") + " %s" % save_path.get_file())
+		global.open_sprites_dialog.current_path = save_path
+		global.save_sprites_dialog.current_path = save_path
+		global.file_menu.get_popup().set_item_text(4, tr("Save") + " %s" % save_path.get_file())
 	else:
-		Global.file_menu.get_popup().set_item_text(4, tr("Save"))
+		global.file_menu.get_popup().set_item_text(4, tr("Save"))
 
-	Export.directory_path = directory_path
-	Export.file_name = file_name
-	Export.file_format = file_format
-	Export.was_exported = was_exported
+	global.get_export().directory_path = directory_path
+	global.get_export().file_name = file_name
+	global.get_export().file_format = file_format
+	global.get_export().was_exported = was_exported
 
 	if !was_exported:
-		Global.file_menu.get_popup().set_item_text(6, tr("Export"))
+		global.file_menu.get_popup().set_item_text(6, tr("Export"))
 	else:
-		Global.file_menu.get_popup().set_item_text(6, tr("Export") + " %s" % (file_name + Export.file_format_string(file_format)))
+		global.file_menu.get_popup().set_item_text(6, tr("Export") + " %s" % (file_name + global.get_export().file_format_string(file_format)))
 
 
 func serialize() -> Dictionary:
@@ -262,11 +264,11 @@ func serialize() -> Dictionary:
 		})
 
 	var project_data := {
-		"pixelorama_version" : Global.current_version,
+		"pixelorama_version" : global.current_version,
 		"name" : name,
 		"size_x" : size.x,
 		"size_y" : size.y,
-		"save_path" : OpenSave.current_save_paths[Global.projects.find(self)],
+		"save_path" : global.get_open_save().current_save_paths[global.projects.find(self)],
 		"layers" : layer_data,
 		"tags" : tag_data,
 		"guides" : guide_data,
@@ -290,7 +292,7 @@ func deserialize(dict : Dictionary) -> void:
 		size.y = dict.size_y
 		select_all_pixels()
 	if dict.has("save_path"):
-		OpenSave.current_save_paths[Global.projects.find(self)] = dict.save_path
+		global.get_open_save().current_save_paths[global.projects.find(self)] = dict.save_path
 	if dict.has("frames"):
 		for frame in dict.frames:
 			var cels := []
@@ -324,7 +326,7 @@ func deserialize(dict : Dictionary) -> void:
 				guide.add_point(Vector2(g.pos, 99999))
 			guide.has_focus = false
 			guide.project = self
-			Global.canvas.add_child(guide)
+			global.canvas.add_child(guide)
 	if dict.has("symmetry_points"):
 		x_symmetry_point = dict.symmetry_points[0]
 		y_symmetry_point = dict.symmetry_points[1]
@@ -349,12 +351,12 @@ func deserialize(dict : Dictionary) -> void:
 
 func name_changed(value : String) -> void:
 	name = value
-	Global.tabs.set_tab_title(Global.tabs.current_tab, name)
+	global.tabs.set_tab_title(global.tabs.current_tab, name)
 
 
 func size_changed(value : Vector2) -> void:
 	size = value
-	if Global.selection_rectangle._selected_rect.has_no_area():
+	if global.selection_rectangle._selected_rect.has_no_area():
 		select_all_pixels()
 
 
@@ -362,19 +364,19 @@ func frames_changed(value : Array) -> void:
 	frames = value
 	remove_cel_buttons()
 
-	for frame_id in Global.frame_ids.get_children():
-		Global.frame_ids.remove_child(frame_id)
+	for frame_id in global.frame_ids.get_children():
+		global.frame_ids.remove_child(frame_id)
 		frame_id.queue_free()
 
 	for i in range(layers.size() - 1, -1, -1):
-		Global.frames_container.add_child(layers[i].frame_container)
+		global.frames_container.add_child(layers[i].frame_container)
 
 	for j in range(frames.size()):
 		var label := Label.new()
 		label.rect_min_size.x = 36
 		label.align = Label.ALIGN_CENTER
 		label.text = str(j + 1)
-		Global.frame_ids.add_child(label)
+		global.frame_ids.add_child(label)
 
 		for i in range(layers.size() - 1, -1, -1):
 			var cel_button = load("res://addons/pixelorama/src/UI/Timeline/CelButton.tscn").instance()
@@ -389,11 +391,11 @@ func frames_changed(value : Array) -> void:
 
 func layers_changed(value : Array) -> void:
 	layers = value
-	if Global.layers_changed_skip:
-		Global.layers_changed_skip = false
+	if global.layers_changed_skip:
+		global.layers_changed_skip = false
 		return
 
-	for container in Global.layers_container.get_children():
+	for container in global.layers_container.get_children():
 		container.queue_free()
 
 	remove_cel_buttons()
@@ -404,11 +406,11 @@ func layers_changed(value : Array) -> void:
 		if layers[i].name == tr("Layer") + " 0":
 			layers[i].name = tr("Layer") + " %s" % i
 
-		Global.layers_container.add_child(layer_container)
+		global.layers_container.add_child(layer_container)
 		layer_container.label.text = layers[i].name
 		layer_container.line_edit.text = layers[i].name
 
-		Global.frames_container.add_child(layers[i].frame_container)
+		global.frames_container.add_child(layers[i].frame_container)
 		for j in range(frames.size()):
 			var cel_button = load("res://addons/pixelorama/src/UI/Timeline/CelButton.tscn").instance()
 			cel_button.frame = j
@@ -417,63 +419,63 @@ func layers_changed(value : Array) -> void:
 
 			layers[i].frame_container.add_child(cel_button)
 
-	var layer_button = Global.layers_container.get_child(Global.layers_container.get_child_count() - 1 - current_layer)
+	var layer_button = global.layers_container.get_child(global.layers_container.get_child_count() - 1 - current_layer)
 	layer_button.pressed = true
 	self.current_frame = current_frame # Call frame_changed to update UI
 	toggle_layer_buttons_layers()
 
 
 func remove_cel_buttons() -> void:
-	for container in Global.frames_container.get_children():
+	for container in global.frames_container.get_children():
 		for button in container.get_children():
 			container.remove_child(button)
 			button.queue_free()
-		Global.frames_container.remove_child(container)
+		global.frames_container.remove_child(container)
 
 
 func frame_changed(value : int) -> void:
 	current_frame = value
-	Global.current_frame_mark_label.text = "%s/%s" % [str(current_frame + 1), frames.size()]
+	global.current_frame_mark_label.text = "%s/%s" % [str(current_frame + 1), frames.size()]
 
 	for i in frames.size():
 		var text_color := Color.white
-		if Global.theme_type == Global.Theme_Types.CARAMEL || Global.theme_type == Global.Theme_Types.LIGHT:
+		if global.theme_type == global.Theme_Types.CARAMEL || global.theme_type == global.Theme_Types.LIGHT:
 			text_color = Color.black
-		Global.frame_ids.get_child(i).add_color_override("font_color", text_color)
+		global.frame_ids.get_child(i).add_color_override("font_color", text_color)
 		for layer in layers: # De-select all the other frames
 			if i < layer.frame_container.get_child_count():
 				layer.frame_container.get_child(i).pressed = false
 
 	# Select the new frame
-	if current_frame < Global.frame_ids.get_child_count():
-		Global.frame_ids.get_child(current_frame).add_color_override("font_color", Global.control.theme.get_color("Selected Color", "Label"))
+	if current_frame < global.frame_ids.get_child_count():
+		global.frame_ids.get_child(current_frame).add_color_override("font_color", global.control.theme.get_color("Selected Color", "Label"))
 	if layers and current_frame < layers[current_layer].frame_container.get_child_count():
 		layers[current_layer].frame_container.get_child(current_frame).pressed = true
 
-	Global.disable_button(Global.remove_frame_button, frames.size() == 1)
-	Global.disable_button(Global.move_left_frame_button, frames.size() == 1 or current_frame == 0)
-	Global.disable_button(Global.move_right_frame_button, frames.size() == 1 or current_frame == frames.size() - 1)
+	global.disable_button(global.remove_frame_button, frames.size() == 1)
+	global.disable_button(global.move_left_frame_button, frames.size() == 1 or current_frame == 0)
+	global.disable_button(global.move_right_frame_button, frames.size() == 1 or current_frame == frames.size() - 1)
 
-	Global.canvas.update()
-	Global.transparent_checker._ready() # To update the rect size
+	global.canvas.update()
+	global.transparent_checker._ready() # To update the rect size
 
 
 func layer_changed(value : int) -> void:
 	current_layer = value
 	if current_frame < frames.size():
-		Global.layer_opacity_slider.value = frames[current_frame].cels[current_layer].opacity * 100
-		Global.layer_opacity_spinbox.value = frames[current_frame].cels[current_layer].opacity * 100
+		global.layer_opacity_slider.value = frames[current_frame].cels[current_layer].opacity * 100
+		global.layer_opacity_spinbox.value = frames[current_frame].cels[current_layer].opacity * 100
 
-	for container in Global.layers_container.get_children():
+	for container in global.layers_container.get_children():
 		container.pressed = false
 
-	if current_layer < Global.layers_container.get_child_count():
-		var layer_button = Global.layers_container.get_child(Global.layers_container.get_child_count() - 1 - current_layer)
+	if current_layer < global.layers_container.get_child_count():
+		var layer_button = global.layers_container.get_child(global.layers_container.get_child_count() - 1 - current_layer)
 		layer_button.pressed = true
 
 	toggle_layer_buttons_current_layer()
 
-	yield(Global.get_tree().create_timer(0.01), "timeout")
+	yield(global.get_tree().create_timer(0.01), "timeout")
 	self.current_frame = current_frame # Call frame_changed to update UI
 
 
@@ -481,48 +483,48 @@ func toggle_layer_buttons_layers() -> void:
 	if !layers:
 		return
 	if layers[current_layer].locked:
-		Global.disable_button(Global.remove_layer_button, true)
+		global.disable_button(global.remove_layer_button, true)
 
 	if layers.size() == 1:
-		Global.disable_button(Global.remove_layer_button, true)
-		Global.disable_button(Global.move_up_layer_button, true)
-		Global.disable_button(Global.move_down_layer_button, true)
-		Global.disable_button(Global.merge_down_layer_button, true)
+		global.disable_button(global.remove_layer_button, true)
+		global.disable_button(global.move_up_layer_button, true)
+		global.disable_button(global.move_down_layer_button, true)
+		global.disable_button(global.merge_down_layer_button, true)
 	elif !layers[current_layer].locked:
-		Global.disable_button(Global.remove_layer_button, false)
+		global.disable_button(global.remove_layer_button, false)
 
 
 func toggle_layer_buttons_current_layer() -> void:
 	if current_layer < layers.size() - 1:
-		Global.disable_button(Global.move_up_layer_button, false)
+		global.disable_button(global.move_up_layer_button, false)
 	else:
-		Global.disable_button(Global.move_up_layer_button, true)
+		global.disable_button(global.move_up_layer_button, true)
 
 	if current_layer > 0:
-		Global.disable_button(Global.move_down_layer_button, false)
-		Global.disable_button(Global.merge_down_layer_button, false)
+		global.disable_button(global.move_down_layer_button, false)
+		global.disable_button(global.merge_down_layer_button, false)
 	else:
-		Global.disable_button(Global.move_down_layer_button, true)
-		Global.disable_button(Global.merge_down_layer_button, true)
+		global.disable_button(global.move_down_layer_button, true)
+		global.disable_button(global.merge_down_layer_button, true)
 
 	if current_layer < layers.size():
 		if layers[current_layer].locked:
-			Global.disable_button(Global.remove_layer_button, true)
+			global.disable_button(global.remove_layer_button, true)
 		else:
 			if layers.size() > 1:
-				Global.disable_button(Global.remove_layer_button, false)
+				global.disable_button(global.remove_layer_button, false)
 
 
 func animation_tags_changed(value : Array) -> void:
 	animation_tags = value
-	for child in Global.tag_container.get_children():
+	for child in global.tag_container.get_children():
 		child.queue_free()
 
 	for tag in animation_tags:
 		var tag_c : Container = load("res://addons/pixelorama/src/UI/Timeline/AnimationTag.tscn").instance()
-		Global.tag_container.add_child(tag_c)
-		var tag_position : int = Global.tag_container.get_child_count() - 1
-		Global.tag_container.move_child(tag_c, tag_position)
+		global.tag_container.add_child(tag_c)
+		var tag_position : int = global.tag_container.get_child_count() - 1
+		global.tag_container.move_child(tag_c, tag_position)
 		tag_c.get_node("Label").text = tag.name
 		tag_c.get_node("Label").modulate = tag.color
 		tag_c.get_node("Line2D").default_color = tag.color
@@ -541,18 +543,18 @@ func set_timeline_first_and_last_frames() -> void:
 	# This is useful in case tags get modified DURING the animation is playing
 	# otherwise, this code is useless in this context, since these values are being set
 	# when the play buttons get pressed anyway
-	Global.animation_timeline.first_frame = 0
-	Global.animation_timeline.last_frame = frames.size() - 1
-	if Global.play_only_tags:
+	global.animation_timeline.first_frame = 0
+	global.animation_timeline.last_frame = frames.size() - 1
+	if global.play_only_tags:
 		for tag in animation_tags:
 			if current_frame + 1 >= tag.from && current_frame + 1 <= tag.to:
-				Global.animation_timeline.first_frame = tag.from - 1
-				Global.animation_timeline.last_frame = min(frames.size() - 1, tag.to - 1)
+				global.animation_timeline.first_frame = tag.from - 1
+				global.animation_timeline.last_frame = min(frames.size() - 1, tag.to - 1)
 
 
 func has_changed_changed(value : bool) -> void:
 	has_changed = value
 	if value:
-		Global.tabs.set_tab_title(Global.tabs.current_tab, name + "(*)")
+		global.tabs.set_tab_title(global.tabs.current_tab, name + "(*)")
 	else:
-		Global.tabs.set_tab_title(Global.tabs.current_tab, name)
+		global.tabs.set_tab_title(global.tabs.current_tab, name)

@@ -105,7 +105,8 @@ func add_randomised_brush(fpaths : Array, tooltip_name : String) -> void:
 
 	if len(loaded_images) > 0:  # actually have images
 		# to use.
-		Brushes.add_file_brush(loaded_images, tooltip_name)
+		Brushes.add_file_brush(get_node("/root/Pixelorama"),
+			loaded_images, tooltip_name)
 
 # Add a plain brush from the given path to the list of brushes.
 # Taken, again, from find_brushes
@@ -116,7 +117,8 @@ func add_plain_brush(path: String, tooltip_name: String) -> void:
 		return
 	# do the standard conversion thing...
 	image.convert(Image.FORMAT_RGBA8)
-	Brushes.add_file_brush([image], tooltip_name)
+	Brushes.add_file_brush(get_node("/root/Pixelorama"),
+		[image], tooltip_name)
 
 
 # Import brushes, in priority order, from the paths in question in priority order
@@ -222,7 +224,7 @@ func import_patterns(priority_ordered_search_path: Array) -> void:
 			if err == OK:
 				image.convert(Image.FORMAT_RGBA8)
 				var tooltip_name = pattern.get_basename()
-				Global.patterns_popup.add(image, tooltip_name)
+				get_node("/root/Pixelorama").patterns_popup.add(image, tooltip_name)
 
 
 func import_gpl(path : String, text : String) -> Palette:

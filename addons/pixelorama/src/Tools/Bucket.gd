@@ -25,8 +25,8 @@ func _on_FillWithOptions_item_selected(index : int) -> void:
 
 
 func _on_PatternType_pressed():
-	Global.patterns_popup.connect("pattern_selected", self, "_on_Pattern_selected", [], CONNECT_ONESHOT)
-	Global.patterns_popup.popup(Rect2($FillPattern/Type.rect_global_position, Vector2(226, 72)))
+	global.patterns_popup.connect("pattern_selected", self, "_on_Pattern_selected", [], CONNECT_ONESHOT)
+	global.patterns_popup.popup(Rect2($FillPattern/Type.rect_global_position, Vector2(226, 72)))
 
 
 func _on_Pattern_selected(pattern : Patterns.Pattern) -> void:
@@ -62,7 +62,7 @@ func get_config() -> Dictionary:
 func set_config(config : Dictionary) -> void:
 	if _pattern:
 		var index = config.get("pattern_index", _pattern.index)
-		_pattern = Global.patterns_popup.get_pattern(index)
+		_pattern = global.patterns_popup.get_pattern(index)
 	_fill_area = config.get("fill_area", _fill_area)
 	_fill_with = config.get("fill_with", _fill_with)
 	_offset_x = config.get("offset_x", _offset_x)
@@ -81,10 +81,10 @@ func update_config() -> void:
 
 func update_pattern() -> void:
 	if _pattern == null:
-		if Global.patterns_popup.default_pattern == null:
+		if global.patterns_popup.default_pattern == null:
 			return
 		else:
-			_pattern = Global.patterns_popup.default_pattern
+			_pattern = global.patterns_popup.default_pattern
 	var tex := ImageTexture.new()
 	tex.create_from_image(_pattern.image, 0)
 	$FillPattern/Type/Texture.texture = tex
@@ -94,7 +94,7 @@ func update_pattern() -> void:
 
 
 func draw_start(position : Vector2) -> void:
-	if not position in Global.current_project.selected_pixels or Global.current_project.layers[Global.current_project.current_layer].locked:
+	if not position in global.current_project.selected_pixels or global.current_project.layers[global.current_project.current_layer].locked:
 		return
 	var undo_data = _get_undo_data()
 	if _fill_area == 0:
@@ -113,7 +113,7 @@ func draw_end(_position : Vector2) -> void:
 
 
 func fill_in_color(position : Vector2) -> void:
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	var image := _get_draw_image()
 	var color := image.get_pixelv(position)
 	if _fill_with == 0 or _pattern == null:
@@ -127,7 +127,7 @@ func fill_in_color(position : Vector2) -> void:
 
 
 func fill_in_area(position : Vector2) -> void:
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	_flood_fill(position)
 
 	# Handle Mirroring
@@ -158,7 +158,7 @@ func fill_in_area(position : Vector2) -> void:
 
 
 func _flood_fill(position : Vector2) -> void:
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	var image := _get_draw_image()
 	var color := image.get_pixelv(position)
 	if _fill_with == 0 or _pattern == null:
@@ -191,7 +191,7 @@ func _flood_fill(position : Vector2) -> void:
 
 
 func _set_pixel(image : Image, x : int, y : int, color : Color) -> void:
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	var entire_image_selected : bool = project.selected_pixels.size() == project.size.x * project.size.y
 	if entire_image_selected:
 		if not _get_draw_rect().has_point(Vector2(x, y)):
@@ -213,21 +213,21 @@ func _set_pixel(image : Image, x : int, y : int, color : Color) -> void:
 
 func commit_undo(action : String, undo_data : Dictionary) -> void:
 	var redo_data = _get_undo_data()
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 
 	project.undos += 1
 	project.undo_redo.create_action(action)
 	project.undo_redo.add_do_property(image, "data", redo_data["image_data"])
 	project.undo_redo.add_undo_property(image, "data", undo_data["image_data"])
-	project.undo_redo.add_do_method(Global, "redo", project.current_frame, project.current_layer)
-	project.undo_redo.add_undo_method(Global, "undo", project.current_frame, project.current_layer)
+	project.undo_redo.add_do_method(global, "redo", project.current_frame, project.current_layer)
+	project.undo_redo.add_undo_method(global, "undo", project.current_frame, project.current_layer)
 	project.undo_redo.commit_action()
 
 
 func _get_undo_data() -> Dictionary:
 	var data = {}
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 	image.unlock()
 	data["image_data"] = image.data

@@ -40,8 +40,12 @@ onready var path_line_edit = $VBoxContainer/Path/PathLineEdit
 onready var file_line_edit = $VBoxContainer/File/FileLineEdit
 onready var file_file_format = $VBoxContainer/File/FileFormat
 
+var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
+
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	tabs.add_tab("Frame")
 	tabs.add_tab("Spritesheet")
 	tabs.add_tab("Animation")
@@ -60,57 +64,57 @@ func show_tab() -> void:
 	frame_options.hide()
 	spritesheet_options.hide()
 	animation_options.hide()
-
-	match Export.current_tab:
-		Export.ExportTab.FRAME:
-			Export.file_format = Export.FileFormat.PNG
-			file_file_format.selected = Export.FileFormat.PNG
+	print(global.get_export().current_tab)
+	match global.get_export().current_tab:
+		Constants.ExportTab.FRAME:
+			global.get_export().file_format = Constants.FileFormat.PNG
+			file_file_format.selected = Constants.FileFormat.PNG
 			frame_timer.stop()
-			if not Export.was_exported:
-				Export.frame_number = Global.current_project.current_frame + 1
-			frame_options_frame_number.max_value = Global.current_project.frames.size() + 1
+			if not global.get_export().was_exported:
+				global.get_export().frame_number = global.current_project.current_frame + 1
+			frame_options_frame_number.max_value = global.current_project.frames.size() + 1
 			var prev_frame_number = frame_options_frame_number.value
-			frame_options_frame_number.value = Export.frame_number
-			if prev_frame_number == Export.frame_number:
-				Export.process_frame()
+			frame_options_frame_number.value = global.get_export().frame_number
+			if prev_frame_number == global.get_export().frame_number:
+				global.get_export().process_frame()
 			frame_options.show()
-		Export.ExportTab.SPRITESHEET:
+		Constants.global.ExportTab.SPRITESHEET:
 			create_frame_tag_list()
-			Export.file_format = Export.FileFormat.PNG
-			if not Export.was_exported:
-				Export.orientation = Export.Orientation.ROWS
-				Export.lines_count = int(ceil(sqrt(Export.number_of_frames)))
-			Export.process_spritesheet()
-			file_file_format.selected = Export.FileFormat.PNG
-			spritesheet_options_frames.select(Export.frame_current_tag)
+			global.get_export().file_format = global.get_export().FileFormat.PNG
+			if not global.get_export().was_exported:
+				global.get_export().orientation = global.get_export().Orientation.ROWS
+				global.get_export().lines_count = int(ceil(sqrt(global.get_export().number_of_frames)))
+			global.get_export().process_spritesheet()
+			file_file_format.selected = global.get_export().FileFormat.PNG
+			spritesheet_options_frames.select(global.get_export().frame_current_tag)
 			frame_timer.stop()
-			spritesheet_options_orientation.selected = Export.orientation
-			spritesheet_options_lines_count.max_value = Export.number_of_frames
-			spritesheet_options_lines_count.value = Export.lines_count
+			spritesheet_options_orientation.selected = global.get_export().orientation
+			spritesheet_options_lines_count.max_value = global.get_export().number_of_frames
+			spritesheet_options_lines_count.value = global.get_export().lines_count
 			spritesheet_options_lines_count_label.text = "Columns:"
 			spritesheet_options.show()
-		Export.ExportTab.ANIMATION:
+		Constants.ExportTab.ANIMATION:
 			set_file_format_selector()
-			Export.process_animation()
-			animation_options_animation_type.selected = Export.animation_type
-			animation_options_direction.selected = Export.direction
+			global.get_export().process_animation()
+			animation_options_animation_type.selected = global.get_export().animation_type
+			animation_options_direction.selected = global.get_export().direction
 			animation_options.show()
 	set_preview()
-	tabs.current_tab = Export.current_tab
+	tabs.current_tab = global.get_export().current_tab
 
 
 func set_preview() -> void:
 	remove_previews()
-	if Export.processed_images.size() == 1 and Export.current_tab != Export.ExportTab.ANIMATION:
+	if get_node("/root/Pixelorama").get_export().processed_images.size() == 1 and get_node("/root/Pixelorama").get_export().current_tab != Constants.ExportTab.ANIMATION:
 		previews.columns = 1
-		add_image_preview(Export.processed_images[0])
+		add_image_preview(get_node("/root/Pixelorama").get_export().processed_images[0])
 	else:
-		match Export.animation_type:
-			Export.AnimationType.MULTIPLE_FILES:
-				previews.columns = ceil(sqrt(Export.processed_images.size()))
-				for i in range(Export.processed_images.size()):
-					add_image_preview(Export.processed_images[i], i + 1)
-			Export.AnimationType.ANIMATED:
+		match get_node("/root/Pixelorama").get_export().animation_type:
+			Constants.AnimationType.MULTIPLE_FILES:
+				previews.columns = ceil(sqrt(get_node("/root/Pixelorama").get_export().processed_images.size()))
+				for i in range(get_node("/root/Pixelorama").get_export().processed_images.size()):
+					add_image_preview(get_node("/root/Pixelorama").get_export().processed_images[i], i + 1)
+			Constants.AnimationType.ANIMATED:
 				previews.columns = 1
 				add_animated_preview()
 
@@ -132,10 +136,10 @@ func add_image_preview(image: Image, canvas_number: int = -1) -> void:
 
 
 func add_animated_preview() -> void:
-	animated_preview_current_frame = Export.processed_images.size() - 1 if Export.direction == Export.AnimationDirection.BACKWARDS else 0
+	animated_preview_current_frame = get_node("/root/Pixelorama").get_export().processed_images.size() - 1 if get_node("/root/Pixelorama").get_export().direction == get_node("/root/Pixelorama").get_export().AnimationDirection.BACKWARDS else 0
 	animated_preview_frames = []
 
-	for processed_image in Export.processed_images:
+	for processed_image in get_node("/root/Pixelorama").get_export().processed_images:
 		var texture = ImageTexture.new()
 		texture.create_from_image(processed_image, 0)
 		animated_preview_frames.push_back(texture)
@@ -149,7 +153,7 @@ func add_animated_preview() -> void:
 
 	previews.add_child(container)
 	frame_timer.set_one_shot(true) #The wait_time it can't change correctly if it is playing
-	frame_timer.wait_time = Global.current_project.frame_duration[animated_preview_current_frame] * (1 / Global.animation_timeline.fps)
+	frame_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[animated_preview_current_frame] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
 	frame_timer.start()
 
 
@@ -177,17 +181,17 @@ func remove_previews() -> void:
 
 func set_file_format_selector() -> void:
 	animation_options_multiple_animations_directories.visible = false
-	match Export.animation_type:
-		Export.AnimationType.MULTIPLE_FILES:
-			Export.file_format = Export.FileFormat.PNG
-			file_file_format.selected = Export.FileFormat.PNG
+	match get_node("/root/Pixelorama").get_export().animation_type:
+		Constants.AnimationType.MULTIPLE_FILES:
+			get_node("/root/Pixelorama").get_export().file_format = get_node("/root/Pixelorama").get_export().FileFormat.PNG
+			file_file_format.selected = get_node("/root/Pixelorama").get_export().FileFormat.PNG
 			frame_timer.stop()
 			animation_options_animation_options.hide()
-			animation_options_multiple_animations_directories.pressed = Export.new_dir_for_each_frame_tag
+			animation_options_multiple_animations_directories.pressed = get_node("/root/Pixelorama").get_export().new_dir_for_each_frame_tag
 			animation_options_multiple_animations_directories.visible = true
-		Export.AnimationType.ANIMATED:
-			Export.file_format = Export.FileFormat.GIF
-			file_file_format.selected = Export.FileFormat.GIF
+		Constants.AnimationType.ANIMATED:
+			get_node("/root/Pixelorama").get_export().file_format = get_node("/root/Pixelorama").get_export().FileFormat.GIF
+			file_file_format.selected = get_node("/root/Pixelorama").get_export().FileFormat.GIF
 			animation_options_animation_options.show()
 
 
@@ -197,7 +201,7 @@ func create_frame_tag_list() -> void:
 	spritesheet_options_frames.add_item("All Frames", 0) # Re-add removed 'All Frames' item
 
 	# Repopulate list with current tag list
-	for item in Global.current_project.animation_tags:
+	for item in get_node("/root/Pixelorama").current_project.animation_tags:
 		spritesheet_options_frames.add_item(item.name)
 
 
@@ -225,85 +229,85 @@ func _on_ExportDialog_about_to_show() -> void:
 	# If we're on HTML5, don't let the user change the directory path
 	if OS.get_name() == "HTML5":
 		path_container.visible = false
-		Export.directory_path = "user://"
+		get_node("/root/Pixelorama").get_export().directory_path = "user://"
 
-	if Export.directory_path.empty():
-		Export.directory_path = OS.get_system_dir(OS.SYSTEM_DIR_DESKTOP)
+	if get_node("/root/Pixelorama").get_export().directory_path.empty():
+		get_node("/root/Pixelorama").get_export().directory_path = OS.get_system_dir(OS.SYSTEM_DIR_DESKTOP)
 
 	# If export already occured - sets gui to show previous settings
-	options_resize.value = Export.resize
-	options_interpolation.selected = Export.interpolation
-	path_line_edit.text = Export.directory_path
-	path_dialog_popup.current_dir = Export.directory_path
-	file_line_edit.text = Export.file_name
-	file_file_format.selected = Export.file_format
+	options_resize.value = get_node("/root/Pixelorama").get_export().resize
+	options_interpolation.selected = get_node("/root/Pixelorama").get_export().interpolation
+	path_line_edit.text = get_node("/root/Pixelorama").get_export().directory_path
+	path_dialog_popup.current_dir = get_node("/root/Pixelorama").get_export().directory_path
+	file_line_edit.text = get_node("/root/Pixelorama").get_export().file_name
+	file_file_format.selected = get_node("/root/Pixelorama").get_export().file_format
 	show_tab()
 
 	for child in popups.get_children(): # Set the theme for the popups
-		child.theme = Global.control.theme
+		child.theme = get_node("/root/Pixelorama").control.theme
 
-	Export.file_exists_alert = tr("File %s already exists. Overwrite?") # Update translation
+	get_node("/root/Pixelorama").get_export().file_exists_alert = tr("File %s already exists. Overwrite?") # Update translation
 
 	# Set the size of the preview checker
 	var checker = $VBoxContainer/PreviewPanel/TransparentChecker
 	checker.rect_size = checker.get_parent().rect_size
 
 func _on_Tabs_tab_clicked(tab : int) -> void:
-	Export.current_tab = tab
+	get_node("/root/Pixelorama").get_export().current_tab = tab
 	show_tab()
 
 
 func _on_Frame_value_changed(value: float) -> void:
-	Export.frame_number = value
-	Export.process_frame()
+	get_node("/root/Pixelorama").get_export().frame_number = value
+	get_node("/root/Pixelorama").get_export().process_frame()
 	set_preview()
 
 
 func _on_Orientation_item_selected(id : int) -> void:
-	Export.orientation = id
-	if Export.orientation == Export.Orientation.ROWS:
+	get_node("/root/Pixelorama").get_export().orientation = id
+	if get_node("/root/Pixelorama").get_export().orientation == get_node("/root/Pixelorama").get_export().Orientation.ROWS:
 		spritesheet_options_lines_count_label.text = "Columns:"
 	else:
 		spritesheet_options_lines_count_label.text = "Rows:"
-	spritesheet_options_lines_count.value = Export.frames_divided_by_spritesheet_lines()
-	Export.process_spritesheet()
+	spritesheet_options_lines_count.value = get_node("/root/Pixelorama").get_export().frames_divided_by_spritesheet_lines()
+	get_node("/root/Pixelorama").get_export().process_spritesheet()
 	set_preview()
 
 
 func _on_LinesCount_value_changed(value : float) -> void:
-	Export.lines_count = value
-	Export.process_spritesheet()
+	get_node("/root/Pixelorama").get_export().lines_count = value
+	get_node("/root/Pixelorama").get_export().process_spritesheet()
 	set_preview()
 
 
 func _on_AnimationType_item_selected(id : int) -> void:
-	Export.animation_type = id
+	get_node("/root/Pixelorama").get_export().animation_type = id
 	set_file_format_selector()
 	set_preview()
 
 
 func _on_Direction_item_selected(id : int) -> void:
-	Export.direction = id
+	get_node("/root/Pixelorama").get_export().direction = id
 	match id:
-		Export.AnimationDirection.FORWARD:
+		Constants.AnimationDirection.FORWARD:
 			animated_preview_current_frame = 0
-		Export.AnimationDirection.BACKWARDS:
-			animated_preview_current_frame = Export.processed_images.size() - 1
-		Export.AnimationDirection.PING_PONG:
+		Constants.AnimationDirection.BACKWARDS:
+			animated_preview_current_frame = get_node("/root/Pixelorama").get_export().processed_images.size() - 1
+		Constants.AnimationDirection.PING_PONG:
 			animated_preview_current_frame = 0
-			pingpong_direction = Export.AnimationDirection.FORWARD
+			pingpong_direction = get_node("/root/Pixelorama").get_export().AnimationDirection.FORWARD
 
 
 func _on_Resize_value_changed(value : float) -> void:
-	Export.resize = value
+	get_node("/root/Pixelorama").get_export().resize = value
 
 
 func _on_Interpolation_item_selected(id: int) -> void:
-	Export.interpolation = id
+	get_node("/root/Pixelorama").get_export().interpolation = id
 
 
 func _on_ExportDialog_confirmed() -> void:
-	if Export.export_processed_images(false, self):
+	if get_node("/root/Pixelorama").get_export().export_processed_images(false, self):
 		hide()
 
 
@@ -317,82 +321,82 @@ func _on_PathButton_pressed() -> void:
 
 
 func _on_PathLineEdit_text_changed(new_text : String) -> void:
-	Global.current_project.directory_path = new_text
-	Export.directory_path = new_text
+	get_node("/root/Pixelorama").current_project.directory_path = new_text
+	get_node("/root/Pixelorama").get_export().directory_path = new_text
 
 
 func _on_FileLineEdit_text_changed(new_text : String) -> void:
-	Global.current_project.file_name = new_text
-	Export.file_name = new_text
+	get_node("/root/Pixelorama").current_project.file_name = new_text
+	get_node("/root/Pixelorama").get_export().file_name = new_text
 
 
 func _on_FileDialog_dir_selected(dir : String) -> void:
 	path_line_edit.text = dir
-	Global.current_project.directory_path = dir
-	Export.directory_path = dir
+	get_node("/root/Pixelorama").current_project.directory_path = dir
+	get_node("/root/Pixelorama").get_export().directory_path = dir
 
 
 func _on_FileFormat_item_selected(id : int) -> void:
-	Global.current_project.file_format = id
-	Export.file_format = id
+	get_node("/root/Pixelorama").current_project.file_format = id
+	get_node("/root/Pixelorama").get_export().file_format = id
 
 
 func _on_FileExistsAlert_confirmed() -> void:
 	# Overwrite existing file
-	file_exists_alert_popup.dialog_text = Export.file_exists_alert
-	Export.stop_export = false
+	file_exists_alert_popup.dialog_text = get_node("/root/Pixelorama").get_export().file_exists_alert
+	get_node("/root/Pixelorama").get_export().stop_export = false
 	emit_signal("resume_export_function")
 
 
 func _on_FileExistsAlert_custom_action(action : String) -> void:
 	if action == "cancel":
 		# Cancel export
-		file_exists_alert_popup.dialog_text = Export.file_exists_alert
-		Export.stop_export = true
+		file_exists_alert_popup.dialog_text = get_node("/root/Pixelorama").get_export().file_exists_alert
+		get_node("/root/Pixelorama").get_export().stop_export = true
 		emit_signal("resume_export_function")
 		file_exists_alert_popup.hide()
 
 
-var pingpong_direction = Export.AnimationDirection.FORWARD
+var pingpong_direction = Constants.AnimationDirection.FORWARD
 func _on_FrameTimer_timeout() -> void:
 	$VBoxContainer/PreviewPanel/PreviewScroll/Previews/PreviewContainer/Preview.texture = animated_preview_frames[animated_preview_current_frame]
 
-	match Export.direction:
-		Export.AnimationDirection.FORWARD:
+	match get_node("/root/Pixelorama").get_export().direction:
+		Constants.AnimationDirection.FORWARD:
 			if animated_preview_current_frame == animated_preview_frames.size() - 1:
 				animated_preview_current_frame = 0
 			else:
 				animated_preview_current_frame += 1
-			frame_timer.wait_time = Global.current_project.frame_duration[(animated_preview_current_frame - 1) % (animated_preview_frames.size())] * (1 / Global.animation_timeline.fps)
+			frame_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[(animated_preview_current_frame - 1) % (animated_preview_frames.size())] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
 			frame_timer.start()
-		Export.AnimationDirection.BACKWARDS:
+		Constants.AnimationDirection.BACKWARDS:
 			if animated_preview_current_frame == 0:
-				animated_preview_current_frame = Export.processed_images.size() - 1
+				animated_preview_current_frame = get_node("/root/Pixelorama").get_export().processed_images.size() - 1
 			else:
 				animated_preview_current_frame -= 1
-			frame_timer.wait_time = Global.current_project.frame_duration[(animated_preview_current_frame + 1) % (animated_preview_frames.size())] * (1 / Global.animation_timeline.fps)
+			frame_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[(animated_preview_current_frame + 1) % (animated_preview_frames.size())] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
 			frame_timer.start()
-		Export.AnimationDirection.PING_PONG:
+		Constants.AnimationDirection.PING_PONG:
 			match pingpong_direction:
-				Export.AnimationDirection.FORWARD:
+				Constants.AnimationDirection.FORWARD:
 					if animated_preview_current_frame == animated_preview_frames.size() - 1:
-						pingpong_direction = Export.AnimationDirection.BACKWARDS
+						pingpong_direction = get_node("/root/Pixelorama").get_export().AnimationDirection.BACKWARDS
 						animated_preview_current_frame -= 1
 						if animated_preview_current_frame <= 0:
 							animated_preview_current_frame = 0
 					else:
 						animated_preview_current_frame += 1
-					frame_timer.wait_time = Global.current_project.frame_duration[(animated_preview_current_frame - 1) % (animated_preview_frames.size())] * (1 / Global.animation_timeline.fps)
+					frame_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[(animated_preview_current_frame - 1) % (animated_preview_frames.size())] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
 					frame_timer.start()
-				Export.AnimationDirection.BACKWARDS:
+				Constants.AnimationDirection.BACKWARDS:
 					if animated_preview_current_frame == 0:
 						animated_preview_current_frame += 1
 						if animated_preview_current_frame >= animated_preview_frames.size() - 1:
 							animated_preview_current_frame = 0
-						pingpong_direction = Export.AnimationDirection.FORWARD
+						pingpong_direction = get_node("/root/Pixelorama").get_export().AnimationDirection.FORWARD
 					else:
 						animated_preview_current_frame -= 1
-					frame_timer.wait_time = Global.current_project.frame_duration[(animated_preview_current_frame + 1) % (animated_preview_frames.size())] * (1 / Global.animation_timeline.fps)
+					frame_timer.wait_time = get_node("/root/Pixelorama").current_project.frame_duration[(animated_preview_current_frame + 1) % (animated_preview_frames.size())] * (1 / get_node("/root/Pixelorama").animation_timeline.fps)
 					frame_timer.start()
 
 
@@ -402,12 +406,12 @@ func _on_ExportDialog_popup_hide() -> void:
 
 
 func _on_MultipleAnimationsDirectories_toggled(button_pressed : bool) -> void:
-	Export.new_dir_for_each_frame_tag = button_pressed
+	get_node("/root/Pixelorama").get_export().new_dir_for_each_frame_tag = button_pressed
 
 
 func _on_Frames_item_selected(id : int) -> void:
-	Export.frame_current_tag = id
-	Export.process_spritesheet()
+	get_node("/root/Pixelorama").get_export().frame_current_tag = id
+	get_node("/root/Pixelorama").get_export().process_spritesheet()
 	set_preview()
-	spritesheet_options_lines_count.max_value = Export.number_of_frames
-	spritesheet_options_lines_count.value = Export.lines_count
+	spritesheet_options_lines_count.max_value = get_node("/root/Pixelorama").get_export().number_of_frames
+	spritesheet_options_lines_count.value = get_node("/root/Pixelorama").get_export().lines_count

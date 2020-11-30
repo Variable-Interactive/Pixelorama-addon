@@ -13,7 +13,7 @@ func set_nodes() -> void:
 	affect_option_button = $VBoxContainer/OptionsContainer/AffectOptionButton
 
 
-func commit_action(_cel : Image, _pixels : Array, _project : Project = Global.current_project) -> void:
+func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node("/root/Pixelorama").current_project) -> void:
 	DrawingAlgos.desaturate_image(_cel, _pixels, red, green, blue, alpha)
 
 

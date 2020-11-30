@@ -23,7 +23,7 @@ func _about_to_show() -> void:
 	angle_hslider.value = 0
 
 
-func commit_action(_cel : Image, _pixels : Array, _project : Project = Global.current_project) -> void:
+func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node("/root/Pixelorama").current_project) -> void:
 	var angle : float = deg2rad(angle_hslider.value)
 	match type_option_button.text:
 		"Rotxel":

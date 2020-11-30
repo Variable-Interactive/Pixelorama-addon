@@ -45,15 +45,15 @@ func _ready() -> void:
 		button.hint_tooltip = languages_dict[locale][1]
 		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		button.group = button_group
-		if Global.is_cjk(locale):
+		if get_node("/root/Pixelorama").is_cjk(locale):
 			button.add_font_override("font", cjk_font)
 		else:
 			button.add_font_override("font", latin_font)
 		add_child(button)
 
 	# Load language
-	if Global.config_cache.has_section_key("preferences", "locale"):
-		var saved_locale : String = Global.config_cache.get_value("preferences", "locale")
+	if get_node("/root/Pixelorama").config_cache.has_section_key("preferences", "locale"):
+		var saved_locale : String = get_node("/root/Pixelorama").config_cache.get_value("preferences", "locale")
 		TranslationServer.set_locale(saved_locale)
 
 		# Set the language option menu's default selected option to the loaded locale
@@ -63,10 +63,10 @@ func _ready() -> void:
 	else: # If the user doesn't have a language preference, set it to their OS' locale
 		TranslationServer.set_locale(OS.get_locale())
 
-	if Global.is_cjk(TranslationServer.get_locale()):
-		Global.control.theme.default_font = cjk_font
+	if get_node("/root/Pixelorama").is_cjk(TranslationServer.get_locale()):
+		get_node("/root/Pixelorama").control.theme.default_font = cjk_font
 	else:
-		Global.control.theme.default_font = latin_font
+		get_node("/root/Pixelorama").control.theme.default_font = latin_font
 
 	for child in get_children():
 		if child is Button:
@@ -81,15 +81,15 @@ func _on_Language_pressed(index : int) -> void:
 	else:
 		TranslationServer.set_locale(loaded_locales[index - 1])
 
-	if Global.is_cjk(TranslationServer.get_locale()):
-		Global.control.theme.default_font = cjk_font
+	if get_node("/root/Pixelorama").is_cjk(TranslationServer.get_locale()):
+		get_node("/root/Pixelorama").control.theme.default_font = cjk_font
 	else:
-		Global.control.theme.default_font = latin_font
+		get_node("/root/Pixelorama").control.theme.default_font = latin_font
 
-	Global.config_cache.set_value("preferences", "locale", TranslationServer.get_locale())
-	Global.config_cache.save("user://cache.ini")
+	get_node("/root/Pixelorama").config_cache.set_value("preferences", "locale", TranslationServer.get_locale())
+	get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
 
 	# Update Translations
-	Global.update_hint_tooltips()
-	Global.preferences_dialog._on_PreferencesDialog_popup_hide()
-	Global.preferences_dialog._on_PreferencesDialog_about_to_show(true)
+	get_node("/root/Pixelorama").update_hint_tooltips()
+	get_node("/root/Pixelorama").preferences_dialog._on_PreferencesDialog_popup_hide()
+	get_node("/root/Pixelorama").preferences_dialog._on_PreferencesDialog_about_to_show(true)

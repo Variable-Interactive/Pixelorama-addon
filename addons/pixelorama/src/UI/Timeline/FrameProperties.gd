@@ -10,20 +10,21 @@ func set_frame_dur(duration : float) -> void:
 	frame_dur.set_value(duration)	
 
 func _on_FrameProperties_popup_hide() -> void:
-	Global.dialog_open(false)
+	get_node("/root/Pixelorama").dialog_open(false)
 
 func _on_FrameProperties_confirmed():
+	var global = get_node("/root/Pixelorama")
 	var frame : int = int(frame_num.get_text())
 	var duration : float = frame_dur.get_value()
-	var frame_duration = Global.current_project.frame_duration.duplicate()
+	var frame_duration = global.current_project.frame_duration.duplicate()
 	frame_duration[frame - 1] = duration 
 
-	Global.current_project.undos += 1
-	Global.current_project.undo_redo.create_action("Change frame duration")
+	global.current_project.undos += 1
+	global.current_project.undo_redo.create_action("Change frame duration")
 
-	Global.current_project.undo_redo.add_do_property(Global.current_project, "frame_duration", frame_duration)
-	Global.current_project.undo_redo.add_undo_property(Global.current_project, "frame_duration", Global.current_project.frame_duration)
+	global.current_project.undo_redo.add_do_property(global.current_project, "frame_duration", frame_duration)
+	global.current_project.undo_redo.add_undo_property(global.current_project, "frame_duration", global.current_project.frame_duration)
 
-	Global.current_project.undo_redo.add_do_method(Global, "redo")
-	Global.current_project.undo_redo.add_undo_method(Global, "undo")
-	Global.current_project.undo_redo.commit_action()
+	global.current_project.undo_redo.add_do_method(global, "redo")
+	global.current_project.undo_redo.add_undo_method(global, "undo")
+	global.current_project.undo_redo.commit_action()

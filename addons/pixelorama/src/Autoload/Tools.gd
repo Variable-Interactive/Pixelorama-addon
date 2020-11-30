@@ -13,8 +13,10 @@ class Slot:
 	var horizontal_mirror := false
 	var vertical_mirror := false
 
+	var global
 
-	func _init(slot_name : String) -> void:
+	func _init(slot_name : String, p_global) -> void:
+		global = p_global
 		name = slot_name
 		kname = name.replace(" ", "_").to_lower()
 		load_config()
@@ -26,11 +28,11 @@ class Slot:
 			"horizontal_mirror" : horizontal_mirror,
 			"vertical_mirror" : vertical_mirror,
 		}
-		Global.config_cache.set_value(kname, "slot", config)
+		global.config_cache.set_value(kname, "slot", config)
 
 
 	func load_config() -> void:
-		var config = Global.config_cache.get_value(kname, "slot", {})
+		var config = global.config_cache.get_value(kname, "slot", {})
 		pixel_perfect = config.get("pixel_perfect", pixel_perfect)
 		horizontal_mirror = config.get("horizontal_mirror", horizontal_mirror)
 		vertical_mirror = config.get("vertical_mirror", vertical_mirror)
@@ -58,22 +60,24 @@ var control := false
 var shift := false
 var alt := false
 
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	yield(get_tree(), "idle_frame")
-	_slots[BUTTON_LEFT] = Slot.new("Left tool")
-	_slots[BUTTON_RIGHT] = Slot.new("Right tool")
-	_panels[BUTTON_LEFT] = Global.find_node_by_name(Global.control, "LeftPanelContainer")
-	_panels[BUTTON_RIGHT] = Global.find_node_by_name(Global.control, "RightPanelContainer")
-	_tool_buttons = Global.find_node_by_name(Global.control, "ToolButtons")
+	_slots[BUTTON_LEFT] = Slot.new("Left tool", global)
+	_slots[BUTTON_RIGHT] = Slot.new("Right tool", global)
+	_panels[BUTTON_LEFT] = global.find_node_by_name(global.control, "LeftPanelContainer")
+	_panels[BUTTON_RIGHT] = global.find_node_by_name(global.control, "RightPanelContainer")
+	_tool_buttons = global.find_node_by_name(global.control, "ToolButtons")
 
-	var value = Global.config_cache.get_value(_slots[BUTTON_LEFT].kname, "tool", "Pencil")
+	var value = global.config_cache.get_value(_slots[BUTTON_LEFT].kname, "tool", "Pencil")
 	set_tool(value, BUTTON_LEFT)
-	value = Global.config_cache.get_value(_slots[BUTTON_RIGHT].kname, "tool", "Eraser")
+	value = global.config_cache.get_value(_slots[BUTTON_RIGHT].kname, "tool", "Eraser")
 	set_tool(value, BUTTON_RIGHT)
-	value = Global.config_cache.get_value(_slots[BUTTON_LEFT].kname, "color", Color.black)
+	value = global.config_cache.get_value(_slots[BUTTON_LEFT].kname, "color", Color.black)
 	assign_color(value, BUTTON_LEFT, false)
-	value = Global.config_cache.get_value(_slots[BUTTON_RIGHT].kname, "color", Color.white)
+	value = global.config_cache.get_value(_slots[BUTTON_RIGHT].kname, "color", Color.white)
 	assign_color(value, BUTTON_RIGHT, false)
 
 	update_tool_buttons()
@@ -104,7 +108,7 @@ func assign_tool(name : String, button : int) -> void:
 	set_tool(name, button)
 	update_tool_buttons()
 	update_tool_cursors()
-	Global.config_cache.set_value(slot.kname, "tool", name)
+	global.config_cache.set_value(slot.kname, "tool", name)
 
 
 func default_color() -> void:
@@ -126,7 +130,7 @@ func assign_color(color : Color, button : int, change_alpha := true) -> void:
 		if color.r != c.r or color.g != c.g or color.b != c.b:
 			color.a = 1
 	_slots[button].color = color
-	Global.config_cache.set_value(_slots[button].kname, "color", color)
+	global.config_cache.set_value(_slots[button].kname, "color", color)
 	emit_signal("color_changed", color, button)
 
 
@@ -143,25 +147,25 @@ func update_tool_buttons() -> void:
 		if _slots[BUTTON_RIGHT].tool_node.name == child.name:
 			filename += "_r"
 		filename += ".png"
-		Global.change_button_texturerect(texture, filename)
+		global.change_button_texturerect(texture, filename)
 
 
 func update_tool_cursors() -> void:
 	var image = "res://addons/pixelorama/assets/graphics/cursor_icons/%s_cursor.png" % _slots[BUTTON_LEFT].tool_node.name.to_lower()
-	Global.left_cursor_tool_texture.create_from_image(load(image), 0)
+	global.left_cursor_tool_texture.create_from_image(load(image), 0)
 	image = "res://addons/pixelorama/assets/graphics/cursor_icons/%s_cursor.png" % _slots[BUTTON_RIGHT].tool_node.name.to_lower()
-	Global.right_cursor_tool_texture.create_from_image(load(image), 0)
+	global.right_cursor_tool_texture.create_from_image(load(image), 0)
 
 
 func draw_indicator() -> void:
-	if Global.left_square_indicator_visible:
+	if global.left_square_indicator_visible:
 		_slots[BUTTON_LEFT].tool_node.draw_indicator()
-	if Global.right_square_indicator_visible:
+	if global.right_square_indicator_visible:
 		_slots[BUTTON_RIGHT].tool_node.draw_indicator()
 
 
 func handle_draw(position : Vector2, event : InputEvent) -> void:
-	if not (Global.can_draw and Global.has_focus):
+	if not (global.can_draw and global.has_focus):
 		return
 
 	if event is InputEventWithModifiers:
@@ -181,7 +185,7 @@ func handle_draw(position : Vector2, event : InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		if Engine.get_version_info().major == 3 && Engine.get_version_info().minor >= 2:
 			pen_pressure = event.pressure
-			if Global.pressure_sensitivity_mode == Global.Pressure_Sensitivity.NONE:
+			if global.pressure_sensitivity_mode == global.Pressure_Sensitivity.NONE:
 				pen_pressure = 1.0
 
 		if not position.is_equal_approx(_last_position):
@@ -191,12 +195,12 @@ func handle_draw(position : Vector2, event : InputEvent) -> void:
 			if _active_button != -1:
 				_slots[_active_button].tool_node.draw_move(position)
 
-	var project : Project = Global.current_project
+	var project : Project = global.current_project
 	var text := "[%s×%s]" % [project.size.x, project.size.y]
-	if Global.has_focus:
+	if global.has_focus:
 		text += "    %s, %s" % [position.x, position.y]
 	if not _slots[BUTTON_LEFT].tool_node.cursor_text.empty():
 		text += "    %s" % _slots[BUTTON_LEFT].tool_node.cursor_text
 	if not _slots[BUTTON_RIGHT].tool_node.cursor_text.empty():
 		text += "    %s" % _slots[BUTTON_RIGHT].tool_node.cursor_text
-	Global.cursor_position_label.text = text
+	global.cursor_position_label.text = text

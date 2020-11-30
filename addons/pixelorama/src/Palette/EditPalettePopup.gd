@@ -14,22 +14,24 @@ onready var left_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/Cente
 onready var right_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/RightColor/NinePatchRect
 onready var dummyBtn = $DummyBtn
 
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	$VBoxContainer/HBoxContainer/EditPaletteColorPicker.presets_visible = false
 
 
 func open(palette : String) -> void:
 	current_palette = palette
 	palette_name_edit.text = current_palette
-	if Global.palettes.has(palette):
-		working_palette = Global.palettes[palette].duplicate()
+	if global.palettes.has(palette):
+		working_palette = global.palettes[palette].duplicate()
 		_display_palette()
 		self.popup_centered()
-		Global.dialog_open(true)
+		global.dialog_open(true)
 
-	left_color_button.modulate = Tools.get_assigned_color(BUTTON_LEFT)
-	right_color_button.modulate = Tools.get_assigned_color(BUTTON_RIGHT)
+	left_color_button.modulate = global.get_tools().get_assigned_color(BUTTON_LEFT)
+	right_color_button.modulate = global.get_tools().get_assigned_color(BUTTON_RIGHT)
 
 
 func _display_palette() -> void:
@@ -121,15 +123,15 @@ func re_index_swatches() -> void:
 
 # Rename a palette, copying to user directory if necessary.
 func rename_palette_file_with_priority_dirs(old_fname: String, new_fname: String) -> void:
-	var user_write_directory: String = Global.directory_module.get_palette_write_path()
+	var user_write_directory: String = global.directory_module.get_palette_write_path()
 	var usrwrite_dir := Directory.new()
 	usrwrite_dir.open(user_write_directory)
 	if usrwrite_dir.file_exists(old_fname):
 		usrwrite_dir.rename(old_fname, new_fname)
 	else:
 		# Scan through the main system directories
-		var priority_dirs : Array = Global.directory_module.get_palette_search_path_in_order()
-		var best_clone_location = Global.palette_container.get_best_palette_file_location(
+		var priority_dirs : Array = global.directory_module.get_palette_search_path_in_order()
+		var best_clone_location = global.palette_container.get_best_palette_file_location(
 			priority_dirs,
 			old_fname
 		)
@@ -139,7 +141,7 @@ func rename_palette_file_with_priority_dirs(old_fname: String, new_fname: String
 
 func _on_EditPaletteSaveButton_pressed() -> void:
 	if palette_name_edit.text != current_palette:
-		Global.palettes.erase(current_palette)
+		global.palettes.erase(current_palette)
 		rename_palette_file_with_priority_dirs(
 			current_palette + ".json",
 			palette_name_edit.text + ".json"
@@ -147,14 +149,14 @@ func _on_EditPaletteSaveButton_pressed() -> void:
 		current_palette = palette_name_edit.text
 		working_palette.name = current_palette
 
-		var optionbutton_index = Global.palette_option_button.selected
-		Global.palette_option_button.set_item_text(optionbutton_index, current_palette)
-		Global.palette_option_button.set_item_metadata(optionbutton_index, current_palette)
-		Global.palette_option_button.text = current_palette
+		var optionbutton_index = global.palette_option_button.selected
+		global.palette_option_button.set_item_text(optionbutton_index, current_palette)
+		global.palette_option_button.set_item_metadata(optionbutton_index, current_palette)
+		global.palette_option_button.text = current_palette
 
-	Global.palettes[current_palette] = working_palette
-	Global.palette_container.on_palette_select(current_palette)
-	Global.palette_container.save_palette(current_palette, working_palette.name + ".json")
+	global.palettes[current_palette] = working_palette
+	global.palette_container.on_palette_select(current_palette)
+	global.palette_container.save_palette(current_palette, working_palette.name + ".json")
 	self.hide()
 
 
@@ -180,14 +182,14 @@ func _refresh_hint_tooltip(_index : int) -> void:
 
 
 func _on_LeftColor_pressed() -> void:
-	color_picker.color = Tools.get_assigned_color(BUTTON_LEFT)
+	color_picker.color = global.get_tools().get_assigned_color(BUTTON_LEFT)
 	_on_EditPaletteColorPicker_color_changed(color_picker.color)
 
 
 func _on_RightColor_pressed() -> void:
-	color_picker.color = Tools.get_assigned_color(BUTTON_RIGHT)
+	color_picker.color = global.get_tools().get_assigned_color(BUTTON_RIGHT)
 	_on_EditPaletteColorPicker_color_changed(color_picker.color)
 
 
 func _on_EditPalettePopup_popup_hide() -> void:
-	Global.dialog_open(false)
+	global.dialog_open(false)

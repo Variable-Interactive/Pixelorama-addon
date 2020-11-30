@@ -6,12 +6,14 @@ var font := preload("res://addons/pixelorama/assets/fonts/Roboto-Regular.tres")
 var has_focus := true
 var mouse_pos := Vector2.ZERO
 var type = Types.HORIZONTAL
-var project = Global.current_project
-
+var project
+var global
 
 func _ready() -> void:
-	width = Global.camera.zoom.x
-	default_color = Global.guide_color
+	global = get_node("/root/Pixelorama")
+	project = global.current_project
+	width = global.camera.zoom.x
+	default_color = global.guide_color
 	project.guides.append(self)
 
 
@@ -27,10 +29,10 @@ func _input(_event : InputEvent):
 	else:
 		point0.x -= width * 3
 		point1.x += width * 3
-	if Global.can_draw and Global.has_focus and point_in_rectangle(mouse_pos, point0, point1) and Input.is_action_just_pressed("left_mouse") and visible:
-		if !point_in_rectangle(Global.canvas.current_pixel, Global.canvas.location, Global.canvas.location + project.size):
+	if global.can_draw and global.has_focus and point_in_rectangle(mouse_pos, point0, point1) and Input.is_action_just_pressed("left_mouse") and visible:
+		if !point_in_rectangle(global.canvas.current_pixel, global.canvas.location, global.canvas.location + project.size):
 			has_focus = true
-			Global.has_focus = false
+			global.has_focus = false
 			update()
 	if has_focus and visible:
 		if Input.is_action_pressed("left_mouse"):
@@ -43,7 +45,7 @@ func _input(_event : InputEvent):
 				points[0].x = xx
 				points[1].x = xx
 		if Input.is_action_just_released("left_mouse"):
-			Global.has_focus = true
+			global.has_focus = true
 			has_focus = false
 			if !outside_canvas():
 				update()
@@ -51,13 +53,13 @@ func _input(_event : InputEvent):
 
 func _draw() -> void:
 	if has_focus:
-		var viewport_size: Vector2 = Global.main_viewport.rect_size
-		var zoom: Vector2 = Global.camera.zoom
+		var viewport_size: Vector2 = global.main_viewport.rect_size
+		var zoom: Vector2 = global.camera.zoom
 		if type == Types.HORIZONTAL:
-			draw_set_transform(Vector2(Global.camera.offset.x - (viewport_size.x / 2) * zoom.x, points[0].y + font.get_height() * zoom.x * 2), rotation, zoom * 2)
+			draw_set_transform(Vector2(global.camera.offset.x - (viewport_size.x / 2) * zoom.x, points[0].y + font.get_height() * zoom.x * 2), rotation, zoom * 2)
 			draw_string(font, Vector2.ZERO, "%spx" % str(stepify(mouse_pos.y, 0.5)))
 		else:
-			draw_set_transform(Vector2(points[0].x + font.get_height() * zoom.y, Global.camera.offset.y - (viewport_size.y / 2.25) * zoom.y), rotation, zoom * 2)
+			draw_set_transform(Vector2(points[0].x + font.get_height() * zoom.y, global.camera.offset.y - (viewport_size.y / 2.25) * zoom.y), rotation, zoom * 2)
 			draw_string(font, Vector2.ZERO, "%spx" % str(stepify(mouse_pos.x, 0.5)))
 
 

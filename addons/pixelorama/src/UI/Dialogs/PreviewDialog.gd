@@ -20,6 +20,10 @@ onready var new_layer_options = $VBoxContainer/HBoxContainer/NewLayerOptions
 onready var new_brush_options = $VBoxContainer/HBoxContainer/NewBrushOptions
 onready var new_brush_name = $VBoxContainer/HBoxContainer/NewBrushOptions/BrushName
 
+var global
+
+func _ready():
+	global = get_node("/root/Pixelorama")
 
 func _on_PreviewDialog_about_to_show() -> void:
 	var img_texture := ImageTexture.new()
@@ -33,30 +37,30 @@ func _on_PreviewDialog_about_to_show() -> void:
 
 func _on_PreviewDialog_popup_hide() -> void:
 	queue_free()
-	# Call Global.dialog_open() only if it's the only preview dialog opened
-	for child in Global.control.get_children():
+	# Call get_node("/root/Pixelorama").dialog_open() only if it's the only preview dialog opened
+	for child in get_node("/root/Pixelorama").control.get_children():
 		if child != self and "PreviewDialog" in child.name:
 			return
-	Global.dialog_open(false)
+	get_node("/root/Pixelorama").dialog_open(false)
 
 
 func _on_PreviewDialog_confirmed() -> void:
 	if current_import_option == ImageImportOptions.NEW_TAB:
-		OpenSave.open_image_as_new_tab(path, image)
+		get_node("/root/Pixelorama").get_open_save().open_image_as_new_tab(path, image)
 
 	elif current_import_option == ImageImportOptions.SPRITESHEET:
-		OpenSave.open_image_as_spritesheet(path, image, spritesheet_horizontal, spritesheet_vertical)
+		get_node("/root/Pixelorama").get_open_save().open_image_as_spritesheet(path, image, spritesheet_horizontal, spritesheet_vertical)
 
 	elif current_import_option == ImageImportOptions.NEW_FRAME:
 		var layer_index : int = new_frame_options.get_node("AtLayerSpinbox").value
-		OpenSave.open_image_as_new_frame(image, layer_index)
+		get_node("/root/Pixelorama").get_open_save().open_image_as_new_frame(image, layer_index)
 
 	elif current_import_option == ImageImportOptions.NEW_LAYER:
 		var frame_index : int = new_layer_options.get_node("AtFrameSpinbox").value - 1
-		OpenSave.open_image_as_new_layer(image, path.get_basename().get_file(), frame_index)
+		get_node("/root/Pixelorama").get_open_save().open_image_as_new_layer(image, path.get_basename().get_file(), frame_index)
 
 	elif current_import_option == ImageImportOptions.PALETTE:
-		Global.palette_container.import_image_palette(path, image)
+		get_node("/root/Pixelorama").palette_container.import_image_palette(path, image)
 
 	elif current_import_option == ImageImportOptions.BRUSH:
 		add_brush()
@@ -66,12 +70,12 @@ func _on_PreviewDialog_confirmed() -> void:
 		file_name_ext = file_name_replace(file_name_ext, "Patterns")
 		var file_name : String = file_name_ext.get_basename()
 		image.convert(Image.FORMAT_RGBA8)
-		Global.patterns_popup.add(image, file_name)
+		get_node("/root/Pixelorama").patterns_popup.add(image, file_name)
 
 		# Copy the image file into the "pixelorama/Patterns" directory
 		var location := "Patterns".plus_file(file_name_ext)
 		var dir = Directory.new()
-		dir.copy(path, Global.directory_module.xdg_data_home.plus_file(location))
+		dir.copy(path, get_node("/root/Pixelorama").directory_module.xdg_data_home.plus_file(location))
 
 
 func _on_ImportOption_item_selected(id : int) -> void:
@@ -92,11 +96,11 @@ func _on_ImportOption_item_selected(id : int) -> void:
 
 	elif id == ImageImportOptions.NEW_FRAME:
 		new_frame_options.visible = true
-		new_frame_options.get_node("AtLayerSpinbox").max_value = Global.current_project.layers.size() - 1
+		new_frame_options.get_node("AtLayerSpinbox").max_value = get_node("/root/Pixelorama").current_project.layers.size() - 1
 
 	elif id == ImageImportOptions.NEW_LAYER:
 		new_layer_options.visible = true
-		new_layer_options.get_node("AtFrameSpinbox").max_value = Global.current_project.frames.size()
+		new_layer_options.get_node("AtFrameSpinbox").max_value = get_node("/root/Pixelorama").current_project.frames.size()
 
 	elif id == ImageImportOptions.BRUSH:
 		new_brush_options.visible = true
@@ -163,6 +167,7 @@ func _on_BrushTypeOption_item_selected(index : int) -> void:
 		new_brush_name.visible = true
 
 
+
 func add_brush() -> void:
 	image.convert(Image.FORMAT_RGBA8)
 	if brush_type == BrushTypes.FILE:
@@ -170,28 +175,28 @@ func add_brush() -> void:
 		file_name_ext = file_name_replace(file_name_ext, "Brushes")
 		var file_name : String = file_name_ext.get_basename()
 
-		Brushes.add_file_brush([image], file_name)
+		Brushes.add_file_brush(global.brushes_popup, [image], file_name)
 
 		# Copy the image file into the "pixelorama/Brushes" directory
 		var location := "Brushes".plus_file(file_name_ext)
 		var dir = Directory.new()
-		dir.copy(path, Global.directory_module.xdg_data_home.plus_file(location))
+		dir.copy(path, get_node("/root/Pixelorama").directory_module.xdg_data_home.plus_file(location))
 
 	elif brush_type == BrushTypes.PROJECT:
 		var file_name : String =  path.get_file().get_basename()
-		Global.current_project.brushes.append(image)
-		Brushes.add_project_brush(image, file_name)
+		get_node("/root/Pixelorama").current_project.brushes.append(image)
+		Brushes.add_project_brush(global.brushes_popup, image, file_name)
 
 	elif brush_type == BrushTypes.RANDOM:
 		var brush_name = new_brush_name.get_node("BrushNameLineEdit").text.to_lower()
 		if !brush_name.is_valid_filename():
 			return
 		var dir := Directory.new()
-		dir.open(Global.directory_module.xdg_data_home.plus_file("Brushes"))
+		dir.open(get_node("/root/Pixelorama").directory_module.xdg_data_home.plus_file("Brushes"))
 		if !dir.dir_exists(brush_name):
 			dir.make_dir(brush_name)
 
-		dir.open(Global.directory_module.xdg_data_home.plus_file("Brushes").plus_file(brush_name))
+		dir.open(get_node("/root/Pixelorama").directory_module.xdg_data_home.plus_file("Brushes").plus_file(brush_name))
 		var random_brushes := []
 		dir.list_dir_begin()
 		var curr_file := dir.get_next()
@@ -205,7 +210,7 @@ func add_brush() -> void:
 		var index : int = random_brushes.size() + 1
 		var file_name = "~" + brush_name + str(index) + "." + file_ext
 		var location := "Brushes".plus_file(brush_name).plus_file(file_name)
-		dir.copy(path, Global.directory_module.xdg_data_home.plus_file(location))
+		dir.copy(path, get_node("/root/Pixelorama").directory_module.xdg_data_home.plus_file(location))
 
 
 # Checks if the file already exists
@@ -216,7 +221,7 @@ func file_name_replace(name : String, folder : String) -> String:
 	var file_ext = name.get_extension()
 	var temp_name := name
 	var dir := Directory.new()
-	dir.open(Global.directory_module.xdg_data_home.plus_file(folder))
+	dir.open(get_node("/root/Pixelorama").directory_module.xdg_data_home.plus_file(folder))
 	while dir.file_exists(temp_name):
 		i += 1
 		temp_name = name.get_basename() + " (%s)" % i

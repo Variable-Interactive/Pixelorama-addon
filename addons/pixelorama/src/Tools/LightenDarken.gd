@@ -207,7 +207,7 @@ func draw_start(position : Vector2) -> void:
 	prepare_undo()
 	_drawer.reset()
 
-	_draw_line = Tools.shift
+	_draw_line = global.get_tools().shift
 	if _draw_line:
 		_line_start = position
 		_line_end = position
@@ -215,7 +215,7 @@ func draw_start(position : Vector2) -> void:
 	else:
 		draw_tool(position)
 		_last_position = position
-		Global.canvas.sprite_changed_this_frame = true
+		get_node("/root/Pixelorama").canvas.sprite_changed_this_frame = true
 	cursor_text = ""
 
 
@@ -229,7 +229,7 @@ func draw_move(position : Vector2) -> void:
 		draw_fill_gap(_last_position, position)
 		_last_position = position
 		cursor_text = ""
-		Global.canvas.sprite_changed_this_frame = true
+		get_node("/root/Pixelorama").canvas.sprite_changed_this_frame = true
 
 
 func draw_end(_position : Vector2) -> void:

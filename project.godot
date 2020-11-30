@@ -19,7 +19,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/pixelorama/src/UI/BrushesPopup.gd"
 }, {
-"base": "Reference",
+"base": "Node2D",
 "class": "Canvas",
 "language": "GDScript",
 "path": "res://addons/pixelorama/src/UI/Canvas/Canvas.gd"
@@ -44,7 +44,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/pixelorama/src/UI/Canvas/Rulers/Guide.gd"
 }, {
-"base": "Reference",
+"base": "AcceptDialog",
 "class": "ImageEffect",
 "language": "GDScript",
 "path": "res://addons/pixelorama/src/Classes/ImageEffect.gd"
@@ -121,12 +121,9 @@ driver="Dummy"
 [autoload]
 
 DrawingAlgos="*res://addons/pixelorama/src/Autoload/DrawingAlgos.gd"
-Export="*res://addons/pixelorama/src/Autoload/Export.gd"
-Global="*res://addons/pixelorama/src/Autoload/Global.gd"
-Html5FileExchange="*res://addons/pixelorama/src/Autoload/HTML5FileExchange.gd"
-Import="*res://addons/pixelorama/src/Autoload/Import.gd"
-OpenSave="*res://addons/pixelorama/src/Autoload/OpenSave.gd"
-Tools="*res://addons/pixelorama/src/Autoload/Tools.gd"
+Html5FileExchange="res://addons/pixelorama/src/Autoload/HTML5FileExchange.gd"
+Tools="res://addons/pixelorama/src/Autoload/Tools.gd"
+Pixelorama="*res://addons/pixelorama/src/Autoload/Global.gd"
 
 [debug]
 

@@ -6,6 +6,9 @@ enum Pressure_Sensitivity {NONE, ALPHA, SIZE, ALPHA_AND_SIZE}
 enum Direction {UP, DOWN, LEFT, RIGHT}
 enum Theme_Types {DARK, BLUE, CARAMEL, LIGHT}
 enum Tile_Mode {NONE, BOTH, XAXIS, YAXIS}
+enum ExportTab { FRAME = 0, SPRITESHEET = 1, ANIMATION = 2 }
+enum AnimationType { MULTIPLE_FILES = 0, ANIMATED = 1 }
+enum AnimationDirection { FORWARD = 0, BACKWARDS = 1, PING_PONG = 2 }
 # Stuff for arrowkey-based canvas movements nyaa ^.^
 const low_speed_move_rate := 150.0
 const medium_speed_move_rate := 750.0
@@ -173,6 +176,42 @@ var quit_and_save_dialog : ConfirmationDialog
 
 onready var current_version : String = ProjectSettings.get_setting("application/config/Version")
 
+var export_component = null
+var import_component = null
+var open_save_component = null
+var html5_file_component = null
+var tools_component = null
+
+func get_export():
+	if not export_component:
+		export_component = preload("res://addons/pixelorama/src/Autoload/Export.gd").new()
+		add_child(export_component)
+	return export_component
+
+func get_import():
+	if not import_component:
+		import_component = preload("res://addons/pixelorama/src/Autoload/Import.gd").new()
+		add_child(import_component)
+	return import_component
+
+func get_open_save():
+	if not open_save_component:
+		open_save_component = load("res://addons/pixelorama/src/Autoload/OpenSave.gd").new()
+		add_child(open_save_component)
+	return open_save_component
+
+func get_html5_file_exchange():
+	if not html5_file_component:
+		html5_file_component = load("res://addons/pixelorama/src/Autoload/HTML5FileExchange.gd").new()
+		add_child(html5_file_component)
+	return html5_file_component
+
+func get_tools():
+	if not tools_component:
+		tools_component = load("res://addons/pixelorama/src/Autoload/Tools.gd").new()
+		add_child(tools_component)
+	return tools_component
+
 
 func _ready() -> void:
 	randomize()
@@ -185,9 +224,9 @@ func _ready() -> void:
 
 	# The fact that root_dir is set earlier than this is important
 	# XDGDataDirs depends on it nyaa
-	directory_module = XDGDataPaths.new()
+	directory_module = XDGDataPaths.new(get_node("/root/Pixelorama"))
 	image_clipboard = Image.new()
-	Input.set_custom_mouse_cursor(Global.cursor_image, Input.CURSOR_CROSS, Vector2(15, 15))
+	Input.set_custom_mouse_cursor(get_node("/root/Pixelorama").cursor_image, Input.CURSOR_CROSS, Vector2(15, 15))
 
 	var root = get_tree().get_root()
 	control = find_node_by_name(root, "Control")
@@ -283,7 +322,7 @@ func _ready() -> void:
 	quit_dialog = find_node_by_name(root, "QuitDialog")
 	quit_and_save_dialog = find_node_by_name(root, "QuitAndSaveDialog")
 
-	projects.append(Project.new())
+	projects.append(Project.new([], tr("untitled"), Vector2(64, 64), self))
 	projects[0].layers.append(Layer.new())
 	current_project = projects[0]
 
@@ -336,9 +375,9 @@ func undo(_frame_index := -1, _layer_index := -1, project : Project = current_pr
 
 		if action_name == "Scale":
 			canvas.camera_zoom()
-			Global.canvas.grid.isometric_polylines.clear()
-			Global.canvas.grid.update()
-			Global.cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
+			get_node("/root/Pixelorama").canvas.grid.isometric_polylines.clear()
+			get_node("/root/Pixelorama").canvas.grid.update()
+			get_node("/root/Pixelorama").cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
 
 	elif "Frame" in action_name:
 		# This actually means that frames.size is one, but it hasn't been updated yet
@@ -367,9 +406,9 @@ func redo(_frame_index := -1, _layer_index := -1, project : Project = current_pr
 
 		if action_name == "Scale":
 			canvas.camera_zoom()
-			Global.canvas.grid.isometric_polylines.clear()
-			Global.canvas.grid.update()
-			Global.cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
+			get_node("/root/Pixelorama").canvas.grid.isometric_polylines.clear()
+			get_node("/root/Pixelorama").canvas.grid.update()
+			get_node("/root/Pixelorama").cursor_position_label.text = "[%s×%s]" % [project.size.x, project.size.y]
 
 	elif "Frame" in action_name:
 		if project.frames.size() == 1: # Stop animating
@@ -527,7 +566,7 @@ func _exit_tree() -> void:
 	var i := 0
 	for project in projects:
 		project.undo_redo.free()
-		OpenSave.remove_backup(i)
+		get_node("/root/Pixelorama").get_open_save().remove_backup(i)
 		i += 1
 
 
@@ -549,5 +588,5 @@ func save_project_to_recent_list(path : String) -> void:
 
 
 func update_recent_projects_submenu() -> void:
-	for project in Global.recent_projects:
+	for project in get_node("/root/Pixelorama").recent_projects:
 		recent_projects_submenu.add_item(project.get_file())

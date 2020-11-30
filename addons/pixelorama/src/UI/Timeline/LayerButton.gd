@@ -10,30 +10,30 @@ var line_edit : LineEdit
 
 
 func _ready() -> void:
-	visibility_button = Global.find_node_by_name(self, "VisibilityButton")
-	lock_button = Global.find_node_by_name(self, "LockButton")
-	linked_button = Global.find_node_by_name(self, "LinkButton")
-	label = Global.find_node_by_name(self, "Label")
-	line_edit = Global.find_node_by_name(self, "LineEdit")
+	visibility_button = get_node("/root/Pixelorama").find_node_by_name(self, "VisibilityButton")
+	lock_button = get_node("/root/Pixelorama").find_node_by_name(self, "LockButton")
+	linked_button = get_node("/root/Pixelorama").find_node_by_name(self, "LinkButton")
+	label = get_node("/root/Pixelorama").find_node_by_name(self, "Label")
+	line_edit = get_node("/root/Pixelorama").find_node_by_name(self, "LineEdit")
 
-	if Global.current_project.layers[i].visible:
-		Global.change_button_texturerect(visibility_button.get_child(0), "layer_visible.png")
+	if get_node("/root/Pixelorama").current_project.layers[i].visible:
+		get_node("/root/Pixelorama").change_button_texturerect(visibility_button.get_child(0), "layer_visible.png")
 		visibility_button.get_child(0).rect_size = Vector2(24, 14)
 		visibility_button.get_child(0).rect_position = Vector2(4, 9)
 	else:
-		Global.change_button_texturerect(visibility_button.get_child(0), "layer_invisible.png")
+		get_node("/root/Pixelorama").change_button_texturerect(visibility_button.get_child(0), "layer_invisible.png")
 		visibility_button.get_child(0).rect_size = Vector2(24, 8)
 		visibility_button.get_child(0).rect_position = Vector2(4, 12)
 
-	if Global.current_project.layers[i].locked:
-		Global.change_button_texturerect(lock_button.get_child(0), "lock.png")
+	if get_node("/root/Pixelorama").current_project.layers[i].locked:
+		get_node("/root/Pixelorama").change_button_texturerect(lock_button.get_child(0), "lock.png")
 	else:
-		Global.change_button_texturerect(lock_button.get_child(0), "unlock.png")
+		get_node("/root/Pixelorama").change_button_texturerect(lock_button.get_child(0), "unlock.png")
 
-	if Global.current_project.layers[i].new_cels_linked: # If new layers will be linked
-		Global.change_button_texturerect(linked_button.get_child(0), "linked_layer.png")
+	if get_node("/root/Pixelorama").current_project.layers[i].new_cels_linked: # If new layers will be linked
+		get_node("/root/Pixelorama").change_button_texturerect(linked_button.get_child(0), "linked_layer.png")
 	else:
-		Global.change_button_texturerect(linked_button.get_child(0), "unlinked_layer.png")
+		get_node("/root/Pixelorama").change_button_texturerect(linked_button.get_child(0), "unlinked_layer.png")
 
 
 func _input(event : InputEvent) -> void:
@@ -58,22 +58,22 @@ func save_layer_name(new_name : String) -> void:
 	line_edit.visible = false
 	line_edit.editable = false
 	label.text = new_name
-	Global.layers_changed_skip = true
-	Global.current_project.layers[i].name = new_name
+	get_node("/root/Pixelorama").layers_changed_skip = true
+	get_node("/root/Pixelorama").current_project.layers[i].name = new_name
 
 
 func _on_VisibilityButton_pressed() -> void:
-	Global.current_project.layers[i].visible = !Global.current_project.layers[i].visible
-	Global.canvas.update()
+	get_node("/root/Pixelorama").current_project.layers[i].visible = !get_node("/root/Pixelorama").current_project.layers[i].visible
+	get_node("/root/Pixelorama").canvas.update()
 
 
 func _on_LockButton_pressed() -> void:
-	Global.current_project.layers[i].locked = !Global.current_project.layers[i].locked
+	get_node("/root/Pixelorama").current_project.layers[i].locked = !get_node("/root/Pixelorama").current_project.layers[i].locked
 
 
 func _on_LinkButton_pressed() -> void:
-	Global.current_project.layers[i].new_cels_linked = !Global.current_project.layers[i].new_cels_linked
-	if Global.current_project.layers[i].new_cels_linked && !Global.current_project.layers[i].linked_cels:
+	get_node("/root/Pixelorama").current_project.layers[i].new_cels_linked = !get_node("/root/Pixelorama").current_project.layers[i].new_cels_linked
+	if get_node("/root/Pixelorama").current_project.layers[i].new_cels_linked && !get_node("/root/Pixelorama").current_project.layers[i].linked_cels:
 		# If button is pressed and there are no linked cels in the layer
-		Global.current_project.layers[i].linked_cels.append(Global.current_project.frames[Global.current_project.current_frame])
-		Global.current_project.layers[i].frame_container.get_child(Global.current_project.current_frame)._ready()
+		get_node("/root/Pixelorama").current_project.layers[i].linked_cels.append(get_node("/root/Pixelorama").current_project.frames[get_node("/root/Pixelorama").current_project.current_frame])
+		get_node("/root/Pixelorama").current_project.layers[i].frame_container.get_child(get_node("/root/Pixelorama").current_project.current_frame)._ready()

@@ -14,14 +14,14 @@ onready var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSa
 
 
 func _on_SplashDialog_about_to_show() -> void:
-	var splash_art_texturerect : TextureRect = Global.find_node_by_name(self, "SplashArt")
-	var art_by_label : Button = Global.find_node_by_name(self, "ArtistName")
-	var show_on_startup_button : CheckBox = Global.find_node_by_name(self, "ShowOnStartup")
-	var copyright_label : Label = Global.find_node_by_name(self, "CopyrightLabel")
+	var splash_art_texturerect : TextureRect = get_node("/root/Pixelorama").find_node_by_name(self, "SplashArt")
+	var art_by_label : Button = get_node("/root/Pixelorama").find_node_by_name(self, "ArtistName")
+	var show_on_startup_button : CheckBox = get_node("/root/Pixelorama").find_node_by_name(self, "ShowOnStartup")
+	var copyright_label : Label = get_node("/root/Pixelorama").find_node_by_name(self, "CopyrightLabel")
 
-	if Global.config_cache.has_section_key("preferences", "startup"):
-		show_on_startup_button.pressed = !Global.config_cache.get_value("preferences", "startup")
-	window_title = "Pixelorama" + " " + Global.current_version
+	if get_node("/root/Pixelorama").config_cache.has_section_key("preferences", "startup"):
+		show_on_startup_button.pressed = !get_node("/root/Pixelorama").config_cache.get_value("preferences", "startup")
+	window_title = "Pixelorama" + " " + get_node("/root/Pixelorama").current_version
 
 	chosen_artwork = artworks.keys()[randi() % artworks.size()]
 	splash_art_texturerect.texture = artworks[chosen_artwork][0]
@@ -29,15 +29,15 @@ func _on_SplashDialog_about_to_show() -> void:
 	art_by_label.text = tr("Art by: %s") % chosen_artwork
 	art_by_label.hint_tooltip = artworks[chosen_artwork][1]
 
-	if Global.is_cjk(TranslationServer.get_locale()):
+	if get_node("/root/Pixelorama").is_cjk(TranslationServer.get_locale()):
 		show_on_startup_button.add_font_override("font", cjk_font)
 		copyright_label.add_font_override("font", cjk_font)
 	else:
 		show_on_startup_button.add_font_override("font", latin_font)
 		copyright_label.add_font_override("font", latin_font)
 
-	get_stylebox("panel", "WindowDialog").bg_color = Global.control.theme.get_stylebox("panel", "WindowDialog").bg_color
-	get_stylebox("panel", "WindowDialog").border_color = Global.control.theme.get_stylebox("panel", "WindowDialog").border_color
+	get_stylebox("panel", "WindowDialog").bg_color = get_node("/root/Pixelorama").control.theme.get_stylebox("panel", "WindowDialog").bg_color
+	get_stylebox("panel", "WindowDialog").border_color = get_node("/root/Pixelorama").control.theme.get_stylebox("panel", "WindowDialog").border_color
 	if OS.get_name() == "HTML5":
 		$Contents/ButtonsPatronsLogos/Buttons/OpenLastBtn.visible = false
 
@@ -48,10 +48,10 @@ func _on_ArtCredits_pressed() -> void:
 
 func _on_ShowOnStartup_toggled(pressed : bool) -> void:
 	if pressed:
-		Global.config_cache.set_value("preferences", "startup", false)
+		get_node("/root/Pixelorama").config_cache.set_value("preferences", "startup", false)
 	else:
-		Global.config_cache.set_value("preferences", "startup", true)
-	Global.config_cache.save("user://cache.ini")
+		get_node("/root/Pixelorama").config_cache.set_value("preferences", "startup", true)
+	get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
 
 
 func _on_PatreonButton_pressed() -> void:
@@ -68,14 +68,14 @@ func _on_DiscordButton_pressed() -> void:
 
 func _on_NewBtn_pressed() -> void:
 	visible = false
-	Global.top_menu_container.file_menu_id_pressed(0)
+	get_node("/root/Pixelorama").top_menu_container.file_menu_id_pressed(0)
 
 
 func _on_OpenBtn__pressed() -> void:
 	visible = false
-	Global.top_menu_container.file_menu_id_pressed(1)
+	get_node("/root/Pixelorama").top_menu_container.file_menu_id_pressed(1)
 
 
 func _on_OpenLastBtn_pressed() -> void:
 	visible = false
-	Global.top_menu_container.file_menu_id_pressed(2)
+	get_node("/root/Pixelorama").top_menu_container.file_menu_id_pressed(2)

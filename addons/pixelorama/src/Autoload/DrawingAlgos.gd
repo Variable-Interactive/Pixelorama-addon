@@ -237,7 +237,7 @@ func colorDistance(c1 : Color, c2 : Color) -> float:
 func scale_image(width : int, height : int, interpolation : int) -> void:
 	general_do_scale(width, height)
 
-	for f in Global.current_project.frames:
+	for f in get_node("/root/Pixelorama").current_project.frames:
 		for i in range(f.cels.size() - 1, -1, -1):
 			var sprite := Image.new()
 			sprite.copy_from(f.cels[i].image)
@@ -249,8 +249,8 @@ func scale_image(width : int, height : int, interpolation : int) -> void:
 				sprite.resize(width, height, 0)
 			else:
 				sprite.resize(width, height, interpolation)
-			Global.current_project.undo_redo.add_do_property(f.cels[i].image, "data", sprite.data)
-			Global.current_project.undo_redo.add_undo_property(f.cels[i].image, "data", f.cels[i].image.data)
+			get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(f.cels[i].image, "data", sprite.data)
+			get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(f.cels[i].image, "data", f.cels[i].image.data)
 
 	general_undo_scale()
 
@@ -259,7 +259,7 @@ func crop_image(image : Image) -> void:
 	# Use first cel as a starting rectangle
 	var used_rect : Rect2 = image.get_used_rect()
 
-	for f in Global.current_project.frames:
+	for f in get_node("/root/Pixelorama").current_project.frames:
 		# However, if first cel is empty, loop through all cels until we find one that isn't
 		for cel in f.cels:
 			if used_rect != Rect2(0, 0, 0, 0):
@@ -280,59 +280,59 @@ func crop_image(image : Image) -> void:
 	var width := used_rect.size.x
 	var height := used_rect.size.y
 	general_do_scale(width, height)
-	for f in Global.current_project.frames:
+	for f in get_node("/root/Pixelorama").current_project.frames:
 		# Loop through all the layers to crop them
-		for j in range(Global.current_project.layers.size() - 1, -1, -1):
+		for j in range(get_node("/root/Pixelorama").current_project.layers.size() - 1, -1, -1):
 			var sprite : Image = f.cels[j].image.get_rect(used_rect)
-			Global.current_project.undo_redo.add_do_property(f.cels[j].image, "data", sprite.data)
-			Global.current_project.undo_redo.add_undo_property(f.cels[j].image, "data", f.cels[j].image.data)
+			get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(f.cels[j].image, "data", sprite.data)
+			get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(f.cels[j].image, "data", f.cels[j].image.data)
 
 	general_undo_scale()
 
 
 func resize_canvas(width : int, height : int, offset_x : int, offset_y : int) -> void:
 	general_do_scale(width, height)
-	for f in Global.current_project.frames:
+	for f in get_node("/root/Pixelorama").current_project.frames:
 		for c in f.cels:
 			var sprite := Image.new()
 			sprite.create(width, height, false, Image.FORMAT_RGBA8)
-			sprite.blend_rect(c.image, Rect2(Vector2.ZERO, Global.current_project.size), Vector2(offset_x, offset_y))
-			Global.current_project.undo_redo.add_do_property(c.image, "data", sprite.data)
-			Global.current_project.undo_redo.add_undo_property(c.image, "data", c.image.data)
+			sprite.blend_rect(c.image, Rect2(Vector2.ZERO, get_node("/root/Pixelorama").current_project.size), Vector2(offset_x, offset_y))
+			get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(c.image, "data", sprite.data)
+			get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(c.image, "data", c.image.data)
 
 	general_undo_scale()
 
 
 func general_do_scale(width : int, height : int) -> void:
-	var x_ratio = Global.current_project.size.x / width
-	var y_ratio = Global.current_project.size.y / height
-	var new_x_symmetry_point = Global.current_project.x_symmetry_point / x_ratio
-	var new_y_symmetry_point = Global.current_project.y_symmetry_point / y_ratio
-	var new_x_symmetry_axis_points = Global.current_project.x_symmetry_axis.points
-	var new_y_symmetry_axis_points = Global.current_project.y_symmetry_axis.points
+	var x_ratio = get_node("/root/Pixelorama").current_project.size.x / width
+	var y_ratio = get_node("/root/Pixelorama").current_project.size.y / height
+	var new_x_symmetry_point = get_node("/root/Pixelorama").current_project.x_symmetry_point / x_ratio
+	var new_y_symmetry_point = get_node("/root/Pixelorama").current_project.y_symmetry_point / y_ratio
+	var new_x_symmetry_axis_points = get_node("/root/Pixelorama").current_project.x_symmetry_axis.points
+	var new_y_symmetry_axis_points = get_node("/root/Pixelorama").current_project.y_symmetry_axis.points
 	new_x_symmetry_axis_points[0].y /= y_ratio
 	new_x_symmetry_axis_points[1].y /= y_ratio
 	new_y_symmetry_axis_points[0].x /= x_ratio
 	new_y_symmetry_axis_points[1].x /= x_ratio
 
-	Global.current_project.undos += 1
-	Global.current_project.undo_redo.create_action("Scale")
-	Global.current_project.undo_redo.add_do_property(Global.current_project, "size", Vector2(width, height).floor())
-	Global.current_project.undo_redo.add_do_property(Global.current_project, "x_symmetry_point", new_x_symmetry_point)
-	Global.current_project.undo_redo.add_do_property(Global.current_project, "y_symmetry_point", new_y_symmetry_point)
-	Global.current_project.undo_redo.add_do_property(Global.current_project.x_symmetry_axis, "points", new_x_symmetry_axis_points)
-	Global.current_project.undo_redo.add_do_property(Global.current_project.y_symmetry_axis, "points", new_y_symmetry_axis_points)
+	get_node("/root/Pixelorama").current_project.undos += 1
+	get_node("/root/Pixelorama").current_project.undo_redo.create_action("Scale")
+	get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(get_node("/root/Pixelorama").current_project, "size", Vector2(width, height).floor())
+	get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(get_node("/root/Pixelorama").current_project, "x_symmetry_point", new_x_symmetry_point)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(get_node("/root/Pixelorama").current_project, "y_symmetry_point", new_y_symmetry_point)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(get_node("/root/Pixelorama").current_project.x_symmetry_axis, "points", new_x_symmetry_axis_points)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_do_property(get_node("/root/Pixelorama").current_project.y_symmetry_axis, "points", new_y_symmetry_axis_points)
 
 
 func general_undo_scale() -> void:
-	Global.current_project.undo_redo.add_undo_property(Global.current_project, "size", Global.current_project.size)
-	Global.current_project.undo_redo.add_undo_property(Global.current_project, "x_symmetry_point", Global.current_project.x_symmetry_point)
-	Global.current_project.undo_redo.add_undo_property(Global.current_project, "y_symmetry_point", Global.current_project.y_symmetry_point)
-	Global.current_project.undo_redo.add_undo_property(Global.current_project.x_symmetry_axis, "points", Global.current_project.x_symmetry_axis.points)
-	Global.current_project.undo_redo.add_undo_property(Global.current_project.y_symmetry_axis, "points", Global.current_project.y_symmetry_axis.points)
-	Global.current_project.undo_redo.add_undo_method(Global, "undo")
-	Global.current_project.undo_redo.add_do_method(Global, "redo")
-	Global.current_project.undo_redo.commit_action()
+	get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(get_node("/root/Pixelorama").current_project, "size", get_node("/root/Pixelorama").current_project.size)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(get_node("/root/Pixelorama").current_project, "x_symmetry_point", get_node("/root/Pixelorama").current_project.x_symmetry_point)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(get_node("/root/Pixelorama").current_project, "y_symmetry_point", get_node("/root/Pixelorama").current_project.y_symmetry_point)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(get_node("/root/Pixelorama").current_project.x_symmetry_axis, "points", get_node("/root/Pixelorama").current_project.x_symmetry_axis.points)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_undo_property(get_node("/root/Pixelorama").current_project.y_symmetry_axis, "points", get_node("/root/Pixelorama").current_project.y_symmetry_axis.points)
+	get_node("/root/Pixelorama").current_project.undo_redo.add_undo_method(get_node("/root/Pixelorama"), "undo")
+	get_node("/root/Pixelorama").current_project.undo_redo.add_do_method(get_node("/root/Pixelorama"), "redo")
+	get_node("/root/Pixelorama").current_project.undo_redo.commit_action()
 
 
 func invert_image_colors(image : Image, pixels : Array, red := true, green := true, blue := true, alpha := false) -> void:
@@ -386,13 +386,13 @@ func generate_outline(image : Image, pixels : Array, outline_color : Color, thic
 				var outline_pos : Vector2 = pos + Vector2.LEFT # Left
 				if outline_pos.x < 0 || image.get_pixelv(outline_pos).a == 0:
 					var new_pos : Vector2 = pos + Vector2.RIGHT * (i - 1)
-					if new_pos.x < Global.current_project.size.x:
+					if new_pos.x < get_node("/root/Pixelorama").current_project.size.x:
 						var new_pixel = image.get_pixelv(new_pos)
 						if new_pixel.a > 0:
 							new_image.set_pixelv(new_pos, outline_color)
 
 				outline_pos = pos + Vector2.RIGHT # Right
-				if outline_pos.x >= Global.current_project.size.x || image.get_pixelv(outline_pos).a == 0:
+				if outline_pos.x >= get_node("/root/Pixelorama").current_project.size.x || image.get_pixelv(outline_pos).a == 0:
 					var new_pos : Vector2 = pos + Vector2.LEFT * (i - 1)
 					if new_pos.x >= 0:
 						var new_pixel = image.get_pixelv(new_pos)
@@ -402,13 +402,13 @@ func generate_outline(image : Image, pixels : Array, outline_color : Color, thic
 				outline_pos = pos + Vector2.UP # Up
 				if outline_pos.y < 0 || image.get_pixelv(outline_pos).a == 0:
 					var new_pos : Vector2 = pos + Vector2.DOWN * (i - 1)
-					if new_pos.y < Global.current_project.size.y:
+					if new_pos.y < get_node("/root/Pixelorama").current_project.size.y:
 						var new_pixel = image.get_pixelv(new_pos)
 						if new_pixel.a > 0:
 							new_image.set_pixelv(new_pos, outline_color)
 
 				outline_pos = pos + Vector2.DOWN # Down
-				if outline_pos.y >= Global.current_project.size.y || image.get_pixelv(outline_pos).a == 0:
+				if outline_pos.y >= get_node("/root/Pixelorama").current_project.size.y || image.get_pixelv(outline_pos).a == 0:
 					var new_pos : Vector2 = pos + Vector2.UP * (i - 1)
 					if new_pos.y >= 0:
 						var new_pixel = image.get_pixelv(new_pos)
@@ -419,29 +419,29 @@ func generate_outline(image : Image, pixels : Array, outline_color : Color, thic
 					outline_pos = pos + (Vector2.LEFT + Vector2.UP) # Top left
 					if (outline_pos.x < 0 && outline_pos.y < 0) || image.get_pixelv(outline_pos).a == 0:
 						var new_pos : Vector2 = pos + (Vector2.RIGHT + Vector2.DOWN) * (i - 1)
-						if new_pos.x < Global.current_project.size.x && new_pos.y < Global.current_project.size.y:
+						if new_pos.x < get_node("/root/Pixelorama").current_project.size.x && new_pos.y < get_node("/root/Pixelorama").current_project.size.y:
 							var new_pixel = image.get_pixelv(new_pos)
 							if new_pixel.a > 0:
 								new_image.set_pixelv(new_pos, outline_color)
 
 					outline_pos = pos + (Vector2.LEFT + Vector2.DOWN) # Bottom left
-					if (outline_pos.x < 0 && outline_pos.y >= Global.current_project.size.y) || image.get_pixelv(outline_pos).a == 0:
+					if (outline_pos.x < 0 && outline_pos.y >= get_node("/root/Pixelorama").current_project.size.y) || image.get_pixelv(outline_pos).a == 0:
 						var new_pos : Vector2 = pos + (Vector2.RIGHT + Vector2.UP) * (i - 1)
-						if new_pos.x < Global.current_project.size.x && new_pos.y >= 0:
+						if new_pos.x < get_node("/root/Pixelorama").current_project.size.x && new_pos.y >= 0:
 							var new_pixel = image.get_pixelv(new_pos)
 							if new_pixel.a > 0:
 								new_image.set_pixelv(new_pos, outline_color)
 
 					outline_pos = pos + (Vector2.RIGHT + Vector2.UP) # Top right
-					if (outline_pos.x >= Global.current_project.size.x && outline_pos.y < 0) || image.get_pixelv(outline_pos).a == 0:
+					if (outline_pos.x >= get_node("/root/Pixelorama").current_project.size.x && outline_pos.y < 0) || image.get_pixelv(outline_pos).a == 0:
 						var new_pos : Vector2 = pos + (Vector2.LEFT + Vector2.DOWN) * (i - 1)
-						if new_pos.x >= 0 && new_pos.y < Global.current_project.size.y:
+						if new_pos.x >= 0 && new_pos.y < get_node("/root/Pixelorama").current_project.size.y:
 							var new_pixel = image.get_pixelv(new_pos)
 							if new_pixel.a > 0:
 								new_image.set_pixelv(new_pos, outline_color)
 
 					outline_pos = pos + (Vector2.RIGHT + Vector2.DOWN) # Bottom right
-					if (outline_pos.x >= Global.current_project.size.x && outline_pos.y >= Global.current_project.size.y) || image.get_pixelv(outline_pos).a == 0:
+					if (outline_pos.x >= get_node("/root/Pixelorama").current_project.size.x && outline_pos.y >= get_node("/root/Pixelorama").current_project.size.y) || image.get_pixelv(outline_pos).a == 0:
 						var new_pos : Vector2 = pos + (Vector2.LEFT + Vector2.UP) * (i - 1)
 						if new_pos.x >= 0 && new_pos.y >= 0:
 							var new_pixel = image.get_pixelv(new_pos)
@@ -456,7 +456,7 @@ func generate_outline(image : Image, pixels : Array, outline_color : Color, thic
 						new_image.set_pixelv(new_pos, outline_color)
 
 				new_pos = pos + Vector2.RIGHT * i # Right
-				if new_pos.x < Global.current_project.size.x:
+				if new_pos.x < get_node("/root/Pixelorama").current_project.size.x:
 					var new_pixel = image.get_pixelv(new_pos)
 					if new_pixel.a == 0:
 						new_image.set_pixelv(new_pos, outline_color)
@@ -468,7 +468,7 @@ func generate_outline(image : Image, pixels : Array, outline_color : Color, thic
 						new_image.set_pixelv(new_pos, outline_color)
 
 				new_pos = pos + Vector2.DOWN * i # Down
-				if new_pos.y < Global.current_project.size.y:
+				if new_pos.y < get_node("/root/Pixelorama").current_project.size.y:
 					var new_pixel = image.get_pixelv(new_pos)
 					if new_pixel.a == 0:
 						new_image.set_pixelv(new_pos, outline_color)
@@ -481,19 +481,19 @@ func generate_outline(image : Image, pixels : Array, outline_color : Color, thic
 							new_image.set_pixelv(new_pos, outline_color)
 
 					new_pos = pos + (Vector2.LEFT + Vector2.DOWN) * i # Bottom left
-					if new_pos.x >= 0 && new_pos.y < Global.current_project.size.y:
+					if new_pos.x >= 0 && new_pos.y < get_node("/root/Pixelorama").current_project.size.y:
 						var new_pixel = image.get_pixelv(new_pos)
 						if new_pixel.a == 0:
 							new_image.set_pixelv(new_pos, outline_color)
 
 					new_pos = pos + (Vector2.RIGHT + Vector2.UP) * i # Top right
-					if new_pos.x < Global.current_project.size.x && new_pos.y >= 0:
+					if new_pos.x < get_node("/root/Pixelorama").current_project.size.x && new_pos.y >= 0:
 						var new_pixel = image.get_pixelv(new_pos)
 						if new_pixel.a == 0:
 							new_image.set_pixelv(new_pos, outline_color)
 
 					new_pos = pos + (Vector2.RIGHT + Vector2.DOWN) * i # Bottom right
-					if new_pos.x < Global.current_project.size.x && new_pos.y < Global.current_project.size.y:
+					if new_pos.x < get_node("/root/Pixelorama").current_project.size.x && new_pos.y < get_node("/root/Pixelorama").current_project.size.y:
 						var new_pixel = image.get_pixelv(new_pos)
 						if new_pixel.a == 0:
 							new_image.set_pixelv(new_pos, outline_color)
@@ -538,7 +538,7 @@ func adjust_hsv(img: Image, delta_h : float, delta_s : float, delta_v : float, p
 	img.unlock()
 
 
-func generate_gradient(image : Image, colors : Array, steps := 2, direction : int = GradientDirection.TOP, pixels = Global.current_project.selected_pixels) -> void:
+func generate_gradient(image : Image, colors : Array, steps := 2, direction : int = GradientDirection.TOP, pixels = get_node("/root/Pixelorama").current_project.selected_pixels) -> void:
 	if colors.size() < 2:
 		return
 

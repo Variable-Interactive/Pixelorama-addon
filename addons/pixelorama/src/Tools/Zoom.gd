@@ -11,11 +11,11 @@ func _on_ModeOptions_item_selected(id):
 
 
 func _on_FitToFrame_pressed():
-	Global.camera.fit_to_frame(Global.current_project.size)
+	get_node("/root/Pixelorama").camera.fit_to_frame(get_node("/root/Pixelorama").current_project.size)
 
 
 func _on_100_pressed():
-	Global.camera.zoom_100()
+	get_node("/root/Pixelorama").camera.zoom_100()
 
 
 func get_config() -> Dictionary:
@@ -33,7 +33,7 @@ func update_config() -> void:
 
 
 func draw_start(_position : Vector2) -> void:
-	Global.camera.zoom_camera(_zoom_mode * 2 - 1)
+	get_node("/root/Pixelorama").camera.zoom_camera(_zoom_mode * 2 - 1)
 
 
 func draw_move(_position : Vector2) -> void:

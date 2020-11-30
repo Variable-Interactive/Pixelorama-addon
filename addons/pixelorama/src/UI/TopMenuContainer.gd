@@ -5,8 +5,10 @@ var file_menu : PopupMenu
 var view_menu : PopupMenu
 var zen_mode := false
 
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	setup_file_menu()
 	setup_edit_menu()
 	setup_view_menu()
@@ -26,7 +28,7 @@ func setup_file_menu() -> void:
 		"Export as..." : InputMap.get_action_list("export_file_as")[0].get_scancode_with_modifiers(),
 		"Quit" : InputMap.get_action_list("quit")[0].get_scancode_with_modifiers(),
 		}
-	file_menu = Global.file_menu.get_popup()
+	file_menu = get_node("/root/Pixelorama").file_menu.get_popup()
 	var i := 0
 
 	for item in file_menu_items.keys():
@@ -44,11 +46,11 @@ func setup_file_menu() -> void:
 
 
 func setup_recent_projects_submenu(item : String) -> void:
-	Global.recent_projects_submenu.connect("id_pressed", self, "on_recent_projects_submenu_id_pressed")
-	Global.update_recent_projects_submenu()
+	get_node("/root/Pixelorama").recent_projects_submenu.connect("id_pressed", self, "on_recent_projects_submenu_id_pressed")
+	get_node("/root/Pixelorama").update_recent_projects_submenu()
 
-	file_menu.add_child(Global.recent_projects_submenu)
-	file_menu.add_submenu_item(item, Global.recent_projects_submenu.get_name())
+	file_menu.add_child(get_node("/root/Pixelorama").recent_projects_submenu)
+	file_menu.add_submenu_item(item, get_node("/root/Pixelorama").recent_projects_submenu.get_name())
 
 
 func setup_edit_menu() -> void:
@@ -62,7 +64,7 @@ func setup_edit_menu() -> void:
 		"Clear Selection" : 0,
 		"Preferences" : 0
 		}
-	var edit_menu : PopupMenu = Global.edit_menu.get_popup()
+	var edit_menu : PopupMenu = get_node("/root/Pixelorama").edit_menu.get_popup()
 	var i := 0
 
 	for item in edit_menu_items.keys():
@@ -83,7 +85,7 @@ func setup_view_menu() -> void:
 		"Zen Mode" : InputMap.get_action_list("zen_mode")[0].get_scancode_with_modifiers(),
 		"Fullscreen Mode" : InputMap.get_action_list("toggle_fullscreen")[0].get_scancode_with_modifiers(),
 		}
-	view_menu = Global.view_menu.get_popup()
+	view_menu = get_node("/root/Pixelorama").view_menu.get_popup()
 
 	var i := 0
 	for item in view_menu_items.keys():
@@ -100,9 +102,9 @@ func setup_view_menu() -> void:
 
 
 func setup_tile_mode_submenu(item : String):
-	Global.tile_mode_submenu.connect("id_pressed", self, "tile_mode_submenu_id_pressed")
-	view_menu.add_child(Global.tile_mode_submenu)
-	view_menu.add_submenu_item(item, Global.tile_mode_submenu.get_name())
+	get_node("/root/Pixelorama").tile_mode_submenu.connect("id_pressed", self, "tile_mode_submenu_id_pressed")
+	view_menu.add_child(get_node("/root/Pixelorama").tile_mode_submenu)
+	view_menu.add_submenu_item(item, get_node("/root/Pixelorama").tile_mode_submenu.get_name())
 
 
 func setup_image_menu() -> void:
@@ -119,7 +121,7 @@ func setup_image_menu() -> void:
 		"Gradient" : 0,
 		# "Shader" : 0
 		}
-	var image_menu : PopupMenu = Global.image_menu.get_popup()
+	var image_menu : PopupMenu = get_node("/root/Pixelorama").image_menu.get_popup()
 
 	var i := 0
 	for item in image_menu_items.keys():
@@ -139,7 +141,7 @@ func setup_help_menu() -> void:
 		"Changelog" : 0,
 		"About Pixelorama" : 0
 		}
-	var help_menu : PopupMenu = Global.help_menu.get_popup()
+	var help_menu : PopupMenu = get_node("/root/Pixelorama").help_menu.get_popup()
 
 	var i := 0
 	for item in help_menu_items.keys():
@@ -164,92 +166,92 @@ func file_menu_id_pressed(id : int) -> void:
 		5: # Export
 			export_file()
 		6: # Export as
-			Global.export_dialog.popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").export_dialog.popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 		7: # Quit
-			Global.control.show_quit_dialog()
+			get_node("/root/Pixelorama").control.show_quit_dialog()
 
 
 func on_new_project_file_menu_option_pressed() -> void:
-	Global.new_image_dialog.popup_centered()
-	Global.dialog_open(true)
+	get_node("/root/Pixelorama").new_image_dialog.popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func open_project_file() -> void:
 	if OS.get_name() == "HTML5":
-		Html5FileExchange.load_image()
+		global.get_html5_file_exchange().load_image()
 	else:
-		Global.open_sprites_dialog.popup_centered()
-		Global.dialog_open(true)
-		Global.control.opensprite_file_selected = false
+		get_node("/root/Pixelorama").open_sprites_dialog.popup_centered()
+		get_node("/root/Pixelorama").dialog_open(true)
+		get_node("/root/Pixelorama").control.opensprite_file_selected = false
 
 
 func on_open_last_project_file_menu_option_pressed() -> void:
 	# Check if last project path is set and if yes then open
-	if Global.config_cache.has_section_key("preferences", "last_project_path"):
-		Global.control.load_last_project()
+	if get_node("/root/Pixelorama").config_cache.has_section_key("preferences", "last_project_path"):
+		get_node("/root/Pixelorama").control.load_last_project()
 	else: # if not then warn user that he didn't edit any project yet
-		Global.error_dialog.set_text("You haven't saved or opened any project in Pixelorama yet!")
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+		get_node("/root/Pixelorama").error_dialog.set_text("You haven't saved or opened any project in Pixelorama yet!")
+		get_node("/root/Pixelorama").error_dialog.popup_centered()
+		get_node("/root/Pixelorama").dialog_open(true)
 
 
 func save_project_file() -> void:
-	Global.control.is_quitting_on_save = false
-	var path = OpenSave.current_save_paths[Global.current_project_index]
+	get_node("/root/Pixelorama").control.is_quitting_on_save = false
+	var path = get_node("/root/Pixelorama").get_open_save().current_save_paths[get_node("/root/Pixelorama").current_project_index]
 	if path == "":
 		if OS.get_name() == "HTML5":
-			Global.save_sprites_html5_dialog.popup_centered()
+			get_node("/root/Pixelorama").save_sprites_html5_dialog.popup_centered()
 		else:
-			Global.save_sprites_dialog.popup_centered()
-		Global.dialog_open(true)
+			get_node("/root/Pixelorama").save_sprites_dialog.popup_centered()
+		get_node("/root/Pixelorama").dialog_open(true)
 	else:
-		Global.control._on_SaveSprite_file_selected(path)
+		get_node("/root/Pixelorama").control._on_SaveSprite_file_selected(path)
 
 
 func save_project_file_as() -> void:
-	Global.control.is_quitting_on_save = false
+	get_node("/root/Pixelorama").control.is_quitting_on_save = false
 	if OS.get_name() == "HTML5":
-		Global.save_sprites_html5_dialog.popup_centered()
+		get_node("/root/Pixelorama").save_sprites_html5_dialog.popup_centered()
 	else:
-		Global.save_sprites_dialog.popup_centered()
-	Global.dialog_open(true)
+		get_node("/root/Pixelorama").save_sprites_dialog.popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func export_file() -> void:
-	if Export.was_exported == false:
-		Global.export_dialog.popup_centered()
-		Global.dialog_open(true)
+	if get_node("/root/Pixelorama").get_export().was_exported == false:
+		get_node("/root/Pixelorama").export_dialog.popup_centered()
+		get_node("/root/Pixelorama").dialog_open(true)
 	else:
-		Export.external_export()
+		get_node("/root/Pixelorama").get_export().external_export()
 
 
 func on_recent_projects_submenu_id_pressed(id : int) -> void:
-	Global.control.load_recent_project_file(Global.recent_projects[id])
+	get_node("/root/Pixelorama").control.load_recent_project_file(get_node("/root/Pixelorama").recent_projects[id])
 
 
 func edit_menu_id_pressed(id : int) -> void:
 	match id:
 		0: # Undo
-			Global.current_project.undo_redo.undo()
+			get_node("/root/Pixelorama").current_project.undo_redo.undo()
 		1: # Redo
-			Global.control.redone = true
-			Global.current_project.undo_redo.redo()
-			Global.control.redone = false
+			get_node("/root/Pixelorama").control.redone = true
+			get_node("/root/Pixelorama").current_project.undo_redo.redo()
+			get_node("/root/Pixelorama").control.redone = false
 		2: # Copy
-			Global.selection_rectangle.copy()
+			get_node("/root/Pixelorama").selection_rectangle.copy()
 		3: # cut
-			Global.selection_rectangle.cut()
+			get_node("/root/Pixelorama").selection_rectangle.cut()
 		4: # paste
-			Global.selection_rectangle.paste()
+			get_node("/root/Pixelorama").selection_rectangle.paste()
 		5: # Delete
-			Global.selection_rectangle.delete()
+			get_node("/root/Pixelorama").selection_rectangle.delete()
 		6: # Clear selection
-			Global.selection_rectangle.set_rect(Rect2(0, 0, 0, 0))
-			Global.selection_rectangle.select_rect()
+			get_node("/root/Pixelorama").selection_rectangle.set_rect(Rect2(0, 0, 0, 0))
+			get_node("/root/Pixelorama").selection_rectangle.select_rect()
 		7: # Preferences
-			Global.preferences_dialog.popup_centered(Vector2(400, 280))
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").preferences_dialog.popup_centered(Vector2(400, 280))
+			get_node("/root/Pixelorama").dialog_open(true)
 
 
 func view_menu_id_pressed(id : int) -> void:
@@ -268,66 +270,66 @@ func view_menu_id_pressed(id : int) -> void:
 			toggle_zen_mode()
 		7: # Fullscreen mode
 			toggle_fullscreen()
-	Global.canvas.update()
+	get_node("/root/Pixelorama").canvas.update()
 
 
 func tile_mode_submenu_id_pressed(id : int):
-	Global.transparent_checker._init_position(id)
-	for i in range(len(Global.Tile_Mode)):
+	get_node("/root/Pixelorama").transparent_checker._init_position(id)
+	for i in range(len(get_node("/root/Pixelorama").Tile_Mode)):
 		if  i != id:
-			Global.tile_mode_submenu.set_item_checked(i, false)
+			get_node("/root/Pixelorama").tile_mode_submenu.set_item_checked(i, false)
 		else:
-			Global.tile_mode_submenu.set_item_checked(i, true)
-	Global.canvas.tile_mode.update()
-	Global.canvas.grid.update()
-	Global.canvas.grid.set_position(Global.transparent_checker.get_position())
+			get_node("/root/Pixelorama").tile_mode_submenu.set_item_checked(i, true)
+	get_node("/root/Pixelorama").canvas.tile_mode.update()
+	get_node("/root/Pixelorama").canvas.grid.update()
+	get_node("/root/Pixelorama").canvas.grid.set_position(get_node("/root/Pixelorama").transparent_checker.get_position())
 
 
 func toggle_mirror_view() -> void:
-	Global.mirror_view = !Global.mirror_view
-	view_menu.set_item_checked(1, Global.mirror_view)
+	get_node("/root/Pixelorama").mirror_view = !get_node("/root/Pixelorama").mirror_view
+	view_menu.set_item_checked(1, get_node("/root/Pixelorama").mirror_view)
 
 
 func toggle_show_grid() -> void:
-	Global.draw_grid = !Global.draw_grid
-	view_menu.set_item_checked(2, Global.draw_grid)
-	Global.canvas.grid.update()
+	get_node("/root/Pixelorama").draw_grid = !get_node("/root/Pixelorama").draw_grid
+	view_menu.set_item_checked(2, get_node("/root/Pixelorama").draw_grid)
+	get_node("/root/Pixelorama").canvas.grid.update()
 
 
 func toggle_show_rulers() -> void:
-	Global.show_rulers = !Global.show_rulers
-	view_menu.set_item_checked(3, Global.show_rulers)
-	Global.horizontal_ruler.visible = Global.show_rulers
-	Global.vertical_ruler.visible = Global.show_rulers
+	get_node("/root/Pixelorama").show_rulers = !get_node("/root/Pixelorama").show_rulers
+	view_menu.set_item_checked(3, get_node("/root/Pixelorama").show_rulers)
+	get_node("/root/Pixelorama").horizontal_ruler.visible = get_node("/root/Pixelorama").show_rulers
+	get_node("/root/Pixelorama").vertical_ruler.visible = get_node("/root/Pixelorama").show_rulers
 
 
 func toggle_show_guides() -> void:
-	Global.show_guides = !Global.show_guides
-	view_menu.set_item_checked(4, Global.show_guides)
-	for guide in Global.canvas.get_children():
-		if guide is Guide and guide in Global.current_project.guides:
-			guide.visible = Global.show_guides
+	get_node("/root/Pixelorama").show_guides = !get_node("/root/Pixelorama").show_guides
+	view_menu.set_item_checked(4, get_node("/root/Pixelorama").show_guides)
+	for guide in get_node("/root/Pixelorama").canvas.get_children():
+		if guide is Guide and guide in get_node("/root/Pixelorama").current_project.guides:
+			guide.visible = get_node("/root/Pixelorama").show_guides
 			if guide is SymmetryGuide:
 				if guide.type == Guide.Types.HORIZONTAL:
-					guide.visible = Global.show_x_symmetry_axis and Global.show_guides
+					guide.visible = get_node("/root/Pixelorama").show_x_symmetry_axis and get_node("/root/Pixelorama").show_guides
 				else:
-					guide.visible = Global.show_y_symmetry_axis and Global.show_guides
+					guide.visible = get_node("/root/Pixelorama").show_y_symmetry_axis and get_node("/root/Pixelorama").show_guides
 
 
 func toggle_show_anim_timeline() -> void:
 	if zen_mode:
 		return
-	Global.show_animation_timeline = !Global.show_animation_timeline
-	view_menu.set_item_checked(5, Global.show_animation_timeline)
-	Global.animation_timeline.visible = Global.show_animation_timeline
+	get_node("/root/Pixelorama").show_animation_timeline = !get_node("/root/Pixelorama").show_animation_timeline
+	view_menu.set_item_checked(5, get_node("/root/Pixelorama").show_animation_timeline)
+	get_node("/root/Pixelorama").animation_timeline.visible = get_node("/root/Pixelorama").show_animation_timeline
 
 
 func toggle_zen_mode() -> void:
-	if Global.show_animation_timeline:
-		Global.animation_timeline.visible = zen_mode
-	Global.control.get_node("MenuAndUI/UI/ToolPanel").visible = zen_mode
-	Global.control.get_node("MenuAndUI/UI/RightPanel").visible = zen_mode
-	Global.control.get_node("MenuAndUI/UI/CanvasAndTimeline/ViewportAndRulers/TabsContainer").visible = zen_mode
+	if get_node("/root/Pixelorama").show_animation_timeline:
+		get_node("/root/Pixelorama").animation_timeline.visible = zen_mode
+	get_node("/root/Pixelorama").control.get_node("MenuAndUI/UI/ToolPanel").visible = zen_mode
+	get_node("/root/Pixelorama").control.get_node("MenuAndUI/UI/RightPanel").visible = zen_mode
+	get_node("/root/Pixelorama").control.get_node("MenuAndUI/UI/CanvasAndTimeline/ViewportAndRulers/TabsContainer").visible = zen_mode
 	zen_mode = !zen_mode
 	view_menu.set_item_checked(6, zen_mode)
 
@@ -338,9 +340,9 @@ func toggle_fullscreen() -> void:
 
 
 func image_menu_id_pressed(id : int) -> void:
-	if Global.current_project.layers[Global.current_project.current_layer].locked: # No changes if the layer is locked
+	if get_node("/root/Pixelorama").current_project.layers[get_node("/root/Pixelorama").current_project.current_layer].locked: # No changes if the layer is locked
 		return
-	var image : Image = Global.current_project.frames[Global.current_project.current_frame].cels[Global.current_project.current_layer].image
+	var image : Image = get_node("/root/Pixelorama").current_project.frames[get_node("/root/Pixelorama").current_project.current_frame].cels[get_node("/root/Pixelorama").current_project.current_layer].image
 	match id:
 		0: # Scale Image
 			show_scale_image_popup()
@@ -352,19 +354,19 @@ func image_menu_id_pressed(id : int) -> void:
 			show_resize_canvas_popup()
 
 		3: # Flip
-			Global.control.get_node("Dialogs/ImageEffects/FlipImageDialog").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/FlipImageDialog").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 
 		4: # Rotate
 			show_rotate_image_popup()
 
 		5: # Invert Colors
-			Global.control.get_node("Dialogs/ImageEffects/InvertColorsDialog").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/InvertColorsDialog").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 
 		6: # Desaturation
-			Global.control.get_node("Dialogs/ImageEffects/DesaturateDialog").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/DesaturateDialog").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 
 		7: # Outline
 			show_add_outline_popup()
@@ -373,44 +375,44 @@ func image_menu_id_pressed(id : int) -> void:
 			show_hsv_configuration_popup()
 
 		9: # Gradient
-			Global.control.get_node("Dialogs/ImageEffects/GradientDialog").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/GradientDialog").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 
 		10: # Shader
-			Global.control.get_node("Dialogs/ImageEffects/ShaderEffect").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/ShaderEffect").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 
 
 func show_scale_image_popup() -> void:
-	Global.control.get_node("Dialogs/ImageEffects/ScaleImage").popup_centered()
-	Global.dialog_open(true)
+	get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/ScaleImage").popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func show_resize_canvas_popup() -> void:
-	Global.control.get_node("Dialogs/ImageEffects/ResizeCanvas").popup_centered()
-	Global.dialog_open(true)
+	get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/ResizeCanvas").popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func show_rotate_image_popup() -> void:
-	Global.control.get_node("Dialogs/ImageEffects/RotateImage").popup_centered()
-	Global.dialog_open(true)
+	get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/RotateImage").popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func show_add_outline_popup() -> void:
-	Global.control.get_node("Dialogs/ImageEffects/OutlineDialog").popup_centered()
-	Global.dialog_open(true)
+	get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/OutlineDialog").popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func show_hsv_configuration_popup() -> void:
-	Global.control.get_node("Dialogs/ImageEffects/HSVDialog").popup_centered()
-	Global.dialog_open(true)
+	get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/HSVDialog").popup_centered()
+	get_node("/root/Pixelorama").dialog_open(true)
 
 
 func help_menu_id_pressed(id : int) -> void:
 	match id:
 		0: # Splash Screen
-			Global.control.get_node("Dialogs/SplashDialog").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/SplashDialog").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)
 		1: # Online Docs
 			OS.shell_open("https://orama-interactive.github.io/Pixelorama-Docs/")
 		2: # Issue Tracker
@@ -421,5 +423,5 @@ func help_menu_id_pressed(id : int) -> void:
 			else:
 				OS.shell_open("https://github.com/Orama-Interactive/Pixelorama/blob/master/CHANGELOG.md#v08---2020-10-14")
 		4: # About Pixelorama
-			Global.control.get_node("Dialogs/AboutDialog").popup_centered()
-			Global.dialog_open(true)
+			get_node("/root/Pixelorama").control.get_node("Dialogs/AboutDialog").popup_centered()
+			get_node("/root/Pixelorama").dialog_open(true)

@@ -66,8 +66,8 @@ func set_pixel_perfect(value: bool) -> void:
 		drawers = [simple_drawer, simple_drawer, simple_drawer, simple_drawer]
 
 
-func set_pixel(image: Image, position: Vector2, color: Color) -> void:
-	var project : Project = Global.current_project
+func set_pixel(image: Image, position: Vector2, color: Color, global) -> void:
+	var project : Project = global.current_project
 	drawers[0].set_pixel(image, position, color, color_op)
 
 	# Handle Mirroring

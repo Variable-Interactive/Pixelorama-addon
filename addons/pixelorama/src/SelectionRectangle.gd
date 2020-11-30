@@ -37,7 +37,7 @@ func set_rect(rect : Rect2) -> void:
 	polygon[3] = Vector2(rect.position.x, rect.end.y)
 	visible = not rect.has_no_area()
 
-	var project : Project = Global.current_project
+	var project : Project = get_node("/root/Pixelorama").current_project
 	if rect.has_no_area():
 		project.select_all_pixels()
 	else:
@@ -59,7 +59,7 @@ func move_rect(move : Vector2) -> void:
 
 func select_rect() -> void:
 	var undo_data = _get_undo_data(false)
-	Global.current_project.selected_rect = _selected_rect
+	get_node("/root/Pixelorama").current_project.selected_rect = _selected_rect
 	commit_undo("Rectangle Select", undo_data)
 
 
@@ -68,7 +68,7 @@ func move_start(move_pixel : bool) -> void:
 		return
 
 	_undo_data = _get_undo_data(true)
-	var project = Global.current_project
+	var project = get_node("/root/Pixelorama").current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 
 	var rect = Rect2(Vector2.ZERO, project.size)
@@ -80,7 +80,7 @@ func move_start(move_pixel : bool) -> void:
 	rect = Rect2(Vector2.ZERO, size)
 	_clear_image.resize(size.x, size.y, Image.INTERPOLATE_NEAREST)
 	image.blit_rect(_clear_image, rect, _clipped_rect.position)
-	Global.canvas.update_texture(project.current_layer)
+	get_node("/root/Pixelorama").canvas.update_texture(project.current_layer)
 
 	_move_pixel = true
 	update()
@@ -90,7 +90,7 @@ func move_end() -> void:
 	var undo_data = _undo_data if _move_pixel else _get_undo_data(false)
 
 	if _move_pixel:
-		var project = Global.current_project
+		var project = get_node("/root/Pixelorama").current_project
 		var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 		var size := _clipped_rect.size
 		var rect = Rect2(Vector2.ZERO, size)
@@ -98,7 +98,7 @@ func move_end() -> void:
 		_move_pixel = false
 		update()
 
-	Global.current_project.selected_rect = _selected_rect
+	get_node("/root/Pixelorama").current_project.selected_rect = _selected_rect
 	commit_undo("Rectangle Select", undo_data)
 	_undo_data.clear()
 
@@ -107,21 +107,22 @@ func copy() -> void:
 	if _selected_rect.has_no_area():
 		return
 
-	var project = Global.current_project
+	var project = get_node("/root/Pixelorama").current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 	_clipboard = image.get_rect(_selected_rect)
 	if _clipboard.is_invisible():
 		return
 	var brush = _clipboard.get_rect(_clipboard.get_used_rect())
 	project.brushes.append(brush)
-	Brushes.add_project_brush(brush)
+	Brushes.add_project_brush(get_node("/root/Pixelorama").brushes_popup 
+				,brush)
 
 func cut() -> void: # This is basically the same as copy + delete
 	if _selected_rect.has_no_area():
 		return
 
 	var undo_data = _get_undo_data(true)
-	var project = Global.current_project
+	var project = get_node("/root/Pixelorama").current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 	var size := _selected_rect.size
 	var rect = Rect2(Vector2.ZERO, size)
@@ -132,7 +133,8 @@ func cut() -> void: # This is basically the same as copy + delete
 	_clear_image.resize(size.x, size.y, Image.INTERPOLATE_NEAREST)
 	var brush = _clipboard.get_rect(_clipboard.get_used_rect())
 	project.brushes.append(brush)
-	Brushes.add_project_brush(brush)
+	Brushes.add_project_brush(get_node("/root/Pixelorama").brushes_popup,
+			brush)
 	move_end() # The selection_rectangle can be used while is moving, this prevents malfunctioning
 	image.blit_rect(_clear_image, rect, _selected_rect.position)
 	commit_undo("Draw", undo_data)
@@ -142,7 +144,7 @@ func paste() -> void:
 		return
 
 	var undo_data = _get_undo_data(true)
-	var project = Global.current_project
+	var project = get_node("/root/Pixelorama").current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 	var size := _selected_rect.size
 	var rect = Rect2(Vector2.ZERO, size)
@@ -153,7 +155,7 @@ func paste() -> void:
 
 func delete() -> void:
 	var undo_data = _get_undo_data(true)
-	var project = Global.current_project
+	var project = get_node("/root/Pixelorama").current_project
 	var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 	var size := _selected_rect.size
 	var rect = Rect2(Vector2.ZERO, size)
@@ -165,7 +167,7 @@ func delete() -> void:
 
 func commit_undo(action : String, undo_data : Dictionary) -> void:
 	var redo_data = _get_undo_data("image_data" in undo_data)
-	var project = Global.current_project
+	var project = get_node("/root/Pixelorama").current_project
 
 	project.undos += 1
 	project.undo_redo.create_action(action)
@@ -175,15 +177,15 @@ func commit_undo(action : String, undo_data : Dictionary) -> void:
 		var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 		project.undo_redo.add_do_property(image, "data", redo_data["image_data"])
 		project.undo_redo.add_undo_property(image, "data", undo_data["image_data"])
-	project.undo_redo.add_do_method(Global, "redo", project.current_frame, project.current_layer)
-	project.undo_redo.add_undo_method(Global, "undo", project.current_frame, project.current_layer)
+	project.undo_redo.add_do_method(get_node("/root/Pixelorama"), "redo", project.current_frame, project.current_layer)
+	project.undo_redo.add_undo_method(get_node("/root/Pixelorama"), "undo", project.current_frame, project.current_layer)
 	project.undo_redo.commit_action()
 
 
 func _get_undo_data(undo_image : bool) -> Dictionary:
 	var data = {}
-	var project = Global.current_project
-	data["selected_rect"] = Global.current_project.selected_rect
+	var project = get_node("/root/Pixelorama").current_project
+	data["selected_rect"] = get_node("/root/Pixelorama").current_project.selected_rect
 	if undo_image:
 		var image : Image = project.frames[project.current_frame].cels[project.current_layer].image
 		image.unlock()

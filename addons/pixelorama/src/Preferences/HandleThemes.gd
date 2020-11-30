@@ -32,8 +32,8 @@ func _ready() -> void:
 		theme_color_preview.get_child(1).color = color2
 		colors_container.add_child(theme_color_preview)
 
-	if Global.config_cache.has_section_key("preferences", "theme"):
-		var theme_id = Global.config_cache.get_value("preferences", "theme")
+	if get_node("/root/Pixelorama").config_cache.has_section_key("preferences", "theme"):
+		var theme_id = get_node("/root/Pixelorama").config_cache.get_value("preferences", "theme")
 		change_theme(theme_id)
 		buttons_container.get_child(theme_id).pressed = true
 	else:
@@ -45,58 +45,58 @@ func _on_Theme_pressed(index : int) -> void:
 	buttons_container.get_child(index).pressed = true
 	change_theme(index)
 
-	Global.config_cache.set_value("preferences", "theme", index)
-	Global.config_cache.save("user://cache.ini")
+	get_node("/root/Pixelorama").config_cache.set_value("preferences", "theme", index)
+	get_node("/root/Pixelorama").config_cache.save("user://cache.ini")
 
 
 func change_theme(ID : int) -> void:
-	var font = Global.control.theme.default_font
+	var font = get_node("/root/Pixelorama").control.theme.default_font
 	var main_theme : Theme = themes[ID][0]
 	if ID == 0 or ID == 1: # Dark or Gray Theme
-		Global.theme_type = Global.Theme_Types.DARK
+		get_node("/root/Pixelorama").theme_type = get_node("/root/Pixelorama").Theme_Types.DARK
 	elif ID == 2: # Godot's Theme
-		Global.theme_type = Global.Theme_Types.BLUE
+		get_node("/root/Pixelorama").theme_type = get_node("/root/Pixelorama").Theme_Types.BLUE
 	elif ID == 3: # Caramel Theme
-		Global.theme_type = Global.Theme_Types.CARAMEL
+		get_node("/root/Pixelorama").theme_type = get_node("/root/Pixelorama").Theme_Types.CARAMEL
 	elif ID == 4: # Light Theme
-		Global.theme_type = Global.Theme_Types.LIGHT
+		get_node("/root/Pixelorama").theme_type = get_node("/root/Pixelorama").Theme_Types.LIGHT
 	elif ID == 5: # Purple Theme
-		Global.theme_type = Global.Theme_Types.DARK
+		get_node("/root/Pixelorama").theme_type = get_node("/root/Pixelorama").Theme_Types.DARK
 
-	Global.control.theme = main_theme
-	Global.control.theme.default_font = font
-	Global.default_clear_color = main_theme.get_stylebox("panel", "PanelContainer").bg_color
-	VisualServer.set_default_clear_color(Color(Global.default_clear_color))
+	get_node("/root/Pixelorama").control.theme = main_theme
+	get_node("/root/Pixelorama").control.theme.default_font = font
+	get_node("/root/Pixelorama").default_clear_color = main_theme.get_stylebox("panel", "PanelContainer").bg_color
+	VisualServer.set_default_clear_color(Color(get_node("/root/Pixelorama").default_clear_color))
 
-	(Global.animation_timeline.get_stylebox("panel", "Panel") as StyleBoxFlat).bg_color = main_theme.get_stylebox("panel", "Panel").bg_color
-	var fake_vsplit_grabber : TextureRect = Global.find_node_by_name(Global.animation_timeline, "FakeVSplitContainerGrabber")
+	(get_node("/root/Pixelorama").animation_timeline.get_stylebox("panel", "Panel") as StyleBoxFlat).bg_color = main_theme.get_stylebox("panel", "Panel").bg_color
+	var fake_vsplit_grabber : TextureRect = get_node("/root/Pixelorama").find_node_by_name(get_node("/root/Pixelorama").animation_timeline, "FakeVSplitContainerGrabber")
 	fake_vsplit_grabber.texture = main_theme.get_icon("grabber", "VSplitContainer")
 
-	var layer_button_panel_container : PanelContainer = Global.find_node_by_name(Global.animation_timeline, "LayerButtonPanelContainer")
-	(layer_button_panel_container.get_stylebox("panel", "PanelContainer") as StyleBoxFlat).bg_color = Global.default_clear_color
+	var layer_button_panel_container : PanelContainer = get_node("/root/Pixelorama").find_node_by_name(get_node("/root/Pixelorama").animation_timeline, "LayerButtonPanelContainer")
+	(layer_button_panel_container.get_stylebox("panel", "PanelContainer") as StyleBoxFlat).bg_color = get_node("/root/Pixelorama").default_clear_color
 
 	var top_menu_style = main_theme.get_stylebox("TopMenu", "Panel")
 	var ruler_style = main_theme.get_stylebox("Ruler", "Button")
-	Global.top_menu_container.add_stylebox_override("panel", top_menu_style)
-	Global.horizontal_ruler.add_stylebox_override("normal", ruler_style)
-	Global.horizontal_ruler.add_stylebox_override("pressed", ruler_style)
-	Global.horizontal_ruler.add_stylebox_override("hover", ruler_style)
-	Global.horizontal_ruler.add_stylebox_override("focus", ruler_style)
-	Global.vertical_ruler.add_stylebox_override("normal", ruler_style)
-	Global.vertical_ruler.add_stylebox_override("pressed", ruler_style)
-	Global.vertical_ruler.add_stylebox_override("hover", ruler_style)
-	Global.vertical_ruler.add_stylebox_override("focus", ruler_style)
+	get_node("/root/Pixelorama").top_menu_container.add_stylebox_override("panel", top_menu_style)
+	get_node("/root/Pixelorama").horizontal_ruler.add_stylebox_override("normal", ruler_style)
+	get_node("/root/Pixelorama").horizontal_ruler.add_stylebox_override("pressed", ruler_style)
+	get_node("/root/Pixelorama").horizontal_ruler.add_stylebox_override("hover", ruler_style)
+	get_node("/root/Pixelorama").horizontal_ruler.add_stylebox_override("focus", ruler_style)
+	get_node("/root/Pixelorama").vertical_ruler.add_stylebox_override("normal", ruler_style)
+	get_node("/root/Pixelorama").vertical_ruler.add_stylebox_override("pressed", ruler_style)
+	get_node("/root/Pixelorama").vertical_ruler.add_stylebox_override("hover", ruler_style)
+	get_node("/root/Pixelorama").vertical_ruler.add_stylebox_override("focus", ruler_style)
 
 	for button in get_tree().get_nodes_in_group("UIButtons"):
 		if button is TextureButton:
 			var last_backslash = button.texture_normal.resource_path.get_base_dir().find_last("/")
 			var button_category = button.texture_normal.resource_path.get_base_dir().right(last_backslash + 1)
 			var normal_file_name = button.texture_normal.resource_path.get_file()
-			var theme_type = Global.theme_type
-			if theme_type == Global.Theme_Types.BLUE:
-				theme_type = Global.Theme_Types.DARK
+			var theme_type = get_node("/root/Pixelorama").theme_type
+			if theme_type == get_node("/root/Pixelorama").Theme_Types.BLUE:
+				theme_type = get_node("/root/Pixelorama").Theme_Types.DARK
 
-			var theme_type_string : String = Global.Theme_Types.keys()[theme_type].to_lower()
+			var theme_type_string : String = get_node("/root/Pixelorama").Theme_Types.keys()[theme_type].to_lower()
 			button.texture_normal = load("res://addons/pixelorama/assets/graphics/%s_themes/%s/%s" % [theme_type_string, button_category, normal_file_name])
 			if button.texture_pressed:
 				var pressed_file_name = button.texture_pressed.resource_path.get_file()
@@ -118,14 +118,14 @@ func change_theme(ID : int) -> void:
 				var last_backslash = texture.texture.resource_path.get_base_dir().find_last("/")
 				var button_category = texture.texture.resource_path.get_base_dir().right(last_backslash + 1)
 				var normal_file_name = texture.texture.resource_path.get_file()
-				var theme_type = Global.theme_type
-				if theme_type == Global.Theme_Types.CARAMEL or (theme_type == Global.Theme_Types.BLUE and button_category != "tools"):
-					theme_type = Global.Theme_Types.DARK
+				var theme_type = get_node("/root/Pixelorama").theme_type
+				if theme_type == get_node("/root/Pixelorama").Theme_Types.CARAMEL or (theme_type == get_node("/root/Pixelorama").Theme_Types.BLUE and button_category != "tools"):
+					theme_type = get_node("/root/Pixelorama").Theme_Types.DARK
 
-				var theme_type_string : String = Global.Theme_Types.keys()[theme_type].to_lower()
+				var theme_type_string : String = get_node("/root/Pixelorama").Theme_Types.keys()[theme_type].to_lower()
 				texture.texture = load("res://addons/pixelorama/assets/graphics/%s_themes/%s/%s" % [theme_type_string, button_category, normal_file_name])
 
 	# Make sure the frame text gets updated
-	Global.current_project.current_frame = Global.current_project.current_frame
+	get_node("/root/Pixelorama").current_project.current_frame = get_node("/root/Pixelorama").current_project.current_frame
 
-	Global.preferences_dialog.get_node("Popups/ShortcutSelector").theme = main_theme
+	get_node("/root/Pixelorama").preferences_dialog.get_node("Popups/ShortcutSelector").theme = main_theme

@@ -142,7 +142,7 @@ func load_image() -> void:
 		print("An error occurred while trying to display the image.")
 		return
 	else:
-		OpenSave.handle_loading_image(image_name, image)
+		get_node("/root/Pixelorama").get_open_save().handle_loading_image(image_name, image)
 
 
 func load_palette() -> void:
@@ -171,23 +171,23 @@ func load_palette() -> void:
 	var file_name = JavaScript.eval("fileName;", true)
 	if file_name.ends_with(".gpl"):
 		var palette := Palette.new()
-		palette = Import.import_gpl(file_name, palette_data)
-		Global.palette_container.attempt_to_import_palette(palette)
+		palette = get_node("/root/Pixelorama").get_import().import_gpl(file_name, palette_data)
+		get_node("/root/Pixelorama").palette_container.attempt_to_import_palette(palette)
 	elif file_name.ends_with(".pal"):
 		var palette := Palette.new()
-		palette = Import.import_pal_palette(file_name, palette_data)
-		Global.palette_container.attempt_to_import_palette(palette)
+		palette = get_node("/root/Pixelorama").get_import().import_pal_palette(file_name, palette_data)
+		get_node("/root/Pixelorama").palette_container.attempt_to_import_palette(palette)
 	else:
 		match file_type:
 			"image/png":
 				var image := Image.new()
 				var err = image.load_png_from_buffer(palette_data)
 				if !err:
-					Global.palette_container.import_image_palette(file_name, image)
+					get_node("/root/Pixelorama").palette_container.import_image_palette(file_name, image)
 			"application/json":
 				var palette : Palette = Palette.new().deserialize(palette_data)
 				palette.source_path = file_name
-				Global.palette_container.attempt_to_import_palette(palette)
+				get_node("/root/Pixelorama").palette_container.attempt_to_import_palette(palette)
 			var invalid_type:
 				print("Invalid type: " + invalid_type)
 				return
@@ -236,6 +236,6 @@ func load_shader() -> void:
 	var shader = Shader.new()
 	shader.code = file_data
 
-	var shader_effect_dialog = Global.control.get_node("Dialogs/ImageEffects/ShaderEffect")
+	var shader_effect_dialog = get_node("/root/Pixelorama").control.get_node("Dialogs/ImageEffects/ShaderEffect")
 	shader_effect_dialog.change_shader(shader, file_name.get_basename())
 

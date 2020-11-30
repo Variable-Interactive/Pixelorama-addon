@@ -11,7 +11,7 @@ func set_nodes() -> void:
 	affect_option_button = $VBoxContainer/OptionsContainer/AffectOptionButton
 
 
-func commit_action(_cel : Image, _pixels : Array, project : Project = Global.current_project) -> void:
+func commit_action(_cel : Image, _pixels : Array, project : Project = get_node("/root/Pixelorama").current_project) -> void:
 	flip_image(_cel, _pixels, project)
 
 
@@ -28,7 +28,7 @@ func _on_SelectionCheckBox_toggled(button_pressed : bool) -> void:
 	update_preview()
 
 
-func flip_image(image : Image, _pixels : Array, project : Project = Global.current_project) -> void:
+func flip_image(image : Image, _pixels : Array, project : Project = get_node("/root/Pixelorama").current_project) -> void:
 	var entire_image_selected : bool = _pixels.size() == project.size.x * project.size.y
 	if entire_image_selected:
 		if flip_h.pressed:

@@ -9,4 +9,4 @@ func _on_ScaleImage_confirmed() -> void:
 
 
 func _on_ScaleImage_popup_hide() -> void:
-	Global.dialog_open(false)
+	get_node("/root/Pixelorama").dialog_open(false)

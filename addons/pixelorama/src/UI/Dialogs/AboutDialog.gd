@@ -62,9 +62,9 @@ func _ready() -> void:
 
 
 func _on_AboutDialog_about_to_show() -> void:
-	window_title = tr("About Pixelorama") + " " + Global.current_version
+	window_title = tr("About Pixelorama") + " " + get_node("/root/Pixelorama").current_version
 
-	if Global.is_cjk(TranslationServer.get_locale()):
+	if get_node("/root/Pixelorama").is_cjk(TranslationServer.get_locale()):
 		slogan_label.add_font_override("font", cjk_font)
 		copyright_label.add_font_override("font", cjk_font_small)
 	else:

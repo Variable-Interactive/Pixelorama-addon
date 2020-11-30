@@ -11,14 +11,16 @@ var from_palette : Palette
 onready var palette_from_sprite_dialog = $"../../../../PaletteFromSpriteDialog"
 onready var remove_palette_warning = $"../../../../RemovePaletteWarning"
 
+var global
 
 func _ready() -> void:
+	global = get_node("/root/Pixelorama")
 	_load_palettes()
 
 	# Select default palette "Default"
 	on_palette_select(current_palette)
 
-	var add_palette_menu : PopupMenu = Global.add_palette_button.get_node("PopupMenu")
+	var add_palette_menu : PopupMenu = global.add_palette_button.get_node("PopupMenu")
 	add_palette_menu.connect("id_pressed", self, "add_palette_menu_id_pressed")
 
 
@@ -31,26 +33,26 @@ func _clear_swatches() -> void:
 
 func on_palette_select(palette_name : String) -> void:
 	_clear_swatches()
-	if Global.palettes.has(palette_name): # Palette exists in memory
+	if global.palettes.has(palette_name): # Palette exists in memory
 		current_palette = palette_name
-		var palette : Palette = Global.palettes[palette_name]
+		var palette : Palette = global.palettes[palette_name]
 		_display_palette(palette)
 
 
 func on_new_empty_palette() -> void:
-	Global.new_palette_dialog.window_title = "Create a new empty palette?"
-	Global.new_palette_name_line_edit.text = "Custom_Palette"
+	global.new_palette_dialog.window_title = "Create a new empty palette?"
+	global.new_palette_name_line_edit.text = "Custom_Palette"
 	from_palette = null
-	Global.new_palette_dialog.popup_centered()
-	Global.dialog_open(true)
+	global.new_palette_dialog.popup_centered()
+	global.dialog_open(true)
 
 
 func on_import_palette() -> void:
 	if OS.get_name() == "HTML5":
-		Html5FileExchange.load_palette()
+		global.get_html5_file_exchange().load_palette()
 	else:
-		Global.palette_import_file_dialog.popup_centered()
-		Global.dialog_open(true)
+		global.palette_import_file_dialog.popup_centered()
+		global.dialog_open(true)
 
 
 func on_palette_import_file_selected(path : String) -> void:
@@ -63,14 +65,14 @@ func on_palette_import_file_selected(path : String) -> void:
 			file.open(path, File.READ)
 			var text = file.get_as_text()
 			file.close()
-			palette = Import.import_gpl(path, text)
+			palette = global.get_import().import_gpl(path, text)
 	elif path.to_lower().ends_with("pal"):
 		var file = File.new()
 		if file.file_exists(path):
 			file.open(path, File.READ)
 			var text = file.get_as_text()
 			file.close()
-			palette = Import.import_pal_palette(path, text)
+			palette = global.get_import().import_pal_palette(path, text)
 	elif path.to_lower().ends_with("png") or path.to_lower().ends_with("bmp") or path.to_lower().ends_with("hdr") or path.to_lower().ends_with("jpg") or path.to_lower().ends_with("svg") or path.to_lower().ends_with("tga") or path.to_lower().ends_with("webp"):
 		var image := Image.new()
 		var err := image.load(path)
@@ -83,37 +85,37 @@ func on_palette_import_file_selected(path : String) -> void:
 
 func import_image_palette(path : String, image : Image) -> void:
 	var palette : Palette = null
-	palette = Import.import_png_palette(path, image)
+	palette = global.get_import().import_png_palette(path, image)
 	attempt_to_import_palette(palette)
 
 
 func attempt_to_import_palette(palette : Palette) -> void:
 	if palette:
 		palette.name = palette_name_replace(palette.name)
-		Global.palettes[palette.name] = palette
-		Global.palette_option_button.add_item(palette.name)
-		var index: int = Global.palette_option_button.get_item_count() - 1
-		Global.palette_option_button.set_item_metadata(index, palette.name)
-		Global.palette_option_button.select(index)
+		global.palettes[palette.name] = palette
+		global.palette_option_button.add_item(palette.name)
+		var index: int = global.palette_option_button.get_item_count() - 1
+		global.palette_option_button.set_item_metadata(index, palette.name)
+		global.palette_option_button.select(index)
 		on_palette_select(palette.name)
 		save_palette(palette.name, palette.name + ".json")
 	else:
-		Global.error_dialog.set_text("Invalid Palette file!")
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+		global.error_dialog.set_text("Invalid Palette file!")
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 
 
 func _on_AddPalette_pressed() -> void:
-	Global.add_palette_button.get_node("PopupMenu").popup(Rect2(Global.add_palette_button.rect_global_position, Vector2.ONE))
+	global.add_palette_button.get_node("PopupMenu").popup(Rect2(global.add_palette_button.rect_global_position, Vector2.ONE))
 
 
 func on_new_palette_confirmed() -> void:
-	var new_palette_name : String = Global.new_palette_name_line_edit.text
+	var new_palette_name : String = global.new_palette_name_line_edit.text
 	var result : String = create_new_palette(new_palette_name, from_palette)
 	if not result.empty():
-		Global.error_dialog.set_text(result)
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+		global.error_dialog.set_text(result)
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 
 
 func add_palette_menu_id_pressed(id : int) -> void:
@@ -124,7 +126,7 @@ func add_palette_menu_id_pressed(id : int) -> void:
 			on_import_palette()
 		2: # Create Palette From Current Sprite
 			palette_from_sprite_dialog.popup_centered()
-			Global.dialog_open(true)
+			global.dialog_open(true)
 
 
 func create_new_palette(name : String, _from_palette : Palette) -> String: # Returns empty string, else error string
@@ -144,11 +146,11 @@ func create_new_palette(name : String, _from_palette : Palette) -> String: # Ret
 		new_palette.editable = true
 
 	# Add palette to Global and options
-	Global.palettes[name] = new_palette
-	Global.palette_option_button.add_item(name)
-	var index : int = Global.palette_option_button.get_item_count() - 1
-	Global.palette_option_button.set_item_metadata(index, name)
-	Global.palette_option_button.select(index)
+	global.palettes[name] = new_palette
+	global.palette_option_button.add_item(name)
+	var index : int = global.palette_option_button.get_item_count() - 1
+	global.palette_option_button.set_item_metadata(index, name)
+	global.palette_option_button.select(index)
 
 	save_palette(name, name + ".json")
 
@@ -162,7 +164,7 @@ func create_new_palette(name : String, _from_palette : Palette) -> String: # Ret
 func palette_name_replace(name : String) -> String:
 	var i := 1
 	var temp_name := name
-	while Global.palettes.has(temp_name):
+	while global.palettes.has(temp_name):
 		i += 1
 		temp_name = name + " (%s)" % i
 	name = temp_name
@@ -170,38 +172,38 @@ func palette_name_replace(name : String) -> String:
 
 
 func on_edit_palette() -> void:
-	var palette : Palette = Global.palettes[current_palette]
+	var palette : Palette = global.palettes[current_palette]
 
 	var create_new_palette := true # Create new palette by default
 	if palette.editable:
 		create_new_palette = false # Edit if already a custom palette
 
 	if create_new_palette:
-		from_palette = Global.palettes[current_palette]
-		Global.new_palette_dialog.window_title = "Create a new custom palette from existing default?"
-		Global.new_palette_name_line_edit.text = "Custom_" + current_palette
-		Global.new_palette_dialog.popup_centered()
-		Global.dialog_open(true)
+		from_palette = global.palettes[current_palette]
+		global.new_palette_dialog.window_title = "Create a new custom palette from existing default?"
+		global.new_palette_name_line_edit.text = "Custom_" + current_palette
+		global.new_palette_dialog.popup_centered()
+		global.dialog_open(true)
 	else:
 		from_palette = null
-		Global.edit_palette_popup.open(current_palette)
+		global.edit_palette_popup.open(current_palette)
 
 
 func create_palette_from_sprite() -> void:
-	var current_project : Project = Global.current_project
+	var current_project : Project = global.current_project
 	var new_palette_name : String = current_project.name
 	var result : String = create_new_palette(new_palette_name, null)
 	if not result.empty():
-		Global.error_dialog.set_text(result)
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+		global.error_dialog.set_text(result)
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		return
 
 	var alpha_checkbox : CheckBox = palette_from_sprite_dialog.get_node("VBoxContainer/AlphaCheckBox")
 	var selection_checkbox : CheckBox = palette_from_sprite_dialog.get_node("VBoxContainer/SelectionCheckBox")
 	var colors_from_optionbutton : OptionButton = palette_from_sprite_dialog.get_node("VBoxContainer/HBoxContainer/ColorsFromOptionButton")
 
-	var palette : Palette = Global.palettes[current_palette]
+	var palette : Palette = global.palettes[current_palette]
 	var pixels := []
 
 	if selection_checkbox.pressed:
@@ -243,7 +245,7 @@ func create_palette_from_sprite() -> void:
 
 
 func _on_PaletteOptionButton_item_selected(ID : int) -> void:
-	var palette_name = Global.palette_option_button.get_item_metadata(ID)
+	var palette_name = global.palette_option_button.get_item_metadata(ID)
 	if palette_name != null:
 		on_palette_select(palette_name)
 
@@ -265,17 +267,17 @@ func _display_palette(palette : Palette) -> void:
 
 
 func on_color_select(index : int) -> void:
-	var color : Color = Global.palettes[current_palette].get_color(index)
+	var color : Color = global.palettes[current_palette].get_color(index)
 
 	if Input.is_action_just_pressed("left_mouse"):
-		Tools.assign_color(color, BUTTON_LEFT, false)
+		global.get_tools().assign_color(color, BUTTON_LEFT, false)
 	elif Input.is_action_just_pressed("right_mouse"):
-		Tools.assign_color(color, BUTTON_RIGHT, false)
+		global.get_tools().assign_color(color, BUTTON_RIGHT, false)
 
 
 func _load_palettes() -> void:
-	Global.directory_module.ensure_xdg_user_dirs_exist()
-	var search_locations = Global.directory_module.get_palette_search_path_in_order()
+	global.directory_module.ensure_xdg_user_dirs_exist()
+	var search_locations = global.directory_module.get_palette_search_path_in_order()
 	var priority_ordered_files := get_palette_priority_file_map(search_locations)
 
 	# Iterate backwards, so any palettes defined in default files
@@ -288,20 +290,20 @@ func _load_palettes() -> void:
 		for file_name in palette_files:
 			var palette : Palette = Palette.new().load_from_file(base_directory.plus_file(file_name))
 			if palette:
-				Global.palettes[palette.name] = palette
-				Global.palette_option_button.add_item(palette.name)
-				var index: int = Global.palette_option_button.get_item_count() - 1
-				Global.palette_option_button.set_item_metadata(index, palette.name)
+				global.palettes[palette.name] = palette
+				global.palette_option_button.add_item(palette.name)
+				var index: int = global.palette_option_button.get_item_count() - 1
+				global.palette_option_button.set_item_metadata(index, palette.name)
 				if palette.name == "Default":
 					# You need these two lines because when you remove a palette
 					# Then this just won't work and _on_PaletteOptionButton_item_selected
 					# method won't fire.
-					Global.palette_option_button.selected = index
+					global.palette_option_button.selected = index
 					on_palette_select("Default")
-					Global.palette_option_button.select(index)
+					global.palette_option_button.select(index)
 
-	if not "Default" in Global.palettes && Global.palettes.size() > 0:
-		Global.palette_container._on_PaletteOptionButton_item_selected(0)
+	if not "Default" in global.palettes && global.palettes.size() > 0:
+		global.palette_container._on_PaletteOptionButton_item_selected(0)
 
 
 # Get the palette files in a single directory.
@@ -373,47 +375,47 @@ func get_best_palette_file_location(looking_paths: Array, fname: String):  # -> 
 
 func remove_palette(palette_name : String) -> void:
 	# Don't allow user to remove palette if there is no one left
-	if Global.palettes.size() < 2:
-		Global.error_dialog.set_text("You can't remove more palettes!")
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+	if global.palettes.size() < 2:
+		global.error_dialog.set_text("You can't remove more palettes!")
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		return
 	# Don't allow user to try to remove not existing palettes
-	if not palette_name in Global.palettes:
-		Global.error_dialog.set_text("Cannot remove the palette, because it doesn't exist!")
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+	if not palette_name in global.palettes:
+		global.error_dialog.set_text("Cannot remove the palette, because it doesn't exist!")
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 		return
-	Global.directory_module.ensure_xdg_user_dirs_exist()
-	var palette = Global.palettes[palette_name]
+	global.directory_module.ensure_xdg_user_dirs_exist()
+	var palette = global.palettes[palette_name]
 	var result = palette.remove_file()
 	# Inform user if pallete hasn't been removed from disk because of an error
 	if result != OK:
-		Global.error_dialog.set_text(tr("An error occured while removing the palette! Error code: %s") % str(result))
-		Global.error_dialog.popup_centered()
-		Global.dialog_open(true)
+		global.error_dialog.set_text(tr("An error occured while removing the palette! Error code: %s") % str(result))
+		global.error_dialog.popup_centered()
+		global.dialog_open(true)
 	# Remove palette in the program anyway, because if you don't do it
 	# then Pixelorama will crash
-	Global.palettes.erase(palette_name)
-	Global.palette_option_button.clear()
+	global.palettes.erase(palette_name)
+	global.palette_option_button.clear()
 	current_palette = "Default"
 	_load_palettes()
 
 
 func save_palette(palette_name : String, filename : String) -> void:
-	Global.directory_module.ensure_xdg_user_dirs_exist()
-	var palette = Global.palettes[palette_name]
-	var palettes_write_path: String = Global.directory_module.get_palette_write_path()
+	global.directory_module.ensure_xdg_user_dirs_exist()
+	var palette = global.palettes[palette_name]
+	var palettes_write_path: String = global.directory_module.get_palette_write_path()
 	palette.save_to_file(palettes_write_path.plus_file(filename))
 
 
 func _on_NewPaletteDialog_popup_hide() -> void:
-	Global.dialog_open(false)
+	global.dialog_open(false)
 
 
 func _on_RemovePalette_pressed() -> void:
 	remove_palette_warning.popup_centered()
-	Global.dialog_open(true)
+	global.dialog_open(true)
 
 
 func _on_PaletteFromSpriteDialog_confirmed() -> void:
@@ -421,7 +423,7 @@ func _on_PaletteFromSpriteDialog_confirmed() -> void:
 
 
 func _on_PaletteFromSpriteDialog_popup_hide() -> void:
-	Global.dialog_open(false)
+	global.dialog_open(false)
 
 
 func _on_RemovePaletteWarning_confirmed() -> void:
@@ -429,4 +431,4 @@ func _on_RemovePaletteWarning_confirmed() -> void:
 
 
 func _on_RemovePaletteWarning_popup_hide() -> void:
-	Global.dialog_open(false)
+	global.dialog_open(false)

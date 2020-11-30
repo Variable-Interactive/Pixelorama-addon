@@ -9,15 +9,15 @@ var node : Node
 
 func _ready() -> void:
 	# Handle themes
-	if Global.theme_type == Global.Theme_Types.LIGHT:
+	if get_node("/root/Pixelorama").theme_type == get_node("/root/Pixelorama").Theme_Types.LIGHT:
 		texture_normal = load("res://addons/pixelorama/assets/graphics/light_themes/misc/icon_reload.png")
-	elif Global.theme_type == Global.Theme_Types.CARAMEL:
+	elif get_node("/root/Pixelorama").theme_type == get_node("/root/Pixelorama").Theme_Types.CARAMEL:
 		texture_normal = load("res://addons/pixelorama/assets/graphics/caramel_themes/misc/icon_reload.png")
 
 
 func _on_RestoreDefaultButton_pressed() -> void:
-	Global.set(setting_name, default_value)
-	Global.config_cache.set_value("preferences", setting_name, default_value)
-	Global.preferences_dialog.preference_update(setting_name)
-	Global.preferences_dialog.disable_restore_default_button(self, true)
+	get_node("/root/Pixelorama").set(setting_name, default_value)
+	get_node("/root/Pixelorama").config_cache.set_value("preferences", setting_name, default_value)
+	get_node("/root/Pixelorama").preferences_dialog.preference_update(setting_name)
+	get_node("/root/Pixelorama").preferences_dialog.disable_restore_default_button(self, true)
 	node.set(value_type, default_value)
