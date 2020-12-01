@@ -64,7 +64,6 @@ func show_tab() -> void:
 	frame_options.hide()
 	spritesheet_options.hide()
 	animation_options.hide()
-	print(global.get_export().current_tab)
 	match global.get_export().current_tab:
 		Constants.ExportTab.FRAME:
 			global.get_export().file_format = Constants.FileFormat.PNG
@@ -78,9 +77,9 @@ func show_tab() -> void:
 			if prev_frame_number == global.get_export().frame_number:
 				global.get_export().process_frame()
 			frame_options.show()
-		Constants.global.ExportTab.SPRITESHEET:
+		Constants.ExportTab.SPRITESHEET:
 			create_frame_tag_list()
-			global.get_export().file_format = global.get_export().FileFormat.PNG
+			global.get_export().file_format = Constants.FileFormat.PNG
 			if not global.get_export().was_exported:
 				global.get_export().orientation = global.get_export().Orientation.ROWS
 				global.get_export().lines_count = int(ceil(sqrt(global.get_export().number_of_frames)))
