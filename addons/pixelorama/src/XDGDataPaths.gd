@@ -1,3 +1,4 @@
+tool
 extends Reference
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")

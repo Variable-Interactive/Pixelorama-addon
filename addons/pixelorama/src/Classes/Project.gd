@@ -1,3 +1,4 @@
+tool
 class_name Project extends Reference
 # A class for project properties.
 
@@ -180,7 +181,7 @@ func change_project() -> void:
 	global.canvas.update()
 	global.canvas.grid.isometric_polylines.clear()
 	global.canvas.grid.update()
-	global.transparent_checker._ready()
+	global.transparent_checker._enter_tree()
 	global.horizontal_ruler.update()
 	global.vertical_ruler.update()
 	global.preview_zoom_slider.value = -global.camera_preview.zoom.x
@@ -407,6 +408,9 @@ func layers_changed(value : Array) -> void:
 			layers[i].name = tr("Layer") + " %s" % i
 
 		global.layers_container.add_child(layer_container)
+		
+#		global.layers_container._enter_tree()
+		
 		layer_container.label.text = layers[i].name
 		layer_container.line_edit.text = layers[i].name
 
@@ -457,7 +461,7 @@ func frame_changed(value : int) -> void:
 	global.disable_button(global.move_right_frame_button, frames.size() == 1 or current_frame == frames.size() - 1)
 
 	global.canvas.update()
-	global.transparent_checker._ready() # To update the rect size
+	global.transparent_checker._enter_tree() # To update the rect size
 
 
 func layer_changed(value : int) -> void:

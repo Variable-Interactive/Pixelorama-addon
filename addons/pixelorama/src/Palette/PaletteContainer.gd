@@ -1,3 +1,4 @@
+tool
 extends GridContainer
 
 
@@ -8,14 +9,16 @@ const palette_button = preload("res://addons/pixelorama/src/Palette/PaletteButto
 var current_palette = "Default"
 var from_palette : Palette
 
-onready var palette_from_sprite_dialog = $"../../../../PaletteFromSpriteDialog"
-onready var remove_palette_warning = $"../../../../RemovePaletteWarning"
+var palette_from_sprite_dialog
+var remove_palette_warning
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	palette_from_sprite_dialog = $"../../../../PaletteFromSpriteDialog"
+	remove_palette_warning = $"../../../../RemovePaletteWarning"
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	_load_palettes()
 

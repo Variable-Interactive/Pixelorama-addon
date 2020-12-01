@@ -1,15 +1,19 @@
+tool
 extends PanelContainer
 
 
-onready var canvas_preview = $HBoxContainer/PreviewViewportContainer/Viewport/CanvasPreview
-onready var camera : Camera2D = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview
-onready var play_button : Button = $HBoxContainer/VBoxContainer/PlayButton
+var canvas_preview
+var camera : Camera2D
+var play_button : Button
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
+	canvas_preview = $HBoxContainer/PreviewViewportContainer/Viewport/CanvasPreview
+	camera = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview
+	play_button = $HBoxContainer/VBoxContainer/PlayButton
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_PreviewZoomSlider_value_changed(value : float) -> void:

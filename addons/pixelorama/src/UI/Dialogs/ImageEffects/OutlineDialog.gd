@@ -1,3 +1,4 @@
+tool
 extends ImageEffect
 
 
@@ -6,10 +7,11 @@ var thickness := 1
 var diagonal := false
 var inside_image := false
 
-onready var outline_color = $VBoxContainer/OptionsContainer/OutlineColor
+var outline_color
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	outline_color = $VBoxContainer/OptionsContainer/OutlineColor
 	outline_color.get_picker().presets_visible = false
 	color = outline_color.color
 

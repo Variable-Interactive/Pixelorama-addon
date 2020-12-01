@@ -1,3 +1,4 @@
+tool
 class_name Cel extends Reference
 # A class for cel properties.
 # The term "cel" comes from "celluloid" (https://en.wikipedia.org/wiki/Cel).

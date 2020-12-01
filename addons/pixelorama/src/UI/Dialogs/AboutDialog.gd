@@ -1,28 +1,44 @@
+tool
 extends WindowDialog
 
-onready var credits = $AboutUI/Credits
-onready var groups : Tree = $AboutUI/Credits/Groups
-onready var developer_container = $AboutUI/Credits/Developers
-onready var contributors_container = $AboutUI/Credits/Contributors
-onready var donors_container = $AboutUI/Credits/Donors
-onready var translators_container = $AboutUI/Credits/Translators
+var credits
+var groups : Tree
+var developer_container
+var contributors_container
+var donors_container
+var translators_container
 
-onready var developers : Tree = $AboutUI/Credits/Developers/DeveloperTree
-onready var contributors : Tree = $AboutUI/Credits/Contributors/ContributorTree
-onready var donors : Tree = $AboutUI/Credits/Donors/DonorTree
-onready var translators : Tree = $AboutUI/Credits/Translators/TranslatorTree
+var developers : Tree
+var contributors : Tree
+var donors : Tree
+var translators : Tree
 
-onready var slogan_label : Label = $AboutUI/IconsButtons/SloganAndLinks/VBoxContainer/PixeloramaSlogan
-onready var copyright_label : Label = $AboutUI/Copyright
+var slogan_label : Label
+var copyright_label : Label
 
-onready var latin_font_italic = preload("res://addons/pixelorama/assets/fonts/Roboto-Italic.tres")
-onready var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Regular.tres")
-onready var latin_font_small = preload("res://addons/pixelorama/assets/fonts/Roboto-Small.tres")
-onready var cjk_font_small = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Small.tres")
+var latin_font_italic = preload("res://addons/pixelorama/assets/fonts/Roboto-Italic.tres")
+var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Regular.tres")
+var latin_font_small = preload("res://addons/pixelorama/assets/fonts/Roboto-Small.tres")
+var cjk_font_small = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Small.tres")
 
 
-func _ready() -> void:
-	var contributor_root := contributors.create_item()
+func _enter_tree() -> void:
+	credits = $AboutUI/Credits
+	groups = $AboutUI/Credits/Groups
+	developer_container = $AboutUI/Credits/Developers
+	contributors_container = $AboutUI/Credits/Contributors
+	donors_container = $AboutUI/Credits/Donors
+	translators_container = $AboutUI/Credits/Translators
+
+	developers = $AboutUI/Credits/Developers/DeveloperTree
+	contributors = $AboutUI/Credits/Contributors/ContributorTree
+	donors = $AboutUI/Credits/Donors/DonorTree
+	translators = $AboutUI/Credits/Translators/TranslatorTree
+
+	slogan_label = $AboutUI/IconsButtons/SloganAndLinks/VBoxContainer/PixeloramaSlogan
+	copyright_label = $AboutUI/Copyright
+
+	var contributor_root = contributors.create_item()
 	contributors.create_item(contributor_root).set_text(0, "  Hugo Locurcio (Calinou)")
 	contributors.create_item(contributor_root).set_text(0, "  CheetoHead (greusser)")
 	contributors.create_item(contributor_root).set_text(0, "  Michael Alexsander (YeldhamDev)")

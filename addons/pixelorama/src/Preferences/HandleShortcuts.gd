@@ -1,3 +1,4 @@
+tool
 extends Node
 
 var default_shortcuts_preset := {}
@@ -14,7 +15,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	shortcut_selector_popup = global.preferences_dialog.get_node("Popups/ShortcutSelector")
 	theme_font_color = global.preferences_dialog.get_node("Popups/ShortcutSelector/EnteredShortcut").get_color("font_color")
@@ -25,7 +26,7 @@ func _ready() -> void:
 	# Buttons in shortcuts selector should be called the same as actions
 	for shortcut_grid_item in get_node("Shortcuts").get_children():
 		if shortcut_grid_item is Button:
-			var input_events = InputMap.get_action_list(shortcut_grid_item.name)
+			var input_events = global.get_input_map().get_action_list(shortcut_grid_item.name)
 			if input_events.size() > 1:
 				printerr("Every shortcut action should have just one input event assigned in input map")
 			shortcut_grid_item.text = (input_events[0] as InputEventKey).as_text()
@@ -51,8 +52,8 @@ func _input(event : InputEvent) -> void:
 				shortcut_selector_popup.hide()
 			else:
 				# Check if shortcut was already used
-				for action in InputMap.get_actions():
-					for input_event in InputMap.get_action_list(action):
+				for action in global.get_input_map().get_actions():
+					for input_event in global.get_input_map().get_action_list(action):
 						if input_event is InputEventKey:
 							if OS.get_scancode_string(input_event.get_scancode_with_modifiers()) == OS.get_scancode_string(event.get_scancode_with_modifiers()):
 								shortcut_selector_popup.get_node("EnteredShortcut").text = tr("Already assigned")
@@ -63,7 +64,7 @@ func _input(event : InputEvent) -> void:
 
 				# Store new shortcut
 				shortcut_already_assigned = false
-				old_input_event = InputMap.get_action_list(action_being_edited)[0]
+				old_input_event = global.get_input_map().get_action_list(action_being_edited)[0]
 				new_input_event = event
 				shortcut_selector_popup.get_node("EnteredShortcut").text = OS.get_scancode_string(event.get_scancode_with_modifiers())
 				shortcut_selector_popup.get_node("EnteredShortcut").add_color_override("font_color", theme_font_color)
@@ -84,7 +85,7 @@ func _on_PresetOptionButton_item_selected(id : int) -> void:
 
 func apply_shortcuts_preset(preset) -> void:
 	for action in preset:
-		var _old_input_event : InputEventKey = InputMap.get_action_list(action)[0]
+		var _old_input_event : InputEventKey = global.get_input_map().get_action_list(action)[0]
 		set_action_shortcut(action, _old_input_event, preset[action])
 		get_node("Shortcuts/" + action).text = OS.get_scancode_string(preset[action].get_scancode_with_modifiers())
 
@@ -100,18 +101,18 @@ func toggle_shortcut_buttons(enabled : bool) -> void:
 
 
 func set_action_shortcut(action : String, old_input : InputEventKey, new_input : InputEventKey) -> void:
-	InputMap.action_erase_event(action, old_input)
-	InputMap.action_add_event(action, new_input)
+	global.get_input_map().action_erase_event(action, old_input)
+	global.get_input_map().action_add_event(action, new_input)
 	global.update_hint_tooltips()
 	# Set shortcut to switch colors button
 	if action == "switch_colors":
-		global.color_switch_button.shortcut.shortcut = InputMap.get_action_list("switch_colors")[0]
+		global.color_switch_button.shortcut.shortcut = global.get_input_map().get_action_list("switch_colors")[0]
 
 
 func _on_Shortcut_button_pressed(button : Button) -> void:
 	set_process_input(true)
 	action_being_edited = button.name
-	new_input_event = InputMap.get_action_list(button.name)[0]
+	new_input_event = global.get_input_map().get_action_list(button.name)[0]
 	shortcut_already_assigned = true
 	shortcut_selector_popup.popup_centered()
 

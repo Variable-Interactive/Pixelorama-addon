@@ -1,3 +1,4 @@
+tool
 extends Node
 # Code taken and modified from https://github.com/Pukkah/HTML5-File-Exchange-for-Godot
 # Thanks to Pukkah from GitHub for providing the original code
@@ -8,7 +9,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	if OS.get_name() == "HTML5" and OS.has_feature('JavaScript'):
 		_define_js()

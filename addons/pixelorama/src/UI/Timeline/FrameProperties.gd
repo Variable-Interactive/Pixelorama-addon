@@ -1,13 +1,16 @@
+tool
 extends ConfirmationDialog
 
-onready var frame_num = $VBoxContainer/GridContainer/FrameNum
-onready var frame_dur = $VBoxContainer/GridContainer/FrameTime
+var frame_num
+var frame_dur
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
+	frame_num = $VBoxContainer/GridContainer/FrameNum
+	frame_dur = $VBoxContainer/GridContainer/FrameTime
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func set_frame_label(frame : int) -> void:

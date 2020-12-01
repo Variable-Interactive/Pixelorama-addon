@@ -1,21 +1,22 @@
+tool
 extends VBoxContainer
 
 
 # Node, shortcut
-onready var tools := [
-	[$RectSelect, "rectangle_select"],
-	[$Zoom, "zoom"],
-	[$ColorPicker, "colorpicker"],
-	[$Pencil, "pencil"],
-	[$Eraser, "eraser"],
-	[$Bucket, "fill"],
-	[$LightenDarken, "lightdark"],
-]
-
+var tools
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
-func _ready() -> void:
+func _enter_tree() -> void:
+	tools = [
+		[$RectSelect, "rectangle_select"],
+		[$Zoom, "zoom"],
+		[$ColorPicker, "colorpicker"],
+		[$Pencil, "pencil"],
+		[$Eraser, "eraser"],
+		[$Bucket, "fill"],
+		[$LightenDarken, "lightdark"],
+	]
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	for t in tools:
 		t[0].connect("pressed", self, "_on_Tool_pressed", [t[0]])

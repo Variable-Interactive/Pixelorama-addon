@@ -1,3 +1,4 @@
+tool
 extends Node
 
 
@@ -5,7 +6,7 @@ var current_save_paths := [] # Array of strings
 # Stores a filename of a backup file in user:// until user saves manually
 var backup_save_paths := [] # Array of strings
 
-onready var autosave_timer : Timer
+var autosave_timer : Timer
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 

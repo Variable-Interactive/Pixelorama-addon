@@ -1,3 +1,4 @@
+tool
 extends Node
 
 # Gif exporter
@@ -47,7 +48,7 @@ var file_exists_alert = "File %s already exists. Overwrite?"
 # Export progress variables
 var export_progress_fraction := 0.0
 var export_progress := 0.0
-onready var gif_export_thread := Thread.new()
+var gif_export_thread : Thread
 
 var global
 
@@ -56,6 +57,7 @@ func _exit_tree() -> void:
 		gif_export_thread.wait_to_finish()
 		
 func _enter_tree() -> void:
+	gif_export_thread = Thread.new()
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 

@@ -1,3 +1,4 @@
+tool
 extends Node
 
 
@@ -24,14 +25,14 @@ const languages_dict := {
 }
 
 var loaded_locales : Array
-onready var latin_font = preload("res://addons/pixelorama/assets/fonts/Roboto-Regular.tres")
-onready var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Regular.tres")
+var latin_font = preload("res://addons/pixelorama/assets/fonts/Roboto-Regular.tres")
+var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Regular.tres")
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	loaded_locales = TranslationServer.get_loaded_locales()
 

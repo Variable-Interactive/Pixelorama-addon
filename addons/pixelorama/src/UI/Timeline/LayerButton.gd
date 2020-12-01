@@ -1,3 +1,4 @@
+tool
 class_name LayerButton
 extends Button
 
@@ -12,14 +13,13 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	visibility_button = global.find_node_by_name(self, "VisibilityButton")
 	lock_button = global.find_node_by_name(self, "LockButton")
 	linked_button = global.find_node_by_name(self, "LinkButton")
 	label = global.find_node_by_name(self, "Label")
 	line_edit = global.find_node_by_name(self, "LineEdit")
-
 	if global.current_project.layers[i].visible:
 		global.change_button_texturerect(visibility_button.get_child(0), "layer_visible.png")
 		visibility_button.get_child(0).rect_size = Vector2(24, 14)
@@ -80,4 +80,4 @@ func _on_LinkButton_pressed() -> void:
 	if global.current_project.layers[i].new_cels_linked && !global.current_project.layers[i].linked_cels:
 		# If button is pressed and there are no linked cels in the layer
 		global.current_project.layers[i].linked_cels.append(global.current_project.frames[global.current_project.current_frame])
-		global.current_project.layers[i].frame_container.get_child(global.current_project.current_frame)._ready()
+		global.current_project.layers[i].frame_container.get_child(global.current_project.current_frame)._enter_tree()

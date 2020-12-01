@@ -1,3 +1,4 @@
+tool
 class_name Canvas
 extends Node2D
 
@@ -9,16 +10,19 @@ var can_undo := true
 var cursor_image_has_changed := false
 var sprite_changed_this_frame := false # for optimization purposes
 
-onready var grid = $Grid
-onready var tile_mode = $TileMode
-onready var indicators = $Indicators
+var grid
+var tile_mode
+var indicators
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func _enter_tree() -> void:
+	grid = $Grid
+	tile_mode = $TileMode
+	indicators = $Indicators
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	var frame : Frame = new_empty_frame(true)
 	global.current_project.frames.append(frame)
@@ -111,7 +115,7 @@ func camera_zoom() -> void:
 		camera.fit_to_frame(global.current_project.size)
 		camera.save_values_to_project()
 
-	global.transparent_checker._ready() # To update the rect size
+	global.transparent_checker._enter_tree() # To update the rect size
 
 
 func new_empty_frame(first_time := false, single_layer := false, size := global.current_project.size) -> Frame:

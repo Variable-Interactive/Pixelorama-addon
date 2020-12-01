@@ -1,9 +1,12 @@
+tool
 extends ImageEffect
 
+var flip_h : CheckBox
+var flip_v : CheckBox
 
-onready var flip_h : CheckBox = $VBoxContainer/OptionsContainer/FlipHorizontal
-onready var flip_v : CheckBox = $VBoxContainer/OptionsContainer/FlipVertical
-
+func _enter_tree():
+	flip_h = $VBoxContainer/OptionsContainer/FlipHorizontal
+	flip_v = $VBoxContainer/OptionsContainer/FlipVertical
 
 func set_nodes() -> void:
 	preview = $VBoxContainer/Preview

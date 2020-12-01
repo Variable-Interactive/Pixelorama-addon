@@ -1,3 +1,4 @@
+tool
 extends Polygon2D
 
 
@@ -14,7 +15,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	_clear_image.create(1, 1, false, Image.FORMAT_RGBA8)
 	_clear_image.fill(Color(0, 0, 0, 0))

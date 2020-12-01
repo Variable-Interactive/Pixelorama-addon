@@ -1,3 +1,4 @@
+tool
 extends Node
 
 
@@ -174,7 +175,7 @@ var error_dialog : AcceptDialog
 var quit_dialog : ConfirmationDialog
 var quit_and_save_dialog : ConfirmationDialog
 
-onready var current_version : String = ProjectSettings.get_setting("application/config/Version")
+var current_version : String = ProjectSettings.get_setting("application/config/Version")
 
 var export_component = null
 var import_component = null
@@ -212,8 +213,15 @@ func get_tools():
 		add_child(tools_component)
 	return tools_component
 
+func get_input_map():
+	if Engine.is_editor_hint():
+		pass
+	else:
+		return get_node("/root/InputMapPlugin")
+#		return InputMap
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	current_version = ProjectSettings.get_setting("application/config/Version")
 	randomize()
 	if OS.has_feature("standalone"):
 		root_directory = OS.get_executable_path().get_base_dir()
@@ -229,6 +237,7 @@ func _ready() -> void:
 	Input.set_custom_mouse_cursor(cursor_image, Input.CURSOR_CROSS, Vector2(15, 15))
 
 	var root = get_tree().get_root()
+
 	control = find_node_by_name(root, "Control")
 	top_menu_container = find_node_by_name(control, "TopMenuContainer")
 	left_cursor = find_node_by_name(root, "LeftCursor")
@@ -325,6 +334,7 @@ func _ready() -> void:
 	projects.append(Project.new([], tr("untitled"), Vector2(64, 64), self))
 	projects[0].layers.append(Layer.new())
 	current_project = projects[0]
+	print(current_project)
 
 
 # Thanks to https://godotengine.org/qa/17524/how-to-find-an-instanced-scene-by-its-name
@@ -481,13 +491,13 @@ func update_hint_tooltips() -> void:
 %s for left mouse button
 %s for right mouse button
 
-Press %s to move the content""") % [InputMap.get_action_list("left_rectangle_select_tool")[0].as_text(), InputMap.get_action_list("right_rectangle_select_tool")[0].as_text(), "Shift"]
+Press %s to move the content""") % [self.get_input_map().get_action_list("left_rectangle_select_tool")[0].as_text(), self.get_input_map().get_action_list("right_rectangle_select_tool")[0].as_text(), "Shift"]
 
 	var zoom_tool : BaseButton = find_node_by_name(root, "Zoom")
 	zoom_tool.hint_tooltip = tr("""Zoom
 
 %s for left mouse button
-%s for right mouse button""") % [InputMap.get_action_list("left_zoom_tool")[0].as_text(), InputMap.get_action_list("right_zoom_tool")[0].as_text()]
+%s for right mouse button""") % [self.get_input_map().get_action_list("left_zoom_tool")[0].as_text(), self.get_input_map().get_action_list("right_zoom_tool")[0].as_text()]
 
 
 	var color_picker : BaseButton = find_node_by_name(root, "ColorPicker")
@@ -495,7 +505,7 @@ Press %s to move the content""") % [InputMap.get_action_list("left_rectangle_sel
 Select a color from a pixel of the sprite
 
 %s for left mouse button
-%s for right mouse button""") % [InputMap.get_action_list("left_colorpicker_tool")[0].as_text(), InputMap.get_action_list("right_colorpicker_tool")[0].as_text()]
+%s for right mouse button""") % [self.get_input_map().get_action_list("left_colorpicker_tool")[0].as_text(), self.get_input_map().get_action_list("right_colorpicker_tool")[0].as_text()]
 
 	var pencil : BaseButton = find_node_by_name(root, "Pencil")
 	pencil.hint_tooltip = tr("""Pencil
@@ -503,7 +513,7 @@ Select a color from a pixel of the sprite
 %s for left mouse button
 %s for right mouse button
 
-Hold %s to make a line""") % [InputMap.get_action_list("left_pencil_tool")[0].as_text(), InputMap.get_action_list("right_pencil_tool")[0].as_text(), "Shift"]
+Hold %s to make a line""") % [self.get_input_map().get_action_list("left_pencil_tool")[0].as_text(), self.get_input_map().get_action_list("right_pencil_tool")[0].as_text(), "Shift"]
 
 	var eraser : BaseButton = find_node_by_name(root, "Eraser")
 	eraser.hint_tooltip = tr("""Eraser
@@ -511,45 +521,45 @@ Hold %s to make a line""") % [InputMap.get_action_list("left_pencil_tool")[0].as
 %s for left mouse button
 %s for right mouse button
 
-Hold %s to make a line""") % [InputMap.get_action_list("left_eraser_tool")[0].as_text(), InputMap.get_action_list("right_eraser_tool")[0].as_text(), "Shift"]
+Hold %s to make a line""") % [self.get_input_map().get_action_list("left_eraser_tool")[0].as_text(), self.get_input_map().get_action_list("right_eraser_tool")[0].as_text(), "Shift"]
 
 	var bucket : BaseButton = find_node_by_name(root, "Bucket")
 	bucket.hint_tooltip = tr("""Bucket
 
 %s for left mouse button
-%s for right mouse button""") % [InputMap.get_action_list("left_fill_tool")[0].as_text(), InputMap.get_action_list("right_fill_tool")[0].as_text()]
+%s for right mouse button""") % [self.get_input_map().get_action_list("left_fill_tool")[0].as_text(), self.get_input_map().get_action_list("right_fill_tool")[0].as_text()]
 
 	var ld : BaseButton = find_node_by_name(root, "LightenDarken")
 	ld.hint_tooltip = tr("""Lighten/Darken
 
 %s for left mouse button
-%s for right mouse button""") % [InputMap.get_action_list("left_lightdark_tool")[0].as_text(), InputMap.get_action_list("right_lightdark_tool")[0].as_text()]
+%s for right mouse button""") % [self.get_input_map().get_action_list("left_lightdark_tool")[0].as_text(), self.get_input_map().get_action_list("right_lightdark_tool")[0].as_text()]
 
 	var color_switch : BaseButton = find_node_by_name(root, "ColorSwitch")
 	color_switch.hint_tooltip = tr("""Switch left and right colors
-(%s)""") % InputMap.get_action_list("switch_colors")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("switch_colors")[0].as_text()
 
 	var first_frame : BaseButton = find_node_by_name(root, "FirstFrame")
 	first_frame.hint_tooltip = tr("""Jump to the first frame
-(%s)""") % InputMap.get_action_list("go_to_first_frame")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("go_to_first_frame")[0].as_text()
 
 	var previous_frame : BaseButton = find_node_by_name(root, "PreviousFrame")
 	previous_frame.hint_tooltip = tr("""Go to the previous frame
-(%s)""") % InputMap.get_action_list("go_to_previous_frame")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("go_to_previous_frame")[0].as_text()
 
 	play_backwards.hint_tooltip = tr("""Play the animation backwards (from end to beginning)
-(%s)""") % InputMap.get_action_list("play_backwards")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("play_backwards")[0].as_text()
 
 	play_forward.hint_tooltip = tr("""Play the animation forward (from beginning to end)
-(%s)""") % InputMap.get_action_list("play_forward")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("play_forward")[0].as_text()
 
 	var next_frame : BaseButton = find_node_by_name(root, "NextFrame")
 	next_frame.hint_tooltip = tr("""Go to the next frame
-(%s)""") % InputMap.get_action_list("go_to_next_frame")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("go_to_next_frame")[0].as_text()
 
 	var last_frame : BaseButton = find_node_by_name(root, "LastFrame")
 	last_frame.hint_tooltip = tr("""Jump to the last frame
-(%s)""") % InputMap.get_action_list("go_to_last_frame")[0].as_text()
+(%s)""") % self.get_input_map().get_action_list("go_to_last_frame")[0].as_text()
 
 
 func is_cjk(locale : String) -> bool:

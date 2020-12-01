@@ -1,3 +1,4 @@
+tool
 extends Button
 
 const RULER_WIDTH := 16
@@ -13,7 +14,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	global.main_viewport.connect("item_rect_changed", self, "update")
 

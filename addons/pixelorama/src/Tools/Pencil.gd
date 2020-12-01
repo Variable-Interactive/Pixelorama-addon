@@ -1,3 +1,4 @@
+tool
 extends "res://addons/pixelorama/src/Tools/Draw.gd"
 
 
@@ -7,7 +8,7 @@ var _overwrite := false
 
 #var global
 
-func _ready():
+func _enter_tree():
 	global = get_node("/root/Pixelorama")
 
 class PencilOp extends Drawer.ColorOp:

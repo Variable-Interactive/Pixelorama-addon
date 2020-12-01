@@ -1,3 +1,4 @@
+tool
 extends ConfirmationDialog
 
 
@@ -8,17 +9,22 @@ var offset_y := 0
 var image : Image
 var first_time := true
 
-onready var width_spinbox : SpinBox = $VBoxContainer/OptionsContainer/WidthValue
-onready var height_spinbox : SpinBox = $VBoxContainer/OptionsContainer/HeightValue
-onready var x_spinbox : SpinBox = $VBoxContainer/OptionsContainer/XSpinBox
-onready var y_spinbox : SpinBox = $VBoxContainer/OptionsContainer/YSpinBox
-onready var preview_rect : TextureRect = $VBoxContainer/Preview
+var width_spinbox : SpinBox
+var height_spinbox : SpinBox
+var x_spinbox : SpinBox
+var y_spinbox : SpinBox
+var preview_rect : TextureRect
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
+	width_spinbox = $VBoxContainer/OptionsContainer/WidthValue
+	height_spinbox = $VBoxContainer/OptionsContainer/HeightValue
+	x_spinbox = $VBoxContainer/OptionsContainer/XSpinBox
+	y_spinbox = $VBoxContainer/OptionsContainer/YSpinBox
+	preview_rect = $VBoxContainer/Preview
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_ResizeCanvas_about_to_show() -> void:

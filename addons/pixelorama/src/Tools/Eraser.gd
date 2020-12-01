@@ -1,3 +1,4 @@
+tool
 extends "res://addons/pixelorama/src/Tools/Draw.gd"
 
 
@@ -18,7 +19,7 @@ class EraseOp extends Drawer.ColorOp:
 
 #var global
 
-func _ready():
+func _enter_tree():
 	global = get_node("/root/Pixelorama")
 
 func _init() -> void:

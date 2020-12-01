@@ -1,3 +1,4 @@
+tool
 extends Panel
 
 
@@ -9,7 +10,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	setup_file_menu()
 	setup_edit_menu()
@@ -20,15 +21,15 @@ func _ready() -> void:
 
 func setup_file_menu() -> void:
 	var file_menu_items := {
-		"New..." : InputMap.get_action_list("new_file")[0].get_scancode_with_modifiers(),
-		"Open..." : InputMap.get_action_list("open_file")[0].get_scancode_with_modifiers(),
+		"New..." : global.get_input_map().get_action_list("new_file")[0].get_scancode_with_modifiers(),
+		"Open..." : global.get_input_map().get_action_list("open_file")[0].get_scancode_with_modifiers(),
 		'Open last project...' : 0,
 		"Recent projects": 0,
-		"Save..." : InputMap.get_action_list("save_file")[0].get_scancode_with_modifiers(),
-		"Save as..." : InputMap.get_action_list("save_file_as")[0].get_scancode_with_modifiers(),
-		"Export..." : InputMap.get_action_list("export_file")[0].get_scancode_with_modifiers(),
-		"Export as..." : InputMap.get_action_list("export_file_as")[0].get_scancode_with_modifiers(),
-		"Quit" : InputMap.get_action_list("quit")[0].get_scancode_with_modifiers(),
+		"Save..." : global.get_input_map().get_action_list("save_file")[0].get_scancode_with_modifiers(),
+		"Save as..." : global.get_input_map().get_action_list("save_file_as")[0].get_scancode_with_modifiers(),
+		"Export..." : global.get_input_map().get_action_list("export_file")[0].get_scancode_with_modifiers(),
+		"Export as..." : global.get_input_map().get_action_list("export_file_as")[0].get_scancode_with_modifiers(),
+		"Quit" : global.get_input_map().get_action_list("quit")[0].get_scancode_with_modifiers(),
 		}
 	file_menu = global.file_menu.get_popup()
 	var i := 0
@@ -57,12 +58,12 @@ func setup_recent_projects_submenu(item : String) -> void:
 
 func setup_edit_menu() -> void:
 	var edit_menu_items := {
-		"Undo" : InputMap.get_action_list("undo")[0].get_scancode_with_modifiers(),
-		"Redo" : InputMap.get_action_list("redo")[0].get_scancode_with_modifiers(),
-		"Copy" : InputMap.get_action_list("copy")[0].get_scancode_with_modifiers(),
-		"Cut" : InputMap.get_action_list("cut")[0].get_scancode_with_modifiers(),
-		"Paste" : InputMap.get_action_list("paste")[0].get_scancode_with_modifiers(),
-		"Delete" : InputMap.get_action_list("delete")[0].get_scancode_with_modifiers(),
+		"Undo" : global.get_input_map().get_action_list("undo")[0].get_scancode_with_modifiers(),
+		"Redo" : global.get_input_map().get_action_list("redo")[0].get_scancode_with_modifiers(),
+		"Copy" : global.get_input_map().get_action_list("copy")[0].get_scancode_with_modifiers(),
+		"Cut" : global.get_input_map().get_action_list("cut")[0].get_scancode_with_modifiers(),
+		"Paste" : global.get_input_map().get_action_list("paste")[0].get_scancode_with_modifiers(),
+		"Delete" : global.get_input_map().get_action_list("delete")[0].get_scancode_with_modifiers(),
 		"Clear Selection" : 0,
 		"Preferences" : 0
 		}
@@ -79,13 +80,13 @@ func setup_edit_menu() -> void:
 func setup_view_menu() -> void:
 	var view_menu_items := {
 		"Tile Mode" : 0,
-		"Mirror View" : InputMap.get_action_list("mirror_view")[0].get_scancode_with_modifiers(),
-		"Show Grid" : InputMap.get_action_list("show_grid")[0].get_scancode_with_modifiers(),
-		"Show Rulers" : InputMap.get_action_list("show_rulers")[0].get_scancode_with_modifiers(),
-		"Show Guides" : InputMap.get_action_list("show_guides")[0].get_scancode_with_modifiers(),
+		"Mirror View" : global.get_input_map().get_action_list("mirror_view")[0].get_scancode_with_modifiers(),
+		"Show Grid" : global.get_input_map().get_action_list("show_grid")[0].get_scancode_with_modifiers(),
+		"Show Rulers" : global.get_input_map().get_action_list("show_rulers")[0].get_scancode_with_modifiers(),
+		"Show Guides" : global.get_input_map().get_action_list("show_guides")[0].get_scancode_with_modifiers(),
 		"Show Animation Timeline" : 0,
-		"Zen Mode" : InputMap.get_action_list("zen_mode")[0].get_scancode_with_modifiers(),
-		"Fullscreen Mode" : InputMap.get_action_list("toggle_fullscreen")[0].get_scancode_with_modifiers(),
+		"Zen Mode" : global.get_input_map().get_action_list("zen_mode")[0].get_scancode_with_modifiers(),
+		"Fullscreen Mode" : global.get_input_map().get_action_list("toggle_fullscreen")[0].get_scancode_with_modifiers(),
 		}
 	view_menu = global.view_menu.get_popup()
 
@@ -138,7 +139,7 @@ func setup_image_menu() -> void:
 func setup_help_menu() -> void:
 	var help_menu_items := {
 		"View Splash Screen" : 0,
-		"Online Docs" : InputMap.get_action_list("open_docs")[0].get_scancode_with_modifiers(),
+		"Online Docs" : global.get_input_map().get_action_list("open_docs")[0].get_scancode_with_modifiers(),
 		"Issue Tracker" : 0,
 		"Changelog" : 0,
 		"About Pixelorama" : 0
@@ -162,6 +163,7 @@ func file_menu_id_pressed(id : int) -> void:
 		2: # Open last project
 			on_open_last_project_file_menu_option_pressed()
 		3: # Save
+			print("saving")
 			save_project_file()
 		4: # Save as
 			save_project_file_as()

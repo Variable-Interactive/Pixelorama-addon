@@ -1,7 +1,8 @@
+tool
 extends Node
 
 
-onready var themes := [
+var themes := [
 	[preload("res://addons/pixelorama/assets/themes/dark/theme.tres"), "Dark"],
 	[preload("res://addons/pixelorama/assets/themes/gray/theme.tres"), "Gray"],
 	[preload("res://addons/pixelorama/assets/themes/blue/theme.tres"), "Blue"],
@@ -9,15 +10,17 @@ onready var themes := [
 	[preload("res://addons/pixelorama/assets/themes/light/theme.tres"), "Light"],
 	[preload("res://addons/pixelorama/assets/themes/purple/theme.tres"), "Purple"],
 ]
-onready var buttons_container : BoxContainer = $ThemeButtons
-onready var colors_container : BoxContainer = $ThemeColorsSpacer/ThemeColors
-onready var theme_color_preview_scene = preload("res://addons/pixelorama/src/Preferences/ThemeColorPreview.tscn")
+var buttons_container : BoxContainer
+var colors_container : BoxContainer
+var theme_color_preview_scene = preload("res://addons/pixelorama/src/Preferences/ThemeColorPreview.tscn")
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	var buttons_container = $ThemeButtons
+	var colors_container = $ThemeColorsSpacer/ThemeColors
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	var button_group = ButtonGroup.new()
 	for theme in themes:

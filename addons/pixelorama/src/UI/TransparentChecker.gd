@@ -1,15 +1,17 @@
+tool
 extends ColorRect
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
+	yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	rect_size = global.current_project.size
 	if get_parent().get_parent() == global.main_viewport:
-		global.second_viewport.get_node("Viewport/TransparentChecker")._ready()
-		global.small_preview_viewport.get_node("Viewport/TransparentChecker")._ready()
+		global.second_viewport.get_node("Viewport/TransparentChecker")._enter_tree()
+		global.small_preview_viewport.get_node("Viewport/TransparentChecker")._enter_tree()
 	material.set_shader_param("size", global.checker_size)
 	material.set_shader_param("color1", global.checker_color_1)
 	material.set_shader_param("color2", global.checker_color_2)

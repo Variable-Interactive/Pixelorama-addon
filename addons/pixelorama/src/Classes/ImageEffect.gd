@@ -1,3 +1,4 @@
+tool
 class_name ImageEffect extends AcceptDialog
 # Parent class for all image effects
 # Methods that have "pass" are meant to be replaced by the inherited Scripts
@@ -19,7 +20,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	set_nodes()
 	current_cel = Image.new()

@@ -1,12 +1,16 @@
+tool
 extends ImageEffect
 
 
-onready var type_option_button : OptionButton = $VBoxContainer/HBoxContainer2/TypeOptionButton
-onready var angle_hslider : HSlider = $VBoxContainer/AngleOptions/AngleHSlider
-onready var angle_spinbox : SpinBox = $VBoxContainer/AngleOptions/AngleSpinBox
+var type_option_button : OptionButton
+var angle_hslider : HSlider
+var angle_spinbox : SpinBox
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	type_option_button = $VBoxContainer/HBoxContainer2/TypeOptionButton
+	angle_hslider = $VBoxContainer/AngleOptions/AngleHSlider
+	angle_spinbox = $VBoxContainer/AngleOptions/AngleSpinBox
 	type_option_button.add_item("Rotxel")
 	type_option_button.add_item("Upscale, Rotate and Downscale")
 	type_option_button.add_item("Nearest neighbour")

@@ -1,3 +1,4 @@
+tool
 extends AcceptDialog
 
 # Preferences table: [Prop name in Global, relative node path, value type, default value]
@@ -34,17 +35,21 @@ func get_preferences():
 
 var selected_item := 0
 
-onready var list : ItemList = $HSplitContainer/List
-onready var right_side : VBoxContainer = $HSplitContainer/ScrollContainer/VBoxContainer
-onready var autosave_interval : SpinBox = $HSplitContainer/ScrollContainer/VBoxContainer/Backup/AutosaveContainer/AutosaveInterval
-onready var restore_default_button_scene = preload("res://addons/pixelorama/src/Preferences/RestoreDefaultButton.tscn")
-onready var shrink_label : Label = $HSplitContainer/ScrollContainer/VBoxContainer/Interface/ShrinkContainer/ShrinkLabel
+var list : ItemList
+var right_side : VBoxContainer
+var autosave_interval : SpinBox
+var restore_default_button_scene = preload("res://addons/pixelorama/src/Preferences/RestoreDefaultButton.tscn")
+var shrink_label : Label
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	list = $HSplitContainer/List
+	right_side = $HSplitContainer/ScrollContainer/VBoxContainer
+	autosave_interval = $HSplitContainer/ScrollContainer/VBoxContainer/Backup/AutosaveContainer/AutosaveInterval
+	shrink_label = $HSplitContainer/ScrollContainer/VBoxContainer/Interface/ShrinkContainer/ShrinkLabel
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	# Replace OK with Close since preference changes are being applied immediately, not after OK confirmation
 	get_ok().text = tr("Close")
@@ -133,7 +138,7 @@ func preference_update(prop : String) -> void:
 		global.canvas.grid.update()
 
 	if prop in ["checker_size", "checker_color_1", "checker_color_2", "checker_follow_movement", "checker_follow_scale"]:
-		global.transparent_checker._ready()
+		global.transparent_checker._enter_tree()
 
 	if prop in ["guide_color"]:
 		for guide in global.canvas.get_children():

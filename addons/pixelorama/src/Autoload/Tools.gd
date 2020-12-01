@@ -1,3 +1,4 @@
+tool
 extends Node
 
 
@@ -64,7 +65,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	yield(get_tree(), "idle_frame")
 	_slots[BUTTON_LEFT] = Slot.new("Left tool", global)

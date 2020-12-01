@@ -1,3 +1,4 @@
+tool
 extends ConfirmationDialog
 
 
@@ -5,15 +6,18 @@ var current_cel : Image
 var shader : Shader
 var params := [] # String[]
 
-onready var preview : TextureRect = $VBoxContainer/Preview
-onready var shader_loaded_label : Label = $VBoxContainer/ShaderLoadedLabel
-onready var shader_params : BoxContainer = $VBoxContainer/ShaderParams
+var preview : TextureRect
+var shader_loaded_label : Label
+var shader_params : BoxContainer
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
 func _enter_tree():
+	preview= $VBoxContainer/Preview
+	shader_loaded_label = $VBoxContainer/ShaderLoadedLabel
+	shader_params = $VBoxContainer/ShaderParams
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 

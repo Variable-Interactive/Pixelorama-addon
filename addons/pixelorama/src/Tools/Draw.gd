@@ -1,3 +1,4 @@
+tool
 extends "res://addons/pixelorama/src/Tools/Base.gd"
 
 
@@ -23,7 +24,7 @@ var _line_polylines := []
 
 #var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global.get_tools().connect("color_changed", self, "_on_Color_changed")
 	global.brushes_popup.connect("brush_removed", self, "_on_Brush_removed")
 

@@ -1,3 +1,4 @@
+tool
 extends AcceptDialog
 
 
@@ -5,12 +6,15 @@ var current_tag_id := 0
 var tag_vboxes := []
 var delete_tag_button : Button
 
-onready var main_vbox_cont : VBoxContainer = $VBoxContainer/ScrollContainer/VBoxTagContainer
-onready var add_tag_button : Button = $VBoxContainer/ScrollContainer/VBoxTagContainer/AddTag
-onready var options_dialog = $TagOptions
+var main_vbox_cont : VBoxContainer
+var add_tag_button : Button
+var options_dialog
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	main_vbox_cont = $VBoxContainer/ScrollContainer/VBoxTagContainer
+	add_tag_button = $VBoxContainer/ScrollContainer/VBoxTagContainer/AddTag
+	options_dialog = $TagOptions
 	$"TagOptions/GridContainer/ColorPickerButton".get_picker().presets_visible = false
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")

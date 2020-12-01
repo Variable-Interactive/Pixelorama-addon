@@ -1,14 +1,17 @@
+tool
 extends VBoxContainer
 
 
-onready var left_picker := $ColorButtonsVertical/ColorPickersCenter/ColorPickersHorizontal/LeftColorPickerButton
-onready var right_picker := $ColorButtonsVertical/ColorPickersCenter/ColorPickersHorizontal/RightColorPickerButton
+var left_picker
+var right_picker
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	left_picker = $ColorButtonsVertical/ColorPickersCenter/ColorPickersHorizontal/LeftColorPickerButton
+	right_picker = $ColorButtonsVertical/ColorPickersCenter/ColorPickersHorizontal/RightColorPickerButton
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	global.get_tools().connect("color_changed", self, "update_color")
 	left_picker.get_picker().presets_visible = false

@@ -1,3 +1,4 @@
+tool
 extends TextureButton
 
 
@@ -10,7 +11,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	# Handle themes
 	if global.theme_type == global.Theme_Types.LIGHT:

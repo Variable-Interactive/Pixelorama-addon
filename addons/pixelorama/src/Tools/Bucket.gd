@@ -1,3 +1,4 @@
+tool
 extends "res://addons/pixelorama/src/Tools/Base.gd"
 
 
@@ -8,7 +9,7 @@ var _offset_x := 0
 var _offset_y := 0
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	update_pattern()
 
 

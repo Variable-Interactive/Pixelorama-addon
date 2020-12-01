@@ -1,3 +1,4 @@
+tool
 extends Control
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
@@ -10,13 +11,15 @@ var is_quitting_on_save := false
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	get_tree().set_auto_accept_quit(false)
 	setup_application_window_size()
 
 	global.window_title = tr("untitled") + " - Pixelorama " + global.current_version
-
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
 	global.current_project.layers[0].name = tr("Layer") + " 0"
 	global.layers_container.get_child(0).label.text = global.current_project.layers[0].name
 	global.layers_container.get_child(0).line_edit.text = global.current_project.layers[0].name

@@ -1,3 +1,4 @@
+tool
 extends "res://addons/pixelorama/src/Tools/Base.gd"
 
 

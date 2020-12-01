@@ -1,3 +1,4 @@
+tool
 extends Popup
 class_name Brushes
 
@@ -21,7 +22,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	var container = global.brushes_popup.get_node("TabContainer/File/FileBrushContainer")
 	var button = create_button(pixel_image)

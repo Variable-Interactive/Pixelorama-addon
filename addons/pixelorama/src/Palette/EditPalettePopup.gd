@@ -1,3 +1,4 @@
+tool
 extends WindowDialog
 
 var palette_button = preload("res://addons/pixelorama/src/Palette/PaletteButton.tscn")
@@ -6,19 +7,26 @@ var current_palette : String
 var current_swatch := -1
 var working_palette : Palette
 
-onready var color_picker = $VBoxContainer/HBoxContainer/EditPaletteColorPicker
-onready var palette_grid = $VBoxContainer/HBoxContainer/VBoxContainer/Panel/ScrollContainer/EditPaletteGridContainer
-onready var color_name_edit = $VBoxContainer/PaletteOptions/EditPaletteColorNameLineEdit
-onready var palette_name_edit = $VBoxContainer/PaletteOptions/EditPaletteNameLineEdit
-onready var left_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/LeftColor/NinePatchRect
-onready var right_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/RightColor/NinePatchRect
-onready var dummyBtn = $DummyBtn
+var color_picker
+var palette_grid
+var color_name_edit
+var palette_name_edit
+var left_color_button
+var right_color_button
+var dummyBtn
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	color_picker = $VBoxContainer/HBoxContainer/EditPaletteColorPicker
+	palette_grid = $VBoxContainer/HBoxContainer/VBoxContainer/Panel/ScrollContainer/EditPaletteGridContainer
+	color_name_edit = $VBoxContainer/PaletteOptions/EditPaletteColorNameLineEdit
+	palette_name_edit = $VBoxContainer/PaletteOptions/EditPaletteNameLineEdit
+	left_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/LeftColor/NinePatchRect
+	right_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/RightColor/NinePatchRect
+	dummyBtn = $DummyBtn
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	$VBoxContainer/HBoxContainer/EditPaletteColorPicker.presets_visible = false
 

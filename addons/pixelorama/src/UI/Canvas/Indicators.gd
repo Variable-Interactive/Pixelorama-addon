@@ -1,3 +1,4 @@
+tool
 extends Node2D
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")

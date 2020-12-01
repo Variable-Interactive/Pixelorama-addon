@@ -1,3 +1,4 @@
+tool
 class_name SymmetryGuide extends Guide
 
 
@@ -5,7 +6,7 @@ var _texture = preload("res://addons/pixelorama/assets/graphics/dotted_line.png"
 
 #var global
 
-func _ready():
+func _enter_tree():
 	global = get_node("/root/Pixelorama")
 	has_focus = false
 	visible = false

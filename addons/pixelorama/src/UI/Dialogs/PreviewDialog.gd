@@ -1,3 +1,4 @@
+tool
 extends ConfirmationDialog
 
 
@@ -11,23 +12,32 @@ var spritesheet_horizontal := 1
 var spritesheet_vertical := 1
 var brush_type : int = BrushTypes.FILE
 
-onready var texture_rect : TextureRect = $VBoxContainer/CenterContainer/TextureRect
-onready var image_size_label : Label = $VBoxContainer/SizeContainer/ImageSizeLabel
-onready var frame_size_label : Label = $VBoxContainer/SizeContainer/FrameSizeLabel
-onready var spritesheet_options = $VBoxContainer/HBoxContainer/SpritesheetOptions
-onready var new_frame_options = $VBoxContainer/HBoxContainer/NewFrameOptions
-onready var new_layer_options = $VBoxContainer/HBoxContainer/NewLayerOptions
-onready var new_brush_options = $VBoxContainer/HBoxContainer/NewBrushOptions
-onready var new_brush_name = $VBoxContainer/HBoxContainer/NewBrushOptions/BrushName
+var texture_rect : TextureRect
+var image_size_label : Label
+var frame_size_label : Label
+var spritesheet_options
+var new_frame_options
+var new_layer_options
+var new_brush_options
+var new_brush_name
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_PreviewDialog_about_to_show() -> void:
+	texture_rect = $VBoxContainer/CenterContainer/TextureRect
+	image_size_label = $VBoxContainer/SizeContainer/ImageSizeLabel
+	frame_size_label = $VBoxContainer/SizeContainer/FrameSizeLabel
+	spritesheet_options = $VBoxContainer/HBoxContainer/SpritesheetOptions
+	new_frame_options = $VBoxContainer/HBoxContainer/NewFrameOptions
+	new_layer_options = $VBoxContainer/HBoxContainer/NewLayerOptions
+	new_brush_options = $VBoxContainer/HBoxContainer/NewBrushOptions
+	new_brush_name = $VBoxContainer/HBoxContainer/NewBrushOptions/BrushName
+
 	var img_texture := ImageTexture.new()
 	img_texture.create_from_image(image, 0)
 	texture_rect.texture = img_texture

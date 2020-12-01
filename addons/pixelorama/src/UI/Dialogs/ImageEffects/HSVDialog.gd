@@ -1,16 +1,24 @@
+tool
 extends ImageEffect
 
 
-onready var hue_slider = $VBoxContainer/HBoxContainer/Sliders/Hue
-onready var sat_slider = $VBoxContainer/HBoxContainer/Sliders/Saturation
-onready var val_slider = $VBoxContainer/HBoxContainer/Sliders/Value
+var hue_slider
+var sat_slider
+var val_slider
 
-onready var hue_spinbox = $VBoxContainer/HBoxContainer/TextBoxes/Hue
-onready var sat_spinbox = $VBoxContainer/HBoxContainer/TextBoxes/Saturation
-onready var val_spinbox = $VBoxContainer/HBoxContainer/TextBoxes/Value
+var hue_spinbox
+var sat_spinbox
+var val_spinbox
 
 
 func set_nodes() -> void:
+	hue_slider = $VBoxContainer/HBoxContainer/Sliders/Hue
+	sat_slider = $VBoxContainer/HBoxContainer/Sliders/Saturation
+	val_slider = $VBoxContainer/HBoxContainer/Sliders/Value
+
+	hue_spinbox = $VBoxContainer/HBoxContainer/TextBoxes/Hue
+	sat_spinbox = $VBoxContainer/HBoxContainer/TextBoxes/Saturation
+	val_spinbox = $VBoxContainer/HBoxContainer/TextBoxes/Value
 	preview = $VBoxContainer/Preview
 	selection_checkbox = $VBoxContainer/AffectHBoxContainer/SelectionCheckBox
 	affect_option_button = $VBoxContainer/AffectHBoxContainer/AffectOptionButton

@@ -1,3 +1,4 @@
+tool
 extends BaseButton
 
 
@@ -7,7 +8,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_BrushButton_pressed() -> void:

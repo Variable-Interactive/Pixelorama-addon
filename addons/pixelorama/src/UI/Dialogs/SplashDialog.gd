@@ -1,3 +1,4 @@
+tool
 extends WindowDialog
 
 
@@ -9,14 +10,14 @@ var artworks := {
 
 var chosen_artwork = ""
 
-onready var latin_font = preload("res://addons/pixelorama/assets/fonts/Roboto-Small.tres")
-onready var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Small.tres")
+var latin_font = preload("res://addons/pixelorama/assets/fonts/Roboto-Small.tres")
+var cjk_font = preload("res://addons/pixelorama/assets/fonts/CJK/DroidSansFallback-Small.tres")
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _on_SplashDialog_about_to_show() -> void:

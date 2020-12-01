@@ -1,13 +1,18 @@
+tool
 extends ImageEffect
 
 
-onready var color1 : ColorPickerButton = $VBoxContainer/OptionsContainer/ColorsContainer/ColorPickerButton
-onready var color2 : ColorPickerButton = $VBoxContainer/OptionsContainer/ColorsContainer/ColorPickerButton2
-onready var steps : SpinBox = $VBoxContainer/OptionsContainer/StepSpinBox
-onready var direction : OptionButton = $VBoxContainer/OptionsContainer/DirectionOptionButton
+var color1 : ColorPickerButton
+var color2 : ColorPickerButton
+var steps : SpinBox
+var direction : OptionButton
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	color1 = $VBoxContainer/OptionsContainer/ColorsContainer/ColorPickerButton
+	color2 = $VBoxContainer/OptionsContainer/ColorsContainer/ColorPickerButton2
+	steps = $VBoxContainer/OptionsContainer/StepSpinBox
+	direction = $VBoxContainer/OptionsContainer/DirectionOptionButton
 	color1.get_picker().presets_visible = false
 	color2.get_picker().presets_visible = false
 

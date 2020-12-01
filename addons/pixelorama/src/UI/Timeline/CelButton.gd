@@ -1,14 +1,16 @@
+tool
 extends Button
 
 var frame := 0
 var layer := 0
 
-onready var popup_menu : PopupMenu = $PopupMenu
+var popup_menu : PopupMenu
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	popup_menu = $PopupMenu
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	hint_tooltip = tr("Frame: %s, Layer: %s") % [frame + 1, layer]
 	if global.current_project.frames[frame] in global.current_project.layers[layer].linked_cels:

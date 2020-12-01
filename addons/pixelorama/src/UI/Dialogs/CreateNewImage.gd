@@ -1,12 +1,13 @@
+tool
 extends ConfirmationDialog
 
-onready var templates_options = $VBoxContainer/OptionsContainer/TemplatesOptions
-onready var ratio_box = $VBoxContainer/OptionsContainer/RatioCheckBox
-onready var width_value = $VBoxContainer/OptionsContainer/WidthValue
-onready var height_value = $VBoxContainer/OptionsContainer/HeightValue
-onready var fill_color_node = $VBoxContainer/OptionsContainer/FillColor
+var templates_options
+var ratio_box
+var width_value
+var height_value
+var fill_color_node
 
-onready var size_value = Vector2()
+var size_value = Vector2()
 
 # Template Id identifier
 enum Templates {
@@ -56,7 +57,14 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready():
+func _enter_tree():
+	templates_options = $VBoxContainer/OptionsContainer/TemplatesOptions
+	ratio_box = $VBoxContainer/OptionsContainer/RatioCheckBox
+	width_value = $VBoxContainer/OptionsContainer/WidthValue
+	height_value = $VBoxContainer/OptionsContainer/HeightValue
+	fill_color_node = $VBoxContainer/OptionsContainer/FillColor
+
+	size_value = Vector2()
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	width_value.value = global.default_image_width
 	height_value.value = global.default_image_height
@@ -85,7 +93,7 @@ func _on_CreateNewImage_confirmed() -> void:
 	global.canvas.fill_color = fill_color
 
 	var frame : Frame = global.canvas.new_empty_frame(false, true, Vector2(width, height))
-	var new_project := Project.new([frame], tr("untitled"), Vector2(width, height).floor())
+	var new_project := Project.new([frame], tr("untitled"), Vector2(width, height).floor(), global)
 	new_project.layers.append(Layer.new())
 	global.projects.append(new_project)
 	global.tabs.current_tab = global.tabs.get_tab_count() - 1

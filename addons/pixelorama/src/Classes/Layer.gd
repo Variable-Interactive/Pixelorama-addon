@@ -1,3 +1,4 @@
+tool
 class_name Layer extends Reference
 # A class for layer properties.
 

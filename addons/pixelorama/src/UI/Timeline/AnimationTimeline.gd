@@ -1,3 +1,4 @@
+tool
 extends Panel
 
 var fps := 6.0
@@ -13,7 +14,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	timeline_scroll = global.find_node_by_name(self, "TimelineScroll")
 	tag_scroll_container = global.find_node_by_name(self, "TagScroll")

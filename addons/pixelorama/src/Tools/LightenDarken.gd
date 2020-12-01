@@ -1,3 +1,4 @@
+tool
 extends "res://addons/pixelorama/src/Tools/Draw.gd"
 
 
@@ -16,7 +17,7 @@ var _value_amount := 10
 
 #var global
 
-func _ready():
+func _enter_tree():
 	global = get_node("/root/Pixelorama")
 
 class LightenDarkenOp extends Drawer.ColorOp:

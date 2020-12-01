@@ -1,50 +1,84 @@
+tool
 extends AcceptDialog
 
 # called when user resumes export after filename collision
 signal resume_export_function()
 
-var animated_preview_current_frame := 0
+var animated_preview_current_frame : int
 var animated_preview_frames = []
 
-onready var tabs = $VBoxContainer/Tabs
-onready var popups = $Popups
-onready var file_exists_alert_popup = $Popups/FileExistsAlert
-onready var path_validation_alert_popup = $Popups/PathValidationAlert
-onready var path_dialog_popup = $Popups/PathDialog
-onready var export_progress_popup = $Popups/ExportProgressBar
-onready var export_progress_bar = $Popups/ExportProgressBar/MarginContainer/ProgressBar
+var tabs
+var popups
+var file_exists_alert_popup
+var path_validation_alert_popup
+var path_dialog_popup
+var export_progress_popup
+var export_progress_bar
 
-onready var animation_options_multiple_animations_directories = $VBoxContainer/AnimationOptions/MultipleAnimationsDirectories
-onready var previews = $VBoxContainer/PreviewPanel/PreviewScroll/Previews
-onready var frame_timer = $FrameTimer
+var animation_options_multiple_animations_directories
+var previews
+var frame_timer
 
-onready var frame_options = $VBoxContainer/FrameOptions
-onready var frame_options_frame_number = $VBoxContainer/FrameOptions/FrameNumber/FrameNumber
+var frame_options
+var frame_options_frame_number
 
-onready var spritesheet_options = $VBoxContainer/SpritesheetOptions
-onready var spritesheet_options_frames = $VBoxContainer/SpritesheetOptions/Frames/Frames
-onready var spritesheet_options_orientation = $VBoxContainer/SpritesheetOptions/Orientation/Orientation
-onready var spritesheet_options_lines_count = $VBoxContainer/SpritesheetOptions/Orientation/LinesCount
-onready var spritesheet_options_lines_count_label = $VBoxContainer/SpritesheetOptions/Orientation/LinesCountLabel
+var spritesheet_options
+var spritesheet_options_frames
+var spritesheet_options_orientation
+var spritesheet_options_lines_count
+var spritesheet_options_lines_count_label
 
-onready var animation_options = $VBoxContainer/AnimationOptions
-onready var animation_options_animation_type = $VBoxContainer/AnimationOptions/AnimationType
-onready var animation_options_animation_options = $VBoxContainer/AnimationOptions/AnimatedOptions
-onready var animation_options_direction = $VBoxContainer/AnimationOptions/AnimatedOptions/Direction
+var animation_options
+var animation_options_animation_type
+var animation_options_animation_options
+var animation_options_direction
 
 
-onready var options_resize = $VBoxContainer/Options/Resize
-onready var options_interpolation = $VBoxContainer/Options/Interpolation
-onready var path_container = $VBoxContainer/Path
-onready var path_line_edit = $VBoxContainer/Path/PathLineEdit
-onready var file_line_edit = $VBoxContainer/File/FileLineEdit
-onready var file_file_format = $VBoxContainer/File/FileFormat
+var options_resize
+var options_interpolation
+var path_container
+var path_line_edit
+var file_line_edit
+var file_file_format
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-func _ready() -> void:
+func _enter_tree() -> void:
+	tabs = $VBoxContainer/Tabs
+	popups = $Popups
+	file_exists_alert_popup = $Popups/FileExistsAlert
+	path_validation_alert_popup = $Popups/PathValidationAlert
+	path_dialog_popup = $Popups/PathDialog
+	export_progress_popup = $Popups/ExportProgressBar
+	export_progress_bar = $Popups/ExportProgressBar/MarginContainer/ProgressBar
+
+	animation_options_multiple_animations_directories = $VBoxContainer/AnimationOptions/MultipleAnimationsDirectories
+	previews = $VBoxContainer/PreviewPanel/PreviewScroll/Previews
+	frame_timer = $FrameTimer
+
+	frame_options = $VBoxContainer/FrameOptions
+	frame_options_frame_number = $VBoxContainer/FrameOptions/FrameNumber/FrameNumber
+
+	spritesheet_options = $VBoxContainer/SpritesheetOptions
+	spritesheet_options_frames = $VBoxContainer/SpritesheetOptions/Frames/Frames
+	spritesheet_options_orientation = $VBoxContainer/SpritesheetOptions/Orientation/Orientation
+	spritesheet_options_lines_count = $VBoxContainer/SpritesheetOptions/Orientation/LinesCount
+	spritesheet_options_lines_count_label = $VBoxContainer/SpritesheetOptions/Orientation/LinesCountLabel
+
+	animation_options = $VBoxContainer/AnimationOptions
+	animation_options_animation_type = $VBoxContainer/AnimationOptions/AnimationType
+	animation_options_animation_options = $VBoxContainer/AnimationOptions/AnimatedOptions
+	animation_options_direction = $VBoxContainer/AnimationOptions/AnimatedOptions/Direction
+
+
+	options_resize = $VBoxContainer/Options/Resize
+	options_interpolation = $VBoxContainer/Options/Interpolation
+	path_container = $VBoxContainer/Path
+	path_line_edit = $VBoxContainer/Path/PathLineEdit
+	file_line_edit = $VBoxContainer/File/FileLineEdit
+	file_file_format = $VBoxContainer/File/FileFormat
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	tabs.add_tab("Frame")
 	tabs.add_tab("Spritesheet")

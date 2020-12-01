@@ -1,3 +1,4 @@
+tool
 extends Node
 
 enum Grid_Types {CARTESIAN, ISOMETRIC, ALL}

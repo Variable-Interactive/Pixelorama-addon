@@ -1,0 +1,97 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://addons/editor_input_mapper/BarLevelUnder.png" type="Texture" id=1]
+[ext_resource path="res://addons/editor_input_mapper/BarLevelProgress.png" type="Texture" id=2]
+[ext_resource path="res://addons/editor_input_mapper/DarkBackground.gd" type="Script" id=3]
+
+[sub_resource type="DynamicFontData" id=1]
+font_path = "res://addons/pixelorama/assets/fonts/Roboto-Regular.ttf"
+
+[sub_resource type="DynamicFont" id=2]
+size = 22
+font_data = SubResource( 1 )
+
+[sub_resource type="DynamicFont" id=3]
+font_data = SubResource( 1 )
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 200 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DarkBackground" type="Panel" parent="."]
+self_modulate = Color( 0, 0, 0, 0.478431 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 200 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="CenterContainer"]
+margin_left = 340.0
+margin_top = 280.0
+margin_right = 980.0
+margin_bottom = 480.0
+rect_min_size = Vector2( 640, 200 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+margin_left = 340.0
+margin_top = 280.0
+margin_right = 980.0
+margin_bottom = 480.0
+rect_min_size = Vector2( 600, 200 )
+focus_mode = 1
+mouse_filter = 0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_right = 640.0
+margin_bottom = 57.0
+custom_fonts/font = SubResource( 2 )
+text = "InputEventKey Editor
+"
+align = 1
+
+[node name="Label2" type="Label" parent="CenterContainer/VBoxContainer"]
+margin_top = 61.0
+margin_right = 640.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+custom_fonts/font = SubResource( 3 )
+text = "Press a Key on your Keyboard..."
+align = 1
+
+[node name="Control" type="Control" parent="CenterContainer/VBoxContainer"]
+margin_top = 84.0
+margin_right = 640.0
+margin_bottom = 114.0
+rect_min_size = Vector2( 0, 30 )
+
+[node name="TextureProgress" type="TextureProgress" parent="CenterContainer/VBoxContainer"]
+margin_top = 118.0
+margin_right = 640.0
+margin_bottom = 138.0
+size_flags_horizontal = 3
+texture_under = ExtResource( 1 )
+texture_progress = ExtResource( 2 )
+tint_under = Color( 0.423529, 0.423529, 0.423529, 1 )

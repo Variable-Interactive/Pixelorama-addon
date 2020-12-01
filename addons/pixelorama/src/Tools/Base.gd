@@ -1,3 +1,4 @@
+tool
 extends VBoxContainer
 
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
@@ -10,7 +11,7 @@ var _cursor := Vector2.INF
 
 var global
 
-func _ready():
+func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	kname = name.replace(" ", "_").to_lower()
 	$Label.text = tool_slot.name
