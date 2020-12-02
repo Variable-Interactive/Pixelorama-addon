@@ -37,7 +37,7 @@ func _draw() -> void:
 	var zoom: float = global.camera.scale.x
 	transform.x = Vector2(zoom, zoom)
 
-	transform.origin = global.main_viewport.rect_size / 2 + global.camera.offset * 1.0/zoom
+	transform.origin = global.camera.offset
 
 	var basic_rule := 100.0
 	var i := 0
