@@ -26,6 +26,8 @@ func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	var container = global.brushes_popup.get_node("TabContainer/File/FileBrushContainer")
 	var button = create_button(pixel_image)
 	button.brush.type = PIXEL

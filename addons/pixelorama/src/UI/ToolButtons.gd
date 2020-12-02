@@ -24,6 +24,8 @@ func _enter_tree() -> void:
 		[$LightenDarken, "lightdark"],
 	]
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	for t in tools:
 		t[0].connect("pressed", self, "_on_Tool_pressed", [t[0]])
 	global.update_hint_tooltips()

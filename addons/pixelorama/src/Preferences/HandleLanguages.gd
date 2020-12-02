@@ -36,6 +36,8 @@ func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	loaded_locales = TranslationServer.get_loaded_locales()
 
 	# Make sure locales are always sorted, in the same order

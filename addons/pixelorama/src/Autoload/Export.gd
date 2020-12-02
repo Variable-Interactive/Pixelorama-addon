@@ -59,6 +59,8 @@ func _exit_tree() -> void:
 func _enter_tree() -> void:
 	gif_export_thread = Thread.new()
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 
 func external_export() -> void:

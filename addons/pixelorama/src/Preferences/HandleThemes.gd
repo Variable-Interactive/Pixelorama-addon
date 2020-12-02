@@ -24,6 +24,8 @@ func _enter_tree() -> void:
 	var buttons_container = $ThemeButtons
 	var colors_container = $ThemeColorsSpacer/ThemeColors
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	var button_group = ButtonGroup.new()
 	for theme in themes:
 		var button := CheckBox.new()

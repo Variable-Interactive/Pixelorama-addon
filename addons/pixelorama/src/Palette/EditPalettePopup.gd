@@ -28,6 +28,8 @@ func _enter_tree() -> void:
 	right_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/RightColor/NinePatchRect
 	dummyBtn = $DummyBtn
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	$VBoxContainer/HBoxContainer/EditPaletteColorPicker.presets_visible = false
 
 

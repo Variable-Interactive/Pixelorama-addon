@@ -23,6 +23,8 @@ var global
 
 func _on_FrameTagDialog_about_to_show() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	global.dialog_open(true)
 	for vbox in tag_vboxes:
 		vbox.queue_free()

@@ -67,6 +67,8 @@ var global
 
 func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	yield(get_tree(), "idle_frame")
 	_slots[BUTTON_LEFT] = Slot.new("Left tool", global)
 	_slots[BUTTON_RIGHT] = Slot.new("Right tool", global)

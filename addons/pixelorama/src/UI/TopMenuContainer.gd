@@ -13,6 +13,8 @@ var global
 func _enter_tree() -> void:
 	yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	setup_file_menu()
 	setup_edit_menu()
 	setup_view_menu()

@@ -12,6 +12,8 @@ var global
 func _enter_tree() -> void:
 	popup_menu = $PopupMenu
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	hint_tooltip = tr("Frame: %s, Layer: %s") % [frame + 1, layer]
 	if global.current_project.frames[frame] in global.current_project.layers[layer].linked_cels:
 		get_node("LinkedIndicator").visible = true

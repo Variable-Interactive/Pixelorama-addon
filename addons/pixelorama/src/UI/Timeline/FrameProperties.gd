@@ -12,6 +12,8 @@ func _enter_tree():
 	frame_num = $VBoxContainer/GridContainer/FrameNum
 	frame_dur = $VBoxContainer/GridContainer/FrameTime
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 func set_frame_label(frame : int) -> void:
 	frame_num.set_text(str(frame + 1))

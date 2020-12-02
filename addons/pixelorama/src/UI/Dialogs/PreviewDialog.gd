@@ -27,6 +27,8 @@ var global
 
 func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 func _on_PreviewDialog_about_to_show() -> void:
 	texture_rect = $VBoxContainer/CenterContainer/TextureRect

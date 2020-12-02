@@ -19,6 +19,8 @@ func _enter_tree() -> void:
 		yield(get_tree(), "idle_frame")
 	has_inited = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	project = global.current_project
 	width = global.camera.scale.x
 	default_color = global.guide_color

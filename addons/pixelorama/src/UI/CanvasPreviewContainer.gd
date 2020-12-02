@@ -15,6 +15,8 @@ func _enter_tree():
 	camera = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview
 	play_button = $HBoxContainer/VBoxContainer/PlayButton
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 func _on_PreviewZoomSlider_value_changed(value : float) -> void:
 	camera.scale = -Vector2(value, value)

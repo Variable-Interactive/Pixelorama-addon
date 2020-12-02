@@ -21,6 +21,8 @@ func _enter_tree():
 		yield(get_tree(), "idle_frame")
 	has_init = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	global.main_viewport.connect("item_rect_changed", self, "update")
 
 

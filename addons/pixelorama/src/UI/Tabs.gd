@@ -7,6 +7,8 @@ var global
 
 func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 func _on_Tabs_tab_changed(tab : int) -> void:
 	global.current_project_index = tab

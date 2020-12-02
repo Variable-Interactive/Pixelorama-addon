@@ -51,6 +51,8 @@ func _enter_tree() -> void:
 	autosave_interval = $HSplitContainer/ScrollContainer/VBoxContainer/Backup/AutosaveContainer/AutosaveInterval
 	shrink_label = $HSplitContainer/ScrollContainer/VBoxContainer/Interface/ShrinkContainer/ShrinkLabel
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	# Replace OK with Close since preference changes are being applied immediately, not after OK confirmation
 	get_ok().text = tr("Close")
 

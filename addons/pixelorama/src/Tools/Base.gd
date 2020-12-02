@@ -13,6 +13,8 @@ var global
 
 func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	kname = name.replace(" ", "_").to_lower()
 	$Label.text = tool_slot.name
 

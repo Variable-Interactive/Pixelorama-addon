@@ -13,6 +13,8 @@ var global
 
 func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	# Handle themes
 	if global.theme_type == global.Theme_Types.LIGHT:
 		texture_normal = load("res://addons/pixelorama/assets/graphics/light_themes/misc/icon_reload.png")

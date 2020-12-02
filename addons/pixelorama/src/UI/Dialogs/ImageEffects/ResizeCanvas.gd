@@ -26,11 +26,15 @@ func _enter_tree():
 	y_spinbox = $VBoxContainer/OptionsContainer/YSpinBox
 	preview_rect = $VBoxContainer/Preview
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 func _on_ResizeCanvas_about_to_show() -> void:
 	image = Image.new()
 	if not global:
 		global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	image.create(global.current_project.size.x, global.current_project.size.y, false, Image.FORMAT_RGBA8)
 	image.lock()
 

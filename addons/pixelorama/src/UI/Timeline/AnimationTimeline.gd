@@ -18,6 +18,8 @@ func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	timeline_scroll = global.find_node_by_name(self, "TimelineScroll")
 	tag_scroll_container = global.find_node_by_name(self, "TagScroll")
 	timeline_scroll.get_h_scrollbar().connect("value_changed", self, "_h_scroll_changed")

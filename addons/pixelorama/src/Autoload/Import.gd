@@ -7,6 +7,8 @@ var global
 
 func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 # Get hold of the brushes, including random brushes (subdirectories and % files
 # in them, non % files get loaded independently.) nyaaa

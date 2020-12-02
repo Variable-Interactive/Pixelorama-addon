@@ -16,6 +16,8 @@ var global
 
 func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	viewport_container = get_parent().get_parent()
 	viewport_container.connect("gui_input", self, "gui_input")
 	transparent_checker = get_node("TransparentChecker")

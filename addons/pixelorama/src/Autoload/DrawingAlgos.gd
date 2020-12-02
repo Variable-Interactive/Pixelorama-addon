@@ -10,6 +10,8 @@ var global
 
 func _enter_tree():
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 func scale3X(sprite : Image, tol : float = 50) -> Image:
 	var scaled = Image.new()
@@ -267,6 +269,8 @@ func crop_image(image : Image) -> void:
 	var used_rect : Rect2 = image.get_used_rect()
 	if not global:
 		global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	for f in global.current_project.frames:
 		# However, if first cel is empty, loop through all cels until we find one that isn't
 		for cel in f.cels:
@@ -314,6 +318,8 @@ func resize_canvas(width : int, height : int, offset_x : int, offset_y : int) ->
 func general_do_scale(width : int, height : int) -> void:
 	if not global:
 		global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	var x_ratio = global.current_project.size.x / width
 	var y_ratio = global.current_project.size.y / height
 	var new_x_symmetry_point = global.current_project.x_symmetry_point / x_ratio

@@ -11,6 +11,8 @@ var global
 
 func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	if OS.get_name() == "HTML5" and OS.has_feature('JavaScript'):
 		_define_js()
 

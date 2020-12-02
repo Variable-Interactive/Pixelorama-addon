@@ -22,6 +22,8 @@ func _enter_tree() -> void:
 	palette_from_sprite_dialog = $"../../../../PaletteFromSpriteDialog"
 	remove_palette_warning = $"../../../../RemovePaletteWarning"
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	_load_palettes()
 
 	# Select default palette "Default"

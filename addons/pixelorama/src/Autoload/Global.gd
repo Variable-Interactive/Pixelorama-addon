@@ -183,6 +183,29 @@ var open_save_component = null
 var html5_file_component = null
 var tools_component = null
 
+# Tell if a node have a sibling named sibling_name
+# of type sibling_type
+func has_sibling(node : Node, sibling_name: String, sibling_type: String) -> bool:
+	for child in node.get_parent().get_children():
+		if child.name == sibling_name:
+			return true
+	return false
+
+static func get_node_in_parents(node, klass_name):
+	while node != null:
+		node = node.get_parent()
+		if node != null and node.get_class() == klass_name:
+			print("Found: %s" % [node])
+			return node
+	return null
+
+
+func is_getting_edited(node):
+	if Engine.is_editor_hint():
+		return (null != get_node_in_parents(node, 'CanvasItemEditor'))
+	else:
+		return false
+
 func get_export():
 	if not export_component:
 		export_component = preload("res://addons/pixelorama/src/Autoload/Export.gd").new()

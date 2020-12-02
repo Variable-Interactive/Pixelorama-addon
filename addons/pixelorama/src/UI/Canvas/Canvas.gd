@@ -29,6 +29,8 @@ func _enter_tree() -> void:
 	tile_mode = $TileMode
 	indicators = $Indicators
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	var frame : Frame = new_empty_frame(true)
 	global.current_project.frames.append(frame)
 	yield(get_tree().create_timer(0.2), "timeout")

@@ -19,6 +19,8 @@ func _enter_tree():
 	shader_loaded_label = $VBoxContainer/ShaderLoadedLabel
 	shader_params = $VBoxContainer/ShaderParams
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 
 
 func _on_ShaderEffect_about_to_show() -> void:

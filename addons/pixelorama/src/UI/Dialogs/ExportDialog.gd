@@ -80,6 +80,8 @@ func _enter_tree() -> void:
 	file_line_edit = $VBoxContainer/File/FileLineEdit
 	file_file_format = $VBoxContainer/File/FileFormat
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	tabs.add_tab("Frame")
 	tabs.add_tab("Spritesheet")
 	tabs.add_tab("Animation")

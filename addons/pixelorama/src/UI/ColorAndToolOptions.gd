@@ -13,6 +13,8 @@ func _enter_tree() -> void:
 	left_picker = $ColorButtonsVertical/ColorPickersCenter/ColorPickersHorizontal/LeftColorPickerButton
 	right_picker = $ColorButtonsVertical/ColorPickersCenter/ColorPickersHorizontal/RightColorPickerButton
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	global.get_tools().connect("color_changed", self, "update_color")
 	left_picker.get_picker().presets_visible = false
 	right_picker.get_picker().presets_visible = false

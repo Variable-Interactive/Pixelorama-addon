@@ -24,6 +24,8 @@ func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	set_nodes()
 	current_cel = Image.new()
 	current_frame = Image.new()

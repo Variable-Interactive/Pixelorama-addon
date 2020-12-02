@@ -22,6 +22,8 @@ func _enter_tree() -> void:
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	shortcut_selector_popup = global.preferences_dialog.get_node("Popups/ShortcutSelector")
 	theme_font_color = global.preferences_dialog.get_node("Popups/ShortcutSelector/EnteredShortcut").get_color("font_color")
 	# Disable input until the shortcut selector is displayed

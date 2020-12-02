@@ -12,7 +12,13 @@ var is_quitting_on_save := false
 
 # Called when the node enters the scene tree for the first time.
 func _enter_tree() -> void:
+
 	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
+	if global.is_getting_edited(self):
+		print("I have to stop that !")
+		return
 	get_tree().set_auto_accept_quit(false)
 	setup_application_window_size()
 
