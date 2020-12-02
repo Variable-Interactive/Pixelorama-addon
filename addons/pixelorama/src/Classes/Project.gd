@@ -114,10 +114,12 @@ func change_project() -> void:
 			layers[i].name = tr("Layer") + " %s" % i
 
 		global.layers_container.add_child(layer_container)
+		yield(global.get_tree(), "idle_frame")
 		layer_container.label.text = layers[i].name
 		layer_container.line_edit.text = layers[i].name
 
 		global.frames_container.add_child(layers[i].frame_container)
+		yield(global.get_tree(), "idle_frame")
 		for j in range(frames.size()): # Create Cel buttons
 			var cel_button = load("res://addons/pixelorama/src/UI/Timeline/CelButton.tscn").instance()
 			cel_button.frame = j
@@ -174,17 +176,17 @@ func change_project() -> void:
 	var cameras = [global.camera, global.camera2, global.camera_preview]
 	var i := 0
 	for camera in cameras:
-		camera.zoom = cameras_zoom[i]
+		camera.scale = cameras_zoom[i]
 		camera.offset = cameras_offset[i]
 		i += 1
-	global.zoom_level_label.text = str(round(100 / global.camera.zoom.x)) + " %"
+	global.zoom_level_label.text = str(round(100 / global.camera.scale.x)) + " %"
 	global.canvas.update()
 	global.canvas.grid.isometric_polylines.clear()
 	global.canvas.grid.update()
 	global.transparent_checker._enter_tree()
 	global.horizontal_ruler.update()
 	global.vertical_ruler.update()
-	global.preview_zoom_slider.value = -global.camera_preview.zoom.x
+	global.preview_zoom_slider.value = -global.camera_preview.scale.x
 	global.cursor_position_label.text = "[%s×%s]" % [size.x, size.y]
 
 	global.window_title = "%s - Pixelorama %s" % [name, global.current_version]

@@ -1,11 +1,12 @@
 tool
 extends ImageEffect
 
-
 var red := true
 var green := true
 var blue := true
 var alpha := false
+
+		
 
 
 func set_nodes() -> void:
@@ -15,7 +16,7 @@ func set_nodes() -> void:
 
 
 func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node("/root/Pixelorama").current_project) -> void:
-	DrawingAlgos.invert_image_colors(_cel, _pixels, red, green, blue, alpha)
+	global.get_drawing_algos().invert_image_colors(_cel, _pixels, red, green, blue, alpha)
 
 
 func _on_RButton_toggled(button_pressed : bool) -> void:

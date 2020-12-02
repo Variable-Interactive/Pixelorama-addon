@@ -31,11 +31,11 @@ func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node(
 	var angle : float = deg2rad(angle_hslider.value)
 	match type_option_button.text:
 		"Rotxel":
-			DrawingAlgos.rotxel(_cel, angle, _pixels)
+			global.get_drawing_algos().rotxel(_cel, angle, _pixels)
 		"Nearest neighbour":
-			DrawingAlgos.nn_rotate(_cel, angle, _pixels)
+			global.get_drawing_algos().nn_rotate(_cel, angle, _pixels)
 		"Upscale, Rotate and Downscale":
-			DrawingAlgos.fake_rotsprite(_cel, angle, _pixels)
+			global.get_drawing_algos().fake_rotsprite(_cel, angle, _pixels)
 
 
 func _confirmed() -> void:

@@ -5,15 +5,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
-
-
-func _enter_tree():
-	yield(get_tree(),"idle_frame")
-	if not is_inside_tree():
-		return
-	global = get_node("/root/Pixelorama")
-	if not global.current_project:
-		return
+func process_enter_tree():
 	rect_size = global.current_project.size
 	if get_parent().get_parent().get_parent() == global.main_viewport:
 		global.second_viewport.get_node("Viewport/Camera2D2/TransparentChecker")._enter_tree()
@@ -26,6 +18,15 @@ func _enter_tree():
 	_init_position(global.current_project.tile_mode)
 	
 
+
+func _enter_tree():
+	yield(get_tree(),"idle_frame")
+	if not is_inside_tree():
+		return
+	global = get_node("/root/Pixelorama")
+	if not global.current_project:
+		return
+	call_deferred("process_enter_tree")
 
 func update_offset(offset : Vector2, scale : Vector2) -> void:
 	material.set_shader_param("offset", offset)

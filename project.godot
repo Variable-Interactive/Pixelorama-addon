@@ -119,10 +119,6 @@ config/Version="v0.8.2-dev"
 
 driver="Dummy"
 
-[autoload]
-
-DrawingAlgos="*res://addons/pixelorama/src/Autoload/DrawingAlgos.gd"
-
 [debug]
 
 gdscript/warnings/narrowing_conversion=false

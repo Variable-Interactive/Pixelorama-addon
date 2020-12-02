@@ -177,6 +177,7 @@ var quit_and_save_dialog : ConfirmationDialog
 
 var current_version : String = ProjectSettings.get_setting("application/config/Version")
 
+var drawing_algos_component = null
 var export_component = null
 var import_component = null
 var open_save_component = null
@@ -205,6 +206,12 @@ func is_getting_edited(node):
 		return (null != get_node_in_parents(node, 'CanvasItemEditor'))
 	else:
 		return false
+
+func get_drawing_algos():
+	if not drawing_algos_component:
+		drawing_algos_component = preload("res://addons/pixelorama/src/Autoload/DrawingAlgos.gd").new()
+		add_child(drawing_algos_component)
+	return drawing_algos_component
 
 func get_export():
 	if not export_component:

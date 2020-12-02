@@ -23,7 +23,7 @@ func set_nodes() -> void:
 
 
 func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node("/root/Pixelorama").current_project) -> void:
-	DrawingAlgos.generate_outline(_cel, _pixels, color, thickness, diagonal, inside_image)
+	global.get_drawing_algos().generate_outline(_cel, _pixels, color, thickness, diagonal, inside_image)
 
 
 func _on_ThickValue_value_changed(value : int) -> void:

@@ -30,6 +30,8 @@ stretch_mode = 5
 
 [node name="TransparentChecker" parent="VBoxContainer/Preview" instance=ExtResource( 2 )]
 show_behind_parent = true
+margin_right = 64.0
+margin_bottom = 64.0
 
 [node name="RGBAContainer" type="HBoxContainer" parent="VBoxContainer"]
 margin_top = 204.0

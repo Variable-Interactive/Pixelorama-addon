@@ -63,7 +63,7 @@ func _on_ResizeCanvas_about_to_show() -> void:
 
 
 func _on_ResizeCanvas_confirmed() -> void:
-	DrawingAlgos.resize_canvas(width, height, offset_x, offset_y)
+	global.get_drawing_algos().resize_canvas(width, height, offset_x, offset_y)
 	first_time = false
 
 

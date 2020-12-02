@@ -356,7 +356,7 @@ func image_menu_id_pressed(id : int) -> void:
 			show_scale_image_popup()
 
 		1: # Crop Image
-			DrawingAlgos.crop_image(image)
+			global.get_drawing_algos().crop_image(image)
 
 		2: # Resize Canvas
 			show_resize_canvas_popup()

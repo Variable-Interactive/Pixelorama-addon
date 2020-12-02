@@ -30,7 +30,7 @@ func _confirmed() -> void:
 
 
 func commit_action(_cel : Image, _pixels : Array, _project : Project = get_node("/root/Pixelorama").current_project) -> void:
-	DrawingAlgos.adjust_hsv(_cel, hue_slider.value, sat_slider.value, val_slider.value, _pixels)
+	global.get_drawing_algos().adjust_hsv(_cel, hue_slider.value, sat_slider.value, val_slider.value, _pixels)
 
 
 func reset() -> void:
