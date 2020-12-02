@@ -23,6 +23,17 @@
 [ext_resource path="res://addons/pixelorama/assets/graphics/dark_themes/tools/zoom.png" type="Texture" id=21]
 [ext_resource path="res://addons/pixelorama/src/UI/ViewportContainer.gd" type="Script" id=23]
 
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 9 )
+shader_param/size = 10.0
+shader_param/color1 = Color( 0.7, 0.7, 0.7, 1 )
+shader_param/color2 = Color( 1, 1, 1, 1 )
+shader_param/offset = Vector2( 0, 0 )
+shader_param/scale = Vector2( 0, 0 )
+shader_param/rect_size = Vector2( 0, 0 )
+shader_param/follow_movement = false
+shader_param/follow_scale = false
+
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 9 )
 shader_param/size = 10.0
@@ -34,19 +45,8 @@ shader_param/rect_size = Vector2( 0, 0 )
 shader_param/follow_movement = false
 shader_param/follow_scale = false
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = ExtResource( 9 )
-shader_param/size = 10.0
-shader_param/color1 = Color( 0.7, 0.7, 0.7, 1 )
-shader_param/color2 = Color( 1, 1, 1, 1 )
-shader_param/offset = Vector2( 0, 0 )
-shader_param/scale = Vector2( 0, 0 )
-shader_param/rect_size = Vector2( 0, 0 )
-shader_param/follow_movement = false
-shader_param/follow_scale = false
-
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.0627451, 0.0627451, 0.0627451, 1 )
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.0906248, 0.0906248, 0.0906248, 1 )
 expand_margin_top = 6.0
 
 [node name="UI" type="HBoxContainer"]
@@ -97,6 +97,12 @@ __meta__ = {
 margin_right = 32.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Rectangular Selection
+
+R for left mouse button
+Alt+R for right mouse button
+
+Press Shift to move the content"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -115,6 +121,10 @@ margin_top = 36.0
 margin_right = 32.0
 margin_bottom = 68.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Zoom
+
+Z for left mouse button
+Alt+Z for right mouse button"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -133,6 +143,11 @@ margin_top = 72.0
 margin_right = 32.0
 margin_bottom = 104.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Color Picker
+Select a color from a pixel of the sprite
+
+O for left mouse button
+Alt+O for right mouse button"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -151,6 +166,12 @@ margin_top = 108.0
 margin_right = 32.0
 margin_bottom = 140.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Pencil
+
+P for left mouse button
+Alt+P for right mouse button
+
+Hold Shift to make a line"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -169,6 +190,12 @@ margin_top = 144.0
 margin_right = 32.0
 margin_bottom = 176.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Eraser
+
+E for left mouse button
+Alt+E for right mouse button
+
+Hold Shift to make a line"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -187,6 +214,10 @@ margin_top = 180.0
 margin_right = 32.0
 margin_bottom = 212.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Bucket
+
+B for left mouse button
+Alt+B for right mouse button"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -205,6 +236,10 @@ margin_top = 216.0
 margin_right = 32.0
 margin_bottom = 248.0
 rect_min_size = Vector2( 32, 32 )
+hint_tooltip = "Lighten/Darken
+
+U for left mouse button
+Alt+U for right mouse button"
 mouse_default_cursor_shape = 2
 button_mask = 3
 
@@ -298,17 +333,17 @@ handle_input_locally = false
 usage = 0
 render_target_update_mode = 3
 
-[node name="TransparentChecker" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport" instance=ExtResource( 5 )]
-material = SubResource( 2 )
-
-[node name="Canvas" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport" instance=ExtResource( 19 )]
-
-[node name="Camera2D" type="Camera2D" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport"]
-current = true
-zoom = Vector2( 0.15, 0.15 )
+[node name="Camera2D" type="CanvasLayer" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport"]
 script = ExtResource( 7 )
 
-[node name="SelectionRectangle" type="Polygon2D" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport"]
+[node name="Canvas" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D" instance=ExtResource( 19 )]
+
+[node name="TransparentChecker" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D" instance=ExtResource( 5 )]
+material = SubResource( 1 )
+margin_right = 64.0
+margin_bottom = 64.0
+
+[node name="SelectionRectangle" type="Polygon2D" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D"]
 visible = false
 z_index = 1
 color = Color( 0.0823529, 0.694118, 0.623529, 0.592157 )
@@ -330,20 +365,20 @@ size = Vector2( 0, 422 )
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="TransparentChecker" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport" instance=ExtResource( 5 )]
-material = SubResource( 3 )
-
-[node name="CanvasPreview" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport" instance=ExtResource( 2 )]
-
-[node name="Camera2D2" type="Camera2D" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport"]
-current = true
-zoom = Vector2( 0.15, 0.15 )
+[node name="Camera2D2" type="CanvasLayer" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport"]
 script = ExtResource( 7 )
+
+[node name="CanvasPreview" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport/Camera2D2" instance=ExtResource( 2 )]
+
+[node name="TransparentChecker" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport/Camera2D2" instance=ExtResource( 5 )]
+material = SubResource( 2 )
+margin_right = 64.0
+margin_bottom = 64.0
 
 [node name="AnimationTimeline" parent="CanvasAndTimeline" instance=ExtResource( 18 )]
 margin_top = 492.0
 margin_bottom = 692.0
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 3 )
 
 [node name="RightPanel" type="Panel" parent="."]
 margin_left = 950.0

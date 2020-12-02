@@ -18,8 +18,13 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited = false
+
 # Called when the node enters the scene tree for the first time.
 func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
+	has_inited = true
 	grid = $Grid
 	tile_mode = $TileMode
 	indicators = $Indicators
@@ -31,8 +36,10 @@ func _enter_tree() -> void:
 
 
 func _draw() -> void:
-	global.second_viewport.get_child(0).get_node("CanvasPreview").update()
-	global.small_preview_viewport.get_child(0).get_node("CanvasPreview").update()
+	if not has_inited:
+		return
+	global.second_viewport.get_child(0).get_node("Camera2D2/CanvasPreview").update()
+	global.small_preview_viewport.get_child(0).get_node("CameraPreview/CanvasPreview").update()
 
 	var current_cels : Array = global.current_project.frames[global.current_project.current_frame].cels
 
@@ -55,6 +62,10 @@ func _draw() -> void:
 
 
 func _input(event : InputEvent) -> void:
+	process_input(event)
+	
+
+func process_input(event: InputEvent):
 	# Don't process anything below if the input isn't a mouse event, or Shift/Ctrl.
 	# This decreases CPU/GPU usage slightly.
 	if not event is InputEventMouse:

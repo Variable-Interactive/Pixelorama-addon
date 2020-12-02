@@ -44,7 +44,7 @@ func _enter_tree() -> void:
 		global.config_cache.set_value("preferences", "startup", true)
 	show_splash_screen()
 
-	handle_backup()
+#	handle_backup()
 
 	# If the user wants to run Pixelorama with arguments in terminal mode
 	# or open files with Pixelorama directly, then handle that
@@ -54,6 +54,8 @@ func _enter_tree() -> void:
 
 
 func _input(event : InputEvent) -> void:
+#	print(event)
+#	print(get_global_mouse_position())
 	global.left_cursor.position = get_global_mouse_position() + Vector2(-32, 32)
 	global.left_cursor.texture = global.left_cursor_tool_texture
 	global.right_cursor.position = get_global_mouse_position() + Vector2(32, 32)

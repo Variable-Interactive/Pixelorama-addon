@@ -78,11 +78,25 @@ func get_actions() -> Array:
 
 # Called when the node enters the scene tree for the first time.
 func _enter_tree():
-	print("#################################################################")
-	print(InputMap.get_actions())
-	for action in InputMap.get_actions():
-		add_action(action, 0.5)
-		action_set_events(action, InputMap.get_action_list(action))
+#	print("#################################################################")
+#	print(InputMap.get_actions())
+	if Engine.is_editor_hint():
+		for setting in ProjectSettings.get_property_list():
+		
+			if setting.name.begins_with("input/"):
+				var action_name = setting.name.substr(6)
+#				print(action_name)
+				add_action(action_name)
+				InputMap.add_action(action_name)
+				var action = ProjectSettings.get(setting.name)
+				action_set_events(action_name, action.events)
+				for event  in action.events:
+					InputMap.action_add_event(action_name, event)
+	else:
+		for action in InputMap.get_actions():
+			add_action(action, 0.5)
+			action_set_events(action, InputMap.get_action_list(action))
+	print("input map loaded")
 	pass # Replace with function body.
 
 

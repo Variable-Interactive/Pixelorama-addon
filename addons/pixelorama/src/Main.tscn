@@ -17,9 +17,12 @@
 [ext_resource path="res://addons/pixelorama/src/UI/Dialogs/AboutDialog.tscn" type="PackedScene" id=34]
 [ext_resource path="res://addons/pixelorama/src/UI/Dialogs/ExportDialog.tscn" type="PackedScene" id=39]
 
-[node name="Control" type="Control"]
+[node name="PixeloramaMain" type="Control"]
+modulate = Color( 0.5, 0.5, 0.5, 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme = ExtResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {
@@ -31,6 +34,8 @@ __meta__ = {
 [node name="MenuAndUI" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -53,6 +58,11 @@ __meta__ = {
 [node name="PatternsPopup" parent="Dialogs" instance=ExtResource( 5 )]
 
 [node name="SplashDialog" parent="Dialogs" instance=ExtResource( 27 )]
+margin_left = 320.0
+margin_top = 68.0
+margin_right = 960.0
+margin_bottom = 651.0
+window_title = "Pixelorama v0.8.2-dev"
 
 [node name="CreateNewImage" parent="Dialogs" instance=ExtResource( 28 )]
 margin_right = 375.0
@@ -108,8 +118,10 @@ window_title = "Error"
 dialog_text = "This is an error message!"
 
 [node name="BackupConfirmation" type="ConfirmationDialog" parent="Dialogs"]
-margin_right = 349.0
-margin_bottom = 88.0
+margin_left = 453.0
+margin_top = 316.0
+margin_right = 827.0
+margin_bottom = 404.0
 rect_min_size = Vector2( 250, 87.5 )
 popup_exclusive = true
 window_title = "Veuillez confirmer…"

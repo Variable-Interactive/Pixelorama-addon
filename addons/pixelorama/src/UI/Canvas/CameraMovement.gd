@@ -1,10 +1,10 @@
 tool
-extends Camera2D
+extends CanvasLayer
 
 
 var tween : Tween
 var zoom_min := Vector2(0.005, 0.005)
-var zoom_max := Vector2.ONE
+var zoom_max := Vector2(3.0, 3.0)
 var viewport_container : ViewportContainer
 var transparent_checker : ColorRect
 var mouse_pos := Vector2.ZERO
@@ -17,17 +17,22 @@ var global
 func _enter_tree() -> void:
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	viewport_container = get_parent().get_parent()
-	transparent_checker = get_parent().get_node("TransparentChecker")
+	viewport_container.connect("gui_input", self, "gui_input")
+	transparent_checker = get_node("TransparentChecker")
 	tween = Tween.new()
 	add_child(tween)
 	tween.connect("tween_step", self, "_on_tween_step")
 	update_transparent_checker_offset()
+	set_custom_viewport(get_parent())
 
 
 func update_transparent_checker_offset() -> void:
-	var o = get_global_transform_with_canvas().get_origin()
-	var s = get_global_transform_with_canvas().get_scale()
-	o.y = get_viewport_rect().size.y - o.y
+	var o = offset
+#	var o = get_global_transform_with_canvas().get_origin()
+	var s = scale
+#	var s = get_global_transform_with_canvas().get_scale()
+	
+	o.y = get_parent().size.y - o.y
 	transparent_checker.update_offset(o, s)
 
 # Get the speed multiplier for when you've pressed
@@ -105,7 +110,7 @@ func process_direction_action_pressed(event: InputEvent) -> void:
 	global.key_move_press_time[dir] += increment
 	var this_direction_press_time : float = global.key_move_press_time[dir]
 	var move_speed := dir_move_zoom_multiplier(this_direction_press_time)
-	offset = offset + move_speed * increment * directional_sign_multipliers[dir] * zoom
+	offset = offset + move_speed * increment * directional_sign_multipliers[dir] * scale
 	update_rulers()
 	update_transparent_checker_offset()
 
@@ -118,21 +123,23 @@ func process_direction_action_released(event: InputEvent) -> void:
 	reset_dir_move_time(dir)
 
 
-func _input(event : InputEvent) -> void:
+func gui_input(event : InputEvent) -> void:
+#	print(event)
 	mouse_pos = viewport_container.get_local_mouse_position()
 	var viewport_size := viewport_container.rect_size
 	if event.is_action_pressed("middle_mouse") || event.is_action_pressed("space"):
 		drag = true
+		print(drag)
 	elif event.is_action_released("middle_mouse") || event.is_action_released("space"):
 		drag = false
 
 	if global.can_draw && Rect2(Vector2.ZERO, viewport_size).has_point(mouse_pos):
 		if event.is_action_pressed("zoom_in"): # Wheel Up Event
-			zoom_camera(-1)
-		elif event.is_action_pressed("zoom_out"): # Wheel Down Event
 			zoom_camera(1)
+		elif event.is_action_pressed("zoom_out"): # Wheel Down Event
+			zoom_camera(-1)
 		elif event is InputEventMouseMotion && drag:
-			offset = offset - event.relative * zoom
+			offset = offset + event.relative * 1/scale
 			update_transparent_checker_offset()
 			update_rulers()
 		elif is_action_direction_pressed(event):
@@ -141,42 +148,44 @@ func _input(event : InputEvent) -> void:
 			process_direction_action_released(event)
 
 		save_values_to_project()
+	if Engine.is_editor_hint():
+		global.canvas.process_input(event)
 
 
 # Zoom Camera
 func zoom_camera(dir : int) -> void:
 	var viewport_size := viewport_container.rect_size
 	if global.smooth_zoom:
-		var zoom_margin = zoom * dir / 5
-		var new_zoom = zoom + zoom_margin
+		var zoom_margin = scale * dir / 5
+		var new_zoom = scale + zoom_margin
 		if new_zoom > zoom_min && new_zoom < zoom_max:
-			var new_offset = offset + (-0.5 * viewport_size + mouse_pos) * (zoom - new_zoom)
-			tween.interpolate_property(self, "zoom", zoom, new_zoom, 0.05, Tween.TRANS_LINEAR, Tween.EASE_IN)
+			var new_offset = offset + (-0.5 * viewport_size + mouse_pos) * (scale - new_zoom)
+			tween.interpolate_property(self, "scale", scale, new_zoom, 0.05, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			tween.interpolate_property(self, "offset", offset, new_offset, 0.05, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			tween.start()
 
 	else:
-		var prev_zoom := zoom
-		var zoom_margin = zoom * dir / 10
-		if zoom + zoom_margin > zoom_min:
-			zoom += zoom_margin
+		var prev_zoom := scale
+		var zoom_margin = scale * dir / 10
+		if scale + zoom_margin > zoom_min:
+			scale += zoom_margin
 
-		if zoom > zoom_max:
-			zoom = zoom_max
+		if scale > zoom_max:
+			scale = zoom_max
 
-		offset = offset + (-0.5 * viewport_size + mouse_pos) * (prev_zoom - zoom)
+		offset = offset + (-0.5 * viewport_size + mouse_pos) * (prev_zoom - scale)
 		zoom_changed()
 
 
 func zoom_changed() -> void:
 	update_transparent_checker_offset()
 	if name == "Camera2D":
-		global.zoom_level_label.text = str(round(100 / zoom.x)) + " %"
+		global.zoom_level_label.text = str(round(100 / scale.x)) + " %"
 		update_rulers()
 		for guide in global.current_project.guides:
-			guide.width = zoom.x * 2
+			guide.width = scale.x * 2
 	elif name == "CameraPreview":
-		global.preview_zoom_slider.value = -zoom.x
+		global.preview_zoom_slider.value = -scale.x
 
 
 func update_rulers() -> void:
@@ -189,7 +198,7 @@ func _on_tween_step(_object: Object, _key: NodePath, _elapsed: float, _value: Ob
 
 
 func zoom_100() -> void:
-	zoom = Vector2.ONE
+	scale = Vector2.ONE
 	offset = global.current_project.size / 2
 	zoom_changed()
 
@@ -212,18 +221,18 @@ func fit_to_frame(size : Vector2) -> void:
 			v_ratio = global.main_viewport.rect_size.y / size.y
 			ratio = min(h_ratio, v_ratio)
 
-	zoom = Vector2(1 / ratio, 1 / ratio)
+	scale = Vector2(1 / ratio, 1 / ratio)
 	offset = size / 2
 	zoom_changed()
 
 
 func save_values_to_project() -> void:
 	if name == "Camera2D":
-		global.current_project.cameras_zoom[0] = zoom
+		global.current_project.cameras_zoom[0] = scale
 		global.current_project.cameras_offset[0] = offset
 	elif name == "Camera2D2":
-		global.current_project.cameras_zoom[1] = zoom
+		global.current_project.cameras_zoom[1] = scale
 		global.current_project.cameras_offset[1] = offset
 	elif name == "CameraPreview":
-		global.current_project.cameras_zoom[2] = zoom
+		global.current_project.cameras_zoom[2] = scale
 		global.current_project.cameras_offset[2] = offset

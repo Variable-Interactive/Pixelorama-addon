@@ -408,9 +408,7 @@ func layers_changed(value : Array) -> void:
 			layers[i].name = tr("Layer") + " %s" % i
 
 		global.layers_container.add_child(layer_container)
-		
-#		global.layers_container._enter_tree()
-		
+		yield(global.layers_container.get_tree(), "idle_frame")
 		layer_container.label.text = layers[i].name
 		layer_container.line_edit.text = layers[i].name
 

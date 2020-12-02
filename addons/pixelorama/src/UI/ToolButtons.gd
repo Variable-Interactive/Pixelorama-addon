@@ -7,7 +7,13 @@ var tools
 var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
+
+var has_inited = false
+
 func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
+	has_inited = true
 	tools = [
 		[$RectSelect, "rectangle_select"],
 		[$Zoom, "zoom"],
@@ -24,6 +30,8 @@ func _enter_tree() -> void:
 
 
 func _input(event : InputEvent) -> void:
+	if not has_inited:
+		return
 	if not global.has_focus:
 		return
 	for action in ["undo", "redo", "redo_secondary"]:

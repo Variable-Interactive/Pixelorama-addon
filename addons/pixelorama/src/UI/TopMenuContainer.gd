@@ -11,6 +11,7 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree() -> void:
+	yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	setup_file_menu()
 	setup_edit_menu()

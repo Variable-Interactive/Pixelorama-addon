@@ -103,9 +103,9 @@ var tabs : Tabs
 var main_viewport : ViewportContainer
 var second_viewport : ViewportContainer
 var small_preview_viewport : ViewportContainer
-var camera : Camera2D
-var camera2 : Camera2D
-var camera_preview : Camera2D
+var camera : CanvasLayer
+var camera2 : CanvasLayer
+var camera_preview : CanvasLayer
 var selection_rectangle : Polygon2D
 var horizontal_ruler : BaseButton
 var vertical_ruler : BaseButton
@@ -215,7 +215,7 @@ func get_tools():
 
 func get_input_map():
 	if Engine.is_editor_hint():
-		pass
+		return get_node("/root/InputMapPlugin")
 	else:
 		return get_node("/root/InputMapPlugin")
 #		return InputMap
@@ -236,19 +236,30 @@ func _enter_tree() -> void:
 	image_clipboard = Image.new()
 	Input.set_custom_mouse_cursor(cursor_image, Input.CURSOR_CROSS, Vector2(15, 15))
 
-	var root = get_tree().get_root()
+	var root 
+	if Engine.is_editor_hint():
+		yield(get_tree(),"idle_frame")
+		var plugin = EditorPlugin.new()
+		root = plugin.get_editor_interface().get_editor_viewport().get_node("PixeloramaMain")
+		print("Pixelorama Main: %s" % [root])
+		plugin.queue_free()
+	else:
+		root = get_tree().get_root()
 
-	control = find_node_by_name(root, "Control")
+	control = find_node_by_name(root, "PixeloramaMain")
+	print(control)
 	top_menu_container = find_node_by_name(control, "TopMenuContainer")
 	left_cursor = find_node_by_name(root, "LeftCursor")
 	right_cursor = find_node_by_name(root, "RightCursor")
 	canvas = find_node_by_name(root, "Canvas")
-
+	
 	tabs = find_node_by_name(root, "Tabs")
 	main_viewport = find_node_by_name(root, "ViewportContainer")
 	second_viewport = find_node_by_name(root, "ViewportContainer2")
+	print("Main Viewport: %s" % [main_viewport])
 	small_preview_viewport = find_node_by_name(root, "PreviewViewportContainer")
 	camera = find_node_by_name(main_viewport, "Camera2D")
+	print("Camera: %s" % [camera])
 	camera2 = find_node_by_name(root, "Camera2D2")
 	camera_preview = find_node_by_name(root, "CameraPreview")
 	selection_rectangle = find_node_by_name(root, "SelectionRectangle")
@@ -290,6 +301,7 @@ func _enter_tree() -> void:
 	patterns_popup = find_node_by_name(root, "PatternsPopup")
 
 	animation_timeline = find_node_by_name(root, "AnimationTimeline")
+	print("AnimationTimeline: %s" % [animation_timeline])
 	frame_properties = find_node_by_name(root, "FrameProperties")
 
 	layers_container = find_node_by_name(animation_timeline, "LayersContainer")
@@ -338,13 +350,22 @@ func _enter_tree() -> void:
 
 
 # Thanks to https://godotengine.org/qa/17524/how-to-find-an-instanced-scene-by-its-name
-func find_node_by_name(root : Node, node_name : String) -> Node:
-	if root.get_name() == node_name:
+func find_node_by_name(root : Node, node_name : String, type : String = "") -> Node:
+	
+	if (
+			(root.get_name() == node_name and type == "")
+		or
+			(root.get_name() == node_name and type == root.get_class())
+		):
 		return root
 	for child in root.get_children():
-		if child.get_name() == node_name:
+		if (
+				(child.get_name() == node_name and type == "")
+			or
+				(child.get_name() == node_name and type == child.get_class())
+			):
 			return child
-		var found = find_node_by_name(child, node_name)
+		var found = find_node_by_name(child, node_name, type)
 		if found:
 			return found
 	return null
@@ -500,7 +521,7 @@ Press %s to move the content""") % [self.get_input_map().get_action_list("left_r
 %s for right mouse button""") % [self.get_input_map().get_action_list("left_zoom_tool")[0].as_text(), self.get_input_map().get_action_list("right_zoom_tool")[0].as_text()]
 
 
-	var color_picker : BaseButton = find_node_by_name(root, "ColorPicker")
+	var color_picker : BaseButton = find_node_by_name(root, "ColorPicker", "Button")
 	color_picker.hint_tooltip = tr("""Color Picker
 Select a color from a pixel of the sprite
 
@@ -542,8 +563,16 @@ Hold %s to make a line""") % [self.get_input_map().get_action_list("left_eraser_
 	var first_frame : BaseButton = find_node_by_name(root, "FirstFrame")
 	first_frame.hint_tooltip = tr("""Jump to the first frame
 (%s)""") % self.get_input_map().get_action_list("go_to_first_frame")[0].as_text()
-
-	var previous_frame : BaseButton = find_node_by_name(root, "PreviousFrame")
+	print(first_frame.get_parent().get_children())
+	
+	var previous_frame
+	for child in first_frame.get_parent().get_children():
+		if child.name == "PreviousFrame":
+			previous_frame = child
+	
+	
+	
+	previous_frame = find_node_by_name(root, "PreviousFrame")
 	previous_frame.hint_tooltip = tr("""Go to the previous frame
 (%s)""") % self.get_input_map().get_action_list("go_to_previous_frame")[0].as_text()
 

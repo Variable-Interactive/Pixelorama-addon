@@ -14,21 +14,28 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited = false
+
 func _enter_tree():
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
+	has_inited = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	global.main_viewport.connect("item_rect_changed", self, "update")
 
 
 # Code taken and modified from Godot's source code
 func _draw() -> void:
+	if not has_inited:
+		return
 	var transform := Transform2D()
 	var ruler_transform := Transform2D()
 	var major_subdivide := Transform2D()
 	var minor_subdivide := Transform2D()
-	var zoom: float = 1 / global.camera.zoom.x
+	var zoom: float = global.camera.scale.x
 	transform.y = Vector2(zoom, zoom)
 
-	transform.origin = global.main_viewport.rect_size / 2 + global.camera.offset * -zoom
+	transform.origin = global.main_viewport.rect_size / 2 + global.camera.offset * 1.0/zoom
 
 	var basic_rule := 100.0
 	var i := 0

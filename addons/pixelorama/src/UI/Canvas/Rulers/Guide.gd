@@ -12,15 +12,23 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited = false
+
 func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
+	has_inited = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	project = global.current_project
-	width = global.camera.zoom.x
+	width = global.camera.scale.x
 	default_color = global.guide_color
 	project.guides.append(self)
 
 
 func _input(_event : InputEvent):
+	if not has_inited:
+		return
+	print(_event)
 	mouse_pos = get_local_mouse_position()
 	if points.size() < 2:
 		return
@@ -55,6 +63,8 @@ func _input(_event : InputEvent):
 
 
 func _draw() -> void:
+	if not has_inited:
+		return
 	if has_focus:
 		var viewport_size: Vector2 = global.main_viewport.rect_size
 		var zoom: Vector2 = global.camera.zoom

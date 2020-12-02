@@ -9,12 +9,12 @@
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 5 )
-shader_param/size = 10.0
-shader_param/color1 = Color( 0.7, 0.7, 0.7, 1 )
-shader_param/color2 = Color( 1, 1, 1, 1 )
-shader_param/offset = Vector2( 0, 0 )
-shader_param/scale = Vector2( 0, 0 )
-shader_param/rect_size = Vector2( 0, 0 )
+shader_param/size = 10
+shader_param/color1 = Color( 0.47, 0.47, 0.47, 1 )
+shader_param/color2 = Color( 0.34, 0.35, 0.34, 1 )
+shader_param/offset = Vector2( 0, 150 )
+shader_param/scale = Vector2( 1, 1 )
+shader_param/rect_size = Vector2( 64, 64 )
 shader_param/follow_movement = false
 shader_param/follow_scale = false
 
@@ -102,15 +102,16 @@ transparent_bg = true
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="TransparentChecker" parent="HBoxContainer/PreviewViewportContainer/Viewport" instance=ExtResource( 2 )]
-material = SubResource( 1 )
-
-[node name="CanvasPreview" parent="HBoxContainer/PreviewViewportContainer/Viewport" instance=ExtResource( 1 )]
-
-[node name="CameraPreview" type="Camera2D" parent="HBoxContainer/PreviewViewportContainer/Viewport"]
+[node name="CameraPreview" type="CanvasLayer" parent="HBoxContainer/PreviewViewportContainer/Viewport"]
 offset = Vector2( 32, 32 )
-current = true
-zoom = Vector2( 0.15, 0.15 )
+transform = Transform2D( 1, 0, 0, 1, 32, 32 )
 script = ExtResource( 4 )
+
+[node name="CanvasPreview" parent="HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview" instance=ExtResource( 1 )]
+
+[node name="TransparentChecker" parent="HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview" instance=ExtResource( 2 )]
+material = SubResource( 1 )
+margin_right = 64.0
+margin_bottom = 64.0
 [connection signal="value_changed" from="HBoxContainer/VBoxContainer/PreviewZoomSlider" to="." method="_on_PreviewZoomSlider_value_changed"]
 [connection signal="toggled" from="HBoxContainer/VBoxContainer/PlayButton" to="." method="_on_PlayButton_toggled"]

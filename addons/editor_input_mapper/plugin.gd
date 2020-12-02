@@ -83,7 +83,7 @@ func _enter_tree():
 	editor_input_map = EditorInputMap.instance()
 
 	
-	get_tree().get_root().call_deferred("add_child", editor_input_map)
+#	get_tree().get_root().call_deferred("add_child", editor_input_map)
 	main_screen_panel = preload("res://addons/editor_input_mapper/TutorialPanel.tscn").instance()
 	main_screen_panel.you_make_laec = self
 	# Add the main panel to the editor's main viewport.
@@ -102,13 +102,13 @@ func _enter_tree():
 			item.add_button(2, AddTexture)
 			item.set_metadata(0, setting.name)
 			var setting_data = ProjectSettings.get_setting(setting.name)
-			print(ProjectSettings.get_setting(setting.name))
+#			print(ProjectSettings.get_setting(setting.name))
 			for event in setting_data.events:
 				
 				var readable_event :Dictionary = read_input_event(event)
 				if readable_event['type'] == "Key":
 					var event_item = tree.create_item(item)
-					print(readable_event.scancode)
+#					print(readable_event.scancode)
 					event_item.set_text(0, readable_event.scancode)
 					event_item.add_button(2, EditTexture)
 					event_item.add_button(2, RemoveTexture)

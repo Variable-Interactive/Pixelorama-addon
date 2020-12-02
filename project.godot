@@ -120,8 +120,8 @@ driver="Dummy"
 
 [autoload]
 
-DrawingAlgos="*res://addons/pixelorama/src/Autoload/DrawingAlgos.gd"
 Pixelorama="*res://addons/pixelorama/src/Autoload/Global.gd"
+DrawingAlgos="*res://addons/pixelorama/src/Autoload/DrawingAlgos.gd"
 InputMapPlugin="*res://addons/editor_input_mapper/input_map_plugin.gd"
 
 [debug]
@@ -136,7 +136,7 @@ window/size/height=720
 
 [editor_plugins]
 
-enabled=PoolStringArray( "editor_input_mapper", "zylann.editor_debugger" )
+enabled=PoolStringArray( "editor_input_mapper", "pixelorama", "zylann.editor_debugger" )
 
 [importer_defaults]
 

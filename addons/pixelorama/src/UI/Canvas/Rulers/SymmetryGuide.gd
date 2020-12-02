@@ -12,7 +12,7 @@ func _enter_tree():
 	visible = false
 	texture = _texture
 	texture_mode = Line2D.LINE_TEXTURE_TILE
-	width = global.camera.zoom.x * 4
+	width = global.camera.scale.x * 4
 	yield(get_tree().create_timer(0.01), "timeout")
 	modulate = global.guide_color
 

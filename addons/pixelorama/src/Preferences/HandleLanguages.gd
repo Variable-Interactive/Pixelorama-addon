@@ -33,6 +33,8 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	loaded_locales = TranslationServer.get_loaded_locales()
 
@@ -71,6 +73,8 @@ func _enter_tree() -> void:
 	if global.is_cjk(TranslationServer.get_locale()):
 		global.control.theme.default_font = cjk_font
 	else:
+		print("global.control")
+		print(global)
 		global.control.theme.default_font = latin_font
 
 	for child in get_children():

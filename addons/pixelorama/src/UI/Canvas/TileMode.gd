@@ -8,10 +8,17 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited = false
+
 func _enter_tree():
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
+	has_inited = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _draw() -> void:
+	if not has_inited:
+		return
 	var current_cels : Array = global.current_project.frames[global.current_project.current_frame].cels
 	var size : Vector2 = global.current_project.size
 	var positions : Array = get_tile_positions(size)

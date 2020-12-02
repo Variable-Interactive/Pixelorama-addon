@@ -21,6 +21,8 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree() -> void:
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	set_nodes()
 	current_cel = Image.new()

@@ -9,11 +9,18 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited
+
 func _enter_tree():
+	if Engine.is_editor_hint():
+		yield(get_tree(), "idle_frame")
+	has_inited = true
 	animation_timer = $AnimationTimer
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 
 func _draw() -> void:
+	if not has_inited:
+		return
 	var current_project : Project = global.current_project
 	if frame >= current_project.frames.size():
 		frame = current_project.current_frame
