@@ -22,8 +22,8 @@ var has_inited = false
 
 # Called when the node enters the scene tree for the first time.
 func _enter_tree() -> void:
-	if Engine.is_editor_hint():
-		yield(get_tree(), "idle_frame")
+#	if Engine.is_editor_hint():
+	yield(get_tree(), "idle_frame")
 	has_inited = true
 	grid = $Grid
 	tile_mode = $TileMode
@@ -64,6 +64,8 @@ func _draw() -> void:
 
 
 func _input(event : InputEvent) -> void:
+	if not has_inited:
+		return
 	process_input(event)
 	
 

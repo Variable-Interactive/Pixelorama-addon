@@ -46,6 +46,10 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree() -> void:
+	yield(get_tree(), "idle_frame")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	tabs = $VBoxContainer/Tabs
 	popups = $Popups
 	file_exists_alert_popup = $Popups/FileExistsAlert
@@ -79,9 +83,7 @@ func _enter_tree() -> void:
 	path_line_edit = $VBoxContainer/Path/PathLineEdit
 	file_line_edit = $VBoxContainer/File/FileLineEdit
 	file_file_format = $VBoxContainer/File/FileFormat
-	global = get_node(Constants.NODE_PATH_GLOBAL)
-	if global.is_getting_edited(self):
-		return
+
 	tabs.add_tab("Frame")
 	tabs.add_tab("Spritesheet")
 	tabs.add_tab("Animation")

@@ -17,8 +17,8 @@ var global
 var has_inited = false
 
 func _enter_tree():
-	if Engine.is_editor_hint():
-		yield(get_tree(), "idle_frame")
+#	if Engine.is_editor_hint():
+	yield(get_tree(), "idle_frame")
 	has_inited = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	if global.is_getting_edited(self):

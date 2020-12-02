@@ -5,20 +5,23 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited = false
+
 var opensprite_file_selected := false
 var redone := false
 var is_quitting_on_save := false
 
-
+var PixeloramaSingleton = preload("res://addons/pixelorama/src/Autoload/Global.tscn")
 # Called when the node enters the scene tree for the first time.
 func _enter_tree() -> void:
-
-	global = get_node(Constants.NODE_PATH_GLOBAL)
+	global = PixeloramaSingleton.instance()
+	yield(get_tree(), "idle_frame")
+	get_tree().get_root().add_child(global)
+	print("global added")
 	if global.is_getting_edited(self):
+		global.queue_free()
 		return
-	if global.is_getting_edited(self):
-		print("I have to stop that !")
-		return
+	has_inited = true
 	get_tree().set_auto_accept_quit(false)
 	setup_application_window_size()
 
@@ -60,7 +63,13 @@ func _enter_tree() -> void:
 
 
 func _input(event : InputEvent) -> void:
-#	print(event)
+#	print(event)	
+	if not has_inited:
+		return
+	if not global.left_cursor:
+		return
+	if not global.right_cursor:
+		return
 	global.left_cursor.position = get_local_mouse_position() + Vector2(-32, 32) 
 	global.left_cursor.texture = global.left_cursor_tool_texture
 	global.right_cursor.position = get_local_mouse_position() + Vector2(32, 32)

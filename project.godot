@@ -121,9 +121,7 @@ driver="Dummy"
 
 [autoload]
 
-Pixelorama="*res://addons/pixelorama/src/Autoload/Global.gd"
 DrawingAlgos="*res://addons/pixelorama/src/Autoload/DrawingAlgos.gd"
-InputMapPlugin="*res://addons/editor_input_mapper/input_map_plugin.gd"
 
 [debug]
 

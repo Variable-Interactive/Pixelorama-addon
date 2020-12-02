@@ -20,6 +20,10 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree() -> void:
+	yield(get_tree(), "idle_frame")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	color_picker = $VBoxContainer/HBoxContainer/EditPaletteColorPicker
 	palette_grid = $VBoxContainer/HBoxContainer/VBoxContainer/Panel/ScrollContainer/EditPaletteGridContainer
 	color_name_edit = $VBoxContainer/PaletteOptions/EditPaletteColorNameLineEdit
@@ -27,9 +31,7 @@ func _enter_tree() -> void:
 	left_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/LeftColor/NinePatchRect
 	right_color_button = $VBoxContainer/HBoxContainer/VBoxContainer/CenterContainer/HBoxContainer/RightColor/NinePatchRect
 	dummyBtn = $DummyBtn
-	global = get_node(Constants.NODE_PATH_GLOBAL)
-	if global.is_getting_edited(self):
-		return
+
 	$VBoxContainer/HBoxContainer/EditPaletteColorPicker.presets_visible = false
 
 

@@ -12,8 +12,8 @@ var global
 var has_inited
 
 func _enter_tree():
-	if Engine.is_editor_hint():
-		yield(get_tree(), "idle_frame")
+#	if Engine.is_editor_hint():
+	yield(get_tree(), "idle_frame")
 	has_inited = true
 	animation_timer = $AnimationTimer
 	global = get_node(Constants.NODE_PATH_GLOBAL)

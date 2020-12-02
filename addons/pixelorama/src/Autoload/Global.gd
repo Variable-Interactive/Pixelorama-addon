@@ -238,9 +238,9 @@ func get_tools():
 
 func get_input_map():
 	if Engine.is_editor_hint():
-		return get_node("/root/InputMapPlugin")
+		return InputMap
 	else:
-		return get_node("/root/InputMapPlugin")
+		return InputMap
 #		return InputMap
 
 func _enter_tree() -> void:
@@ -261,7 +261,7 @@ func _enter_tree() -> void:
 
 	var root 
 	if Engine.is_editor_hint():
-		yield(get_tree(),"idle_frame")
+#		yield(get_tree(),"idle_frame")
 		var plugin = EditorPlugin.new()
 		root = plugin.get_editor_interface().get_editor_viewport().get_node("PixeloramaMain")
 		print("Pixelorama Main: %s" % [root])

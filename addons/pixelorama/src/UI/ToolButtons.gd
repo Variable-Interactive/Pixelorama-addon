@@ -11,8 +11,8 @@ var global
 var has_inited = false
 
 func _enter_tree() -> void:
-	if Engine.is_editor_hint():
-		yield(get_tree(), "idle_frame")
+#	if Engine.is_editor_hint():
+	yield(get_tree(), "idle_frame")
 	has_inited = true
 	tools = [
 		[$RectSelect, "rectangle_select"],

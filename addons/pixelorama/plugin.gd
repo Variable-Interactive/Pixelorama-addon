@@ -46,13 +46,22 @@ var pixelorama_singleton
 
 func _enter_tree():
 	print("editor frame")
-	
 	yield(get_tree(), "idle_frame")
+	if Engine.is_editor_hint():
+		for setting in ProjectSettings.get_property_list():
+		
+			if setting.name.begins_with("input/"):
+				var action_name = setting.name.substr(6)
+#				print(action_name)
+				InputMap.add_action(action_name)
+				var action = ProjectSettings.get(setting.name)
+				for event  in action.events:
+					InputMap.action_add_event(action_name, event)
 	print("post editor frame")
 	main_screen_panel = PixeloramaMain.instance()
 	print("adding main")
 	get_editor_interface().get_editor_viewport().add_child(main_screen_panel)
-#	print("adding singleton")
+	print("adding singleton")
 #	pixelorama_singleton = PixeloramaSingleton.instance()
 #	get_tree().get_root().add_child(pixelorama_singleton)
 ##

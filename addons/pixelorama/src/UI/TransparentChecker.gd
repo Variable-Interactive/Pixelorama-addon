@@ -8,6 +8,7 @@ var global
 
 
 func _enter_tree():
+	yield(get_tree(),"idle_frame")
 	if not is_inside_tree():
 		return
 	global = get_node("/root/Pixelorama")

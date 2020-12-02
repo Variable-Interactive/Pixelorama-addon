@@ -58,6 +58,10 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree():
+	yield(get_tree(), "idle_frame")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
 	templates_options = $VBoxContainer/OptionsContainer/TemplatesOptions
 	ratio_box = $VBoxContainer/OptionsContainer/RatioCheckBox
 	width_value = $VBoxContainer/OptionsContainer/WidthValue
@@ -65,9 +69,7 @@ func _enter_tree():
 	fill_color_node = $VBoxContainer/OptionsContainer/FillColor
 
 	size_value = Vector2()
-	global = get_node(Constants.NODE_PATH_GLOBAL)
-	if global.is_getting_edited(self):
-		return
+
 	width_value.value = global.default_image_width
 	height_value.value = global.default_image_height
 	fill_color_node.color = global.default_fill_color

@@ -15,12 +15,15 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree():
-	preview= $VBoxContainer/Preview
-	shader_loaded_label = $VBoxContainer/ShaderLoadedLabel
-	shader_params = $VBoxContainer/ShaderParams
+	yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	if global.is_getting_edited(self):
 		return
+	preview= $VBoxContainer/Preview
+	shader_loaded_label = $VBoxContainer/ShaderLoadedLabel
+	shader_params = $VBoxContainer/ShaderParams
+	
+	
 
 
 func _on_ShaderEffect_about_to_show() -> void:

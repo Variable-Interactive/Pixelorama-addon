@@ -20,14 +20,16 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree():
+	yield(get_tree(), "idle_frame")
+	global = get_node(Constants.NODE_PATH_GLOBAL)
+	if global.is_getting_edited(self):
+		return
+
 	width_spinbox = $VBoxContainer/OptionsContainer/WidthValue
 	height_spinbox = $VBoxContainer/OptionsContainer/HeightValue
 	x_spinbox = $VBoxContainer/OptionsContainer/XSpinBox
 	y_spinbox = $VBoxContainer/OptionsContainer/YSpinBox
 	preview_rect = $VBoxContainer/Preview
-	global = get_node(Constants.NODE_PATH_GLOBAL)
-	if global.is_getting_edited(self):
-		return
 
 func _on_ResizeCanvas_about_to_show() -> void:
 	image = Image.new()

@@ -19,8 +19,8 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree() -> void:
-	if Engine.is_editor_hint():
-		yield(get_tree(), "idle_frame")
+#	if Engine.is_editor_hint():
+	yield(get_tree(), "idle_frame")
 	var buttons_container = $ThemeButtons
 	var colors_container = $ThemeColorsSpacer/ThemeColors
 	global = get_node(Constants.NODE_PATH_GLOBAL)

@@ -11,12 +11,14 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func _enter_tree():
-	canvas_preview = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview/CanvasPreview
-	camera = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview
-	play_button = $HBoxContainer/VBoxContainer/PlayButton
+	yield(get_tree(),"idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	if global.is_getting_edited(self):
 		return
+	canvas_preview = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview/CanvasPreview
+	camera = $HBoxContainer/PreviewViewportContainer/Viewport/CameraPreview
+	play_button = $HBoxContainer/VBoxContainer/PlayButton
+	
 
 func _on_PreviewZoomSlider_value_changed(value : float) -> void:
 	camera.scale = -Vector2(value, value)

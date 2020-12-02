@@ -9,12 +9,18 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 
 var global
 
+var has_inited = false
+
 func _enter_tree():
+	yield(get_tree(),"idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	if global.is_getting_edited(self):
 		return
+	has_inited = true
 
 func _draw() -> void:
+	if not has_inited:
+		return
 	if global.draw_grid:
 		draw_grid(global.grid_type)
 
