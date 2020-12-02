@@ -30,7 +30,7 @@ func _enter_tree() -> void:
 func _input(_event : InputEvent):
 	if not has_inited:
 		return
-	print(_event)
+#	print(_event)
 	mouse_pos = get_local_mouse_position()
 	if points.size() < 2:
 		return

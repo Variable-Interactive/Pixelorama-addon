@@ -231,6 +231,11 @@ func handle_redo(_action : String, project : Project = global.current_project, l
 			 "redo", frame_index, layer_index, project)
 	project.undo_redo.commit_action()
 
+func finalise_texture_update(frame_index, frame_texture_rect, project, layer_index, current_cel):
+	if project.layers[layer_index].frame_container.get_children() == []:
+		yield(get_tree(),"idle_frame")
+	frame_texture_rect = global.find_node_by_name(project.layers[layer_index].frame_container.get_child(frame_index), "CelTexture")
+	frame_texture_rect.texture = current_cel.image_texture
 
 func update_texture(layer_index : int, frame_index := -1, project : Project = global.current_project) -> void:
 	if frame_index == -1:
@@ -240,9 +245,8 @@ func update_texture(layer_index : int, frame_index := -1, project : Project = gl
 
 	if project == global.current_project:
 		var frame_texture_rect : TextureRect
-		frame_texture_rect = global.find_node_by_name(project.layers[layer_index].frame_container.get_child(frame_index), "CelTexture")
-		frame_texture_rect.texture = current_cel.image_texture
-
+		call_deferred("finalise_texture_update", frame_index, frame_texture_rect, project, layer_index, current_cel)
+		
 
 func onion_skinning() -> void:
 	# Past

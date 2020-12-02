@@ -6,10 +6,17 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func process_enter_tree():
-	global = get_node("/root/Pixelorama")
+	if not is_inside_tree():
+			return
+	if has_node("/root/Pixelorama"):
+		global = get_node("/root/Pixelorama")
 	if not global:
 		yield(get_tree(), "idle_frame")
-		global = get_node("/root/Pixelorama")
+		if has_node("/root/Pixelorama"):
+			global = get_node("/root/Pixelorama")
+		else:
+			printerr("this transparent checker went terribly wrong")
+			return
 	if not global.current_project:
 		return
 	rect_size = global.current_project.size
