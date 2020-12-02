@@ -336,12 +336,12 @@ render_target_update_mode = 3
 [node name="Camera2D" type="CanvasLayer" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport"]
 script = ExtResource( 7 )
 
-[node name="Canvas" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D" instance=ExtResource( 19 )]
-
 [node name="TransparentChecker" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D" instance=ExtResource( 5 )]
 material = SubResource( 1 )
-margin_right = 64.0
+margin_right = 128.0
 margin_bottom = 64.0
+
+[node name="Canvas" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D" instance=ExtResource( 19 )]
 
 [node name="SelectionRectangle" type="Polygon2D" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportandVerticalRuler/ViewportContainer/Viewport/Camera2D"]
 visible = false
@@ -368,12 +368,12 @@ render_target_update_mode = 3
 [node name="Camera2D2" type="CanvasLayer" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport"]
 script = ExtResource( 7 )
 
-[node name="CanvasPreview" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport/Camera2D2" instance=ExtResource( 2 )]
-
 [node name="TransparentChecker" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport/Camera2D2" instance=ExtResource( 5 )]
 material = SubResource( 2 )
-margin_right = 64.0
+margin_right = 128.0
 margin_bottom = 64.0
+
+[node name="CanvasPreview" parent="CanvasAndTimeline/ViewportAndRulers/HSplitContainer/ViewportContainer2/Viewport/Camera2D2" instance=ExtResource( 2 )]
 
 [node name="AnimationTimeline" parent="CanvasAndTimeline" instance=ExtResource( 18 )]
 margin_top = 492.0
