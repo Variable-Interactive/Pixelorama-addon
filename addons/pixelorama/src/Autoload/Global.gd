@@ -196,7 +196,7 @@ static func get_node_in_parents(node, klass_name):
 	while node != null:
 		node = node.get_parent()
 		if node != null and node.get_class() == klass_name:
-			print("Found: %s" % [node])
+#			print("Found: %s" % [node])
 			return node
 	return null
 

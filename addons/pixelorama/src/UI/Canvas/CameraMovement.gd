@@ -16,6 +16,7 @@ var global
 
 func _enter_tree() -> void:
 	yield(get_tree(),"idle_frame")
+#	yield(get_tree(),"idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
 	if global.is_getting_edited(self):
 		return
@@ -142,7 +143,7 @@ func gui_input(event : InputEvent) -> void:
 		elif event.is_action_pressed("zoom_out"): # Wheel Down Event
 			zoom_camera(-1)
 		elif event is InputEventMouseMotion && drag:
-			offset = offset + event.relative * Vector2(sqrt(scale.x),sqrt(scale.y))
+			offset = offset + event.relative
 			update_transparent_checker_offset()
 			update_rulers()
 		elif is_action_direction_pressed(event):
@@ -226,8 +227,14 @@ func fit_to_frame(size : Vector2) -> void:
 			v_ratio = global.main_viewport.rect_size.y / size.y
 			ratio = min(h_ratio, v_ratio)
 
-	scale = Vector2(1 / ratio, 1 / ratio)
-	offset = size / 2
+	scale = Vector2(ratio, ratio)
+	var global_size = size * ratio
+	if ratio == h_ratio:
+		offset.x = 0
+		offset.y = (viewport_container.rect_size.y - global_size.y) / 2.0
+	else:
+		offset.x = (viewport_container.rect_size.x - global_size.x) / 2.0
+		offset.y = 0
 	zoom_changed()
 
 

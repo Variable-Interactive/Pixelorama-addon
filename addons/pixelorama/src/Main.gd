@@ -27,8 +27,8 @@ func _enter_tree() -> void:
 
 	global.window_title = tr("untitled") + " - Pixelorama " + global.current_version
 	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
+#	yield(get_tree(), "idle_frame")
+#	yield(get_tree(), "idle_frame")
 	global.current_project.layers[0].name = tr("Layer") + " 0"
 	global.layers_container.get_child(0).label.text = global.current_project.layers[0].name
 	global.layers_container.get_child(0).line_edit.text = global.current_project.layers[0].name
