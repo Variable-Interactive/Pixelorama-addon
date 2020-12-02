@@ -49,7 +49,6 @@ func _enter_tree():
 	yield(get_tree(), "idle_frame")
 	if Engine.is_editor_hint():
 		for setting in ProjectSettings.get_property_list():
-		
 			if setting.name.begins_with("input/"):
 				var action_name = setting.name.substr(6)
 #				print(action_name)

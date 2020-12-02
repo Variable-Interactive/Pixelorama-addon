@@ -6,6 +6,12 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 func process_enter_tree():
+	global = get_node("/root/Pixelorama")
+	if not global:
+		yield(get_tree(), "idle_frame")
+		global = get_node("/root/Pixelorama")
+	if not global.current_project:
+		return
 	rect_size = global.current_project.size
 	if get_parent().get_parent().get_parent() == global.main_viewport:
 		global.second_viewport.get_node("Viewport/Camera2D2/TransparentChecker")._enter_tree()
@@ -20,11 +26,9 @@ func process_enter_tree():
 
 
 func _enter_tree():
-	yield(get_tree(),"idle_frame")
+#	yield(get_tree(),"idle_frame")
 	if not is_inside_tree():
-		return
-	global = get_node("/root/Pixelorama")
-	if not global.current_project:
+		call_deferred("_enter_tree")
 		return
 	call_deferred("process_enter_tree")
 
@@ -55,3 +59,8 @@ func _init_position(id : int) -> void:
 			global.current_project.tile_mode = global.Tile_Mode.YAXIS
 			global.transparent_checker.set_size(Vector2(global.current_project.size.x*1, global.current_project.size.y*3))
 			global.transparent_checker.set_position(Vector2(0, -global.current_project.size.y))
+	if get_parent().name == "CelTexture":
+		self.margin_bottom = 0
+		self.margin_top = 0
+		self.margin_left = 0
+		self.margin_right = 0
