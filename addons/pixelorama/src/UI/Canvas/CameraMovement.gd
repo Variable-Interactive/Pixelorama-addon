@@ -4,7 +4,7 @@ extends CanvasLayer
 
 var tween : Tween
 var zoom_min := Vector2(0.005, 0.005)
-var zoom_max := Vector2(3.0, 3.0)
+var zoom_max := Vector2.ONE
 var viewport_container : ViewportContainer
 var transparent_checker : ColorRect
 var mouse_pos := Vector2.ZERO
@@ -139,7 +139,7 @@ func gui_input(event : InputEvent) -> void:
 		elif event.is_action_pressed("zoom_out"): # Wheel Down Event
 			zoom_camera(-1)
 		elif event is InputEventMouseMotion && drag:
-			offset = offset + event.relative * 1/scale
+			offset = offset + event.relative * Vector2(sqrt(scale.x),sqrt(scale.y))
 			update_transparent_checker_offset()
 			update_rulers()
 		elif is_action_direction_pressed(event):
@@ -159,7 +159,9 @@ func zoom_camera(dir : int) -> void:
 		var zoom_margin = scale * dir / 5
 		var new_zoom = scale + zoom_margin
 		if new_zoom > zoom_min && new_zoom < zoom_max:
-			var new_offset = offset + (-0.5 * viewport_size + mouse_pos) * (scale - new_zoom)
+			var offset_diff = ((-0.3 * viewport_size + mouse_pos) * (Vector2(scale.x, scale.y) - new_zoom)) / (Vector2(scale.x, scale.y))
+			var new_offset = offset + (offset_diff / 3.0)
+#			new_offset /= 3.0
 			tween.interpolate_property(self, "scale", scale, new_zoom, 0.05, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			tween.interpolate_property(self, "offset", offset, new_offset, 0.05, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			tween.start()

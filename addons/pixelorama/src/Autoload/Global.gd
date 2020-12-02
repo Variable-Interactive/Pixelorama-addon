@@ -563,16 +563,8 @@ Hold %s to make a line""") % [self.get_input_map().get_action_list("left_eraser_
 	var first_frame : BaseButton = find_node_by_name(root, "FirstFrame")
 	first_frame.hint_tooltip = tr("""Jump to the first frame
 (%s)""") % self.get_input_map().get_action_list("go_to_first_frame")[0].as_text()
-	print(first_frame.get_parent().get_children())
-	
-	var previous_frame
-	for child in first_frame.get_parent().get_children():
-		if child.name == "PreviousFrame":
-			previous_frame = child
-	
-	
-	
-	previous_frame = find_node_by_name(root, "PreviousFrame")
+
+	var previous_frame = find_node_by_name(root, "PreviousFrame")
 	previous_frame.hint_tooltip = tr("""Go to the previous frame
 (%s)""") % self.get_input_map().get_action_list("go_to_previous_frame")[0].as_text()
 

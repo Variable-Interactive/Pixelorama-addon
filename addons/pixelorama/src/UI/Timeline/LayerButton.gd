@@ -17,7 +17,7 @@ func _enter_tree():
 	if Engine.is_editor_hint():
 		yield(get_tree(), "idle_frame")
 	global = get_node(Constants.NODE_PATH_GLOBAL)
-	print("Layer container global: %s" % [global])
+#	print("Layer container global: %s" % [global])
 	visibility_button = global.find_node_by_name(self, "VisibilityButton")
 	lock_button = global.find_node_by_name(self, "LockButton")
 	linked_button = global.find_node_by_name(self, "LinkButton")
