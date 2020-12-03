@@ -71,3 +71,7 @@ func _enter_tree():
 	make_visible(false)
 	print("main inited")
 #
+func _exit_tree():
+	main_screen_panel.queue_free()
+	if has_node("/root/Pixelorama"):
+		get_node("/root/Pixelorama").queue_free()

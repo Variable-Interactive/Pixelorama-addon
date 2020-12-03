@@ -53,7 +53,7 @@ func _enter_tree() -> void:
 		global.config_cache.set_value("preferences", "startup", true)
 	show_splash_screen()
 
-#	handle_backup()
+	handle_backup()
 
 	# If the user wants to run Pixelorama with arguments in terminal mode
 	# or open files with Pixelorama directly, then handle that

@@ -85,13 +85,14 @@ func process_input(event: InputEvent):
 	var tmp_transform = get_canvas_transform().affine_inverse()
 	var tmp_position = global.main_viewport.get_local_mouse_position()
 	current_pixel = tmp_transform.basis_xform(tmp_position) + tmp_transform.origin + location
-	if not point_in_rectangle(event.position, viewport_rect.position, viewport_rect.position + viewport_rect.size):
-		if event.has_method("get_pressed"):
-			event.pressed = false
-		
-		var tools = global.get_tools().handle_draw(current_pixel.floor(), event)
-#		tools._slots[tools._active_button].tool_node.draw_end(event.position)
-		return
+	if not event is InputEventKey:
+		if not point_in_rectangle(event.position, viewport_rect.position, viewport_rect.position + viewport_rect.size):
+			if event.has_method("get_pressed"):
+				event.pressed = false
+			
+			var tools = global.get_tools().handle_draw(current_pixel.floor(), event)
+	#		tools._slots[tools._active_button].tool_node.draw_end(event.position)
+			return
 
 	# Do not use self.get_local_mouse_position() because it return unexpected
 	# value when shrink parameter is not equal to one. At godot version 3.2.3
