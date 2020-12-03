@@ -167,7 +167,7 @@ func file_menu_id_pressed(id : int) -> void:
 		2: # Open last project
 			on_open_last_project_file_menu_option_pressed()
 		3: # Save
-			print("saving")
+#			print("saving")
 			save_project_file()
 		4: # Save as
 			save_project_file_as()

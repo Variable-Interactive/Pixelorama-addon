@@ -40,6 +40,7 @@ var was_exported := false
 
 
 func _init(_frames := [], _name := tr("untitled"), _size := Vector2(64, 64), p_global = null) -> void:
+	print("project init")
 	global = p_global
 	frames = _frames
 	name = _name

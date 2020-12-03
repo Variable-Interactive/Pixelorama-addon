@@ -68,6 +68,8 @@ func _input(event : InputEvent) -> void:
 		return
 	process_input(event)
 	
+func point_in_rectangle(p : Vector2, coord1 : Vector2, coord2 : Vector2) -> bool:
+	return p.x > coord1.x && p.y > coord1.y && p.x < coord2.x && p.y < coord2.y
 
 func process_input(event: InputEvent):
 	# Don't process anything below if the input isn't a mouse event, or Shift/Ctrl.
@@ -77,14 +79,23 @@ func process_input(event: InputEvent):
 			return
 		elif not event.scancode in [KEY_SHIFT, KEY_CONTROL]:
 			return
-#	elif not get_viewport_rect().has_point(event.position):
-#		return
 
-	# Do not use self.get_local_mouse_position() because it return unexpected
-	# value when shrink parameter is not equal to one. At godot version 3.2.3
+	var viewport_rect = global.main_viewport.get_node("Viewport").get_visible_rect()
+#	print(point_in_rectangle(event.position, viewport_rect.position, viewport_rect.position + viewport_rect.size))
 	var tmp_transform = get_canvas_transform().affine_inverse()
 	var tmp_position = global.main_viewport.get_local_mouse_position()
 	current_pixel = tmp_transform.basis_xform(tmp_position) + tmp_transform.origin + location
+	if not point_in_rectangle(event.position, viewport_rect.position, viewport_rect.position + viewport_rect.size):
+		if event.has_method("get_pressed"):
+			event.pressed = false
+		
+		var tools = global.get_tools().handle_draw(current_pixel.floor(), event)
+#		tools._slots[tools._active_button].tool_node.draw_end(event.position)
+		return
+
+	# Do not use self.get_local_mouse_position() because it return unexpected
+	# value when shrink parameter is not equal to one. At godot version 3.2.3
+	
 
 	if global.has_focus:
 		update()

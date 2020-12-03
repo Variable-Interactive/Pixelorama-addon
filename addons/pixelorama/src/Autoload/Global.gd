@@ -251,6 +251,8 @@ func get_input_map():
 #		return InputMap
 
 func _enter_tree() -> void:
+	if name != "Pixelorama":
+		return
 	current_version = ProjectSettings.get_setting("application/config/Version")
 	randomize()
 	if OS.has_feature("standalone"):

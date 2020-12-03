@@ -136,7 +136,7 @@ func gui_input(event : InputEvent) -> void:
 	var viewport_size := viewport_container.rect_size
 	if event.is_action_pressed("middle_mouse") || event.is_action_pressed("space"):
 		drag = true
-		print(drag)
+#		print(drag)
 	elif event.is_action_released("middle_mouse") || event.is_action_released("space"):
 		drag = false
 
