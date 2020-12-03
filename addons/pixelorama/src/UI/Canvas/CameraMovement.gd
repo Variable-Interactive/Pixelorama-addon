@@ -189,7 +189,7 @@ func zoom_changed() -> void:
 		global.zoom_level_label.text = str(round(100 / scale.x)) + " %"
 		update_rulers()
 		for guide in global.current_project.guides:
-			guide.width = scale.x * 2
+			guide.width = 1/ scale.x *2
 	elif name == "CameraPreview":
 		global.preview_zoom_slider.value = -scale.x
 

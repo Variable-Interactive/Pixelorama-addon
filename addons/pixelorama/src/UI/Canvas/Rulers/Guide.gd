@@ -22,7 +22,7 @@ func _enter_tree() -> void:
 	if global.is_getting_edited(self):
 		return
 	project = global.current_project
-	width = global.camera.scale.x
+	width = 1.0 /global.camera.scale.x *2.0
 	default_color = global.guide_color
 	project.guides.append(self)
 
@@ -69,12 +69,12 @@ func _draw() -> void:
 		return
 	if has_focus:
 		var viewport_size: Vector2 = global.main_viewport.rect_size
-		var zoom: Vector2 = global.camera.zoom
+		var zoom: Vector2 = global.camera.scale
 		if type == Types.HORIZONTAL:
-			draw_set_transform(Vector2(global.camera.offset.x - (viewport_size.x / 2) * zoom.x, points[0].y + font.get_height() * zoom.x * 2), rotation, zoom * 2)
+			draw_set_transform(Vector2(-global.camera.offset.x / zoom.x, points[0].y + font.get_height() * 2.0 /zoom.y), rotation, Vector2.ONE / zoom * 2.0)
 			draw_string(font, Vector2.ZERO, "%spx" % str(stepify(mouse_pos.y, 0.5)))
 		else:
-			draw_set_transform(Vector2(points[0].x + font.get_height() * zoom.y, global.camera.offset.y - (viewport_size.y / 2.25) * zoom.y), rotation, zoom * 2)
+			draw_set_transform(Vector2(points[0].x + font.get_height() * 2.0 / zoom.x, -global.camera.offset.y / zoom.y + font.get_height() * 2.0 / zoom.y), rotation, Vector2.ONE / zoom * 2.0)
 			draw_string(font, Vector2.ZERO, "%spx" % str(stepify(mouse_pos.x, 0.5)))
 
 
