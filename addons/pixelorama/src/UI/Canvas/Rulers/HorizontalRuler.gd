@@ -86,6 +86,7 @@ func _on_HorizontalRuler_pressed() -> void:
 	global.canvas.add_child(guide)
 	global.has_focus = false
 	update()
+	spawned_guide = guide
 
 
 func _on_HorizontalRuler_mouse_entered() -> void:
@@ -94,3 +95,13 @@ func _on_HorizontalRuler_mouse_entered() -> void:
 		mouse_default_cursor_shape = Control.CURSOR_FDIAGSIZE
 	else:
 		mouse_default_cursor_shape = Control.CURSOR_VSPLIT
+
+var spawned_guide
+
+func _input(event):
+	if not Engine.is_editor_hint():
+		return
+	if spawned_guide:
+		spawned_guide.process_input(null)
+	if Input.is_action_just_released("left_mouse"):
+		spawned_guide = null

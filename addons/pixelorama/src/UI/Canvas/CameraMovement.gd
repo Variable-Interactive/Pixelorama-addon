@@ -128,7 +128,11 @@ func process_direction_action_released(event: InputEvent) -> void:
 
 
 func gui_input(event : InputEvent) -> void:
-#	print(event)
+	print(event)
+	if Engine.is_editor_hint():
+		for guide in global.canvas.get_children():
+			if guide is Guide:
+				guide.process_input(event)
 	mouse_pos = viewport_container.get_local_mouse_position()
 	var viewport_size := viewport_container.rect_size
 	if event.is_action_pressed("middle_mouse") || event.is_action_pressed("space"):
@@ -154,6 +158,7 @@ func gui_input(event : InputEvent) -> void:
 		save_values_to_project()
 	if Engine.is_editor_hint():
 		global.canvas.process_input(event)
+		
 
 
 # Zoom Camera

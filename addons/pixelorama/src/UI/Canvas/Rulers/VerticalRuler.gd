@@ -72,6 +72,7 @@ func _draw() -> void:
 			else:
 				draw_line(Vector2(RULER_WIDTH * 0.66, position.y), Vector2(RULER_WIDTH, position.y), Color.white)
 
+var spawned_guide
 
 func _on_VerticalRuler_pressed() -> void:
 	if !global.show_guides:
@@ -86,3 +87,14 @@ func _on_VerticalRuler_pressed() -> void:
 	global.canvas.add_child(guide)
 	global.has_focus = false
 	update()
+	spawned_guide = guide
+	
+
+func _input(event):
+	if not Engine.is_editor_hint():
+		return
+	if spawned_guide:
+		spawned_guide.process_input(null)
+	if Input.is_action_just_released("left_mouse"):
+		spawned_guide = null
+#	print(event)
