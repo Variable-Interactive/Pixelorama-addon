@@ -128,7 +128,6 @@ func process_direction_action_released(event: InputEvent) -> void:
 
 
 func gui_input(event : InputEvent) -> void:
-	print(event)
 	if Engine.is_editor_hint():
 		for guide in global.canvas.get_children():
 			if guide is Guide:

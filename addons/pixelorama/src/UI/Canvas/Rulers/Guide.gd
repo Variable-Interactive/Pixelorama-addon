@@ -13,14 +13,15 @@ var Constants = preload("res://addons/pixelorama/src/Autoload/Constants.gd")
 var global
 
 var has_inited = false
-var is_first_frame = true
+
 func _enter_tree() -> void:
 #	if Engine.is_editor_hint():
 
 	has_inited = true
 	global = get_node(Constants.NODE_PATH_GLOBAL)
-	if not global:
+	if not global.current_project:
 		yield(get_tree(), "idle_frame")		
+		global = get_node(Constants.NODE_PATH_GLOBAL)
 	if global.is_getting_edited(self):
 		return
 	project = global.current_project
@@ -45,9 +46,6 @@ func process_input(_event : InputEvent):
 	else:
 		point0.x -= width * 3
 		point1.x += width * 3
-	if visible:
-		print(is_first_frame)
-		print(Input.is_action_just_pressed("left_mouse"))
 	if global.can_draw and global.has_focus and point_in_rectangle(mouse_pos, point0, point1) and Input.is_action_just_pressed("left_mouse") and visible:
 		if !point_in_rectangle(global.canvas.current_pixel, global.canvas.location, global.canvas.location + project.size):
 			has_focus = true
@@ -55,7 +53,6 @@ func process_input(_event : InputEvent):
 			update()
 	if has_focus and visible:
 		if Input.is_action_pressed("left_mouse"):
-			print("I'm alive")
 			if type == Types.HORIZONTAL:
 				var yy = stepify(mouse_pos.y, 0.5)
 				points[0].y = yy
@@ -76,7 +73,6 @@ func _input(_event : InputEvent):
 func _draw() -> void:
 	if not has_inited:
 		return
-	is_first_frame = false
 	if has_focus:
 		var viewport_size: Vector2 = global.main_viewport.rect_size
 		var zoom: Vector2 = global.camera.scale
