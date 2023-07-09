@@ -2,7 +2,7 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://addons/pixelorama/.import/pencil.png-7f91c236a1a94dfb335c22d820f3c852.stex"
+path="res://.import/pencil.png-7f91c236a1a94dfb335c22d820f3c852.stex"
 metadata={
 "vram_texture": false
 }
@@ -10,7 +10,7 @@ metadata={
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/light_themes/tools/pencil.png"
-dest_files=[ "res://addons/pixelorama/.import/pencil.png-7f91c236a1a94dfb335c22d820f3c852.stex" ]
+dest_files=[ "res://.import/pencil.png-7f91c236a1a94dfb335c22d820f3c852.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true

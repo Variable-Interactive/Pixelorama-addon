@@ -2,7 +2,7 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://addons/pixelorama/.import/colorpicker_r.png-8552cac62a2fc93dbb0a6da12550369b.stex"
+path="res://.import/colorpicker_r.png-8552cac62a2fc93dbb0a6da12550369b.stex"
 metadata={
 "vram_texture": false
 }
@@ -10,7 +10,7 @@ metadata={
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/blue_themes/tools/colorpicker_r.png"
-dest_files=[ "res://addons/pixelorama/.import/colorpicker_r.png-8552cac62a2fc93dbb0a6da12550369b.stex" ]
+dest_files=[ "res://.import/colorpicker_r.png-8552cac62a2fc93dbb0a6da12550369b.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true

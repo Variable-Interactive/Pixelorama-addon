@@ -2,12 +2,12 @@
 
 importer="image"
 type="Image"
-path="res://addons/pixelorama/.import/colorpicker_cursor.png-8893426377ce94e4e303909acc75a9d2.image"
+path="res://.import/colorpicker_cursor.png-8893426377ce94e4e303909acc75a9d2.image"
 
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/cursor_icons/colorpicker_cursor.png"
-dest_files=[ "res://addons/pixelorama/.import/colorpicker_cursor.png-8893426377ce94e4e303909acc75a9d2.image" ]
+dest_files=[ "res://.import/colorpicker_cursor.png-8893426377ce94e4e303909acc75a9d2.image" ]
 
 [params]
 

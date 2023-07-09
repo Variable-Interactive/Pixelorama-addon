@@ -2,12 +2,12 @@
 
 importer="image"
 type="Image"
-path="res://addons/pixelorama/.import/bucket_cursor.png-92b90dd9153cb3055ae70fe72ecb86b5.image"
+path="res://.import/bucket_cursor.png-92b90dd9153cb3055ae70fe72ecb86b5.image"
 
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/cursor_icons/bucket_cursor.png"
-dest_files=[ "res://addons/pixelorama/.import/bucket_cursor.png-92b90dd9153cb3055ae70fe72ecb86b5.image" ]
+dest_files=[ "res://.import/bucket_cursor.png-92b90dd9153cb3055ae70fe72ecb86b5.image" ]
 
 [params]
 

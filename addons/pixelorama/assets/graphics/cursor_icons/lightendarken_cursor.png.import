@@ -2,12 +2,12 @@
 
 importer="image"
 type="Image"
-path="res://addons/pixelorama/.import/lightendarken_cursor.png-2606299e00edbd60cc06c9d00df74ab2.image"
+path="res://.import/lightendarken_cursor.png-2606299e00edbd60cc06c9d00df74ab2.image"
 
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/cursor_icons/lightendarken_cursor.png"
-dest_files=[ "res://addons/pixelorama/.import/lightendarken_cursor.png-2606299e00edbd60cc06c9d00df74ab2.image" ]
+dest_files=[ "res://.import/lightendarken_cursor.png-2606299e00edbd60cc06c9d00df74ab2.image" ]
 
 [params]
 

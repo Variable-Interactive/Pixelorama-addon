@@ -2,12 +2,12 @@
 
 importer="image"
 type="Image"
-path="res://addons/pixelorama/.import/pixel_image.png-4703dcec29e0374f1a253dc4a5c98360.image"
+path="res://.import/pixel_image.png-4703dcec29e0374f1a253dc4a5c98360.image"
 
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/pixel_image.png"
-dest_files=[ "res://addons/pixelorama/.import/pixel_image.png-4703dcec29e0374f1a253dc4a5c98360.image" ]
+dest_files=[ "res://.import/pixel_image.png-4703dcec29e0374f1a253dc4a5c98360.image" ]
 
 [params]
 

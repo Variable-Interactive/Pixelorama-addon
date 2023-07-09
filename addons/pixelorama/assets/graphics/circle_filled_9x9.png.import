@@ -2,12 +2,12 @@
 
 importer="image"
 type="Image"
-path="res://addons/pixelorama/.import/circle_filled_9x9.png-4d0c42ba34cb3dd92b0a49688200d96a.image"
+path="res://.import/circle_filled_9x9.png-4d0c42ba34cb3dd92b0a49688200d96a.image"
 
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/circle_filled_9x9.png"
-dest_files=[ "res://addons/pixelorama/.import/circle_filled_9x9.png-4d0c42ba34cb3dd92b0a49688200d96a.image" ]
+dest_files=[ "res://.import/circle_filled_9x9.png-4d0c42ba34cb3dd92b0a49688200d96a.image" ]
 
 [params]
 

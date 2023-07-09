@@ -2,7 +2,7 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://addons/pixelorama/.import/go_to_first_frame.png-e8a22e4b7fa57a9fd6082b0414341e1a.stex"
+path="res://.import/go_to_first_frame.png-e8a22e4b7fa57a9fd6082b0414341e1a.stex"
 metadata={
 "vram_texture": false
 }
@@ -10,7 +10,7 @@ metadata={
 [deps]
 
 source_file="res://addons/pixelorama/assets/graphics/dark_themes/timeline/go_to_first_frame.png"
-dest_files=[ "res://addons/pixelorama/.import/go_to_first_frame.png-e8a22e4b7fa57a9fd6082b0414341e1a.stex" ]
+dest_files=[ "res://.import/go_to_first_frame.png-e8a22e4b7fa57a9fd6082b0414341e1a.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=true
